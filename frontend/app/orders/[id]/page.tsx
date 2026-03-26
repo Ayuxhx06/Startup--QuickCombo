@@ -38,6 +38,9 @@ export default function OrderTrackingPage() {
     axios.get(`${API}/api/orders/${params.id}/`)
       .then(res => {
         setOrder(res.data);
+        if (res.data.payment_method === 'upi' && res.data.payment_status === 'pending') {
+          setShowQr(true);
+        }
         setLoading(false);
       })
       .catch(() => {

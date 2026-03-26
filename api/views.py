@@ -194,9 +194,9 @@ def verify_otp(request):
 
 @api_view(['GET', 'PATCH'])
 def user_profile(request):
-    email = request.headers.get('X-User-Email', '')
+    email = request.headers.get('X-User-Email', '').strip().lower()
     try:
-        user = User.objects.get(email=email)
+        user = User.objects.get(email__iexact=email)
     except User.DoesNotExist:
         return Response({'error': 'Not authenticated'}, status=401)
 
@@ -286,7 +286,7 @@ def place_order(request):
     total = (subtotal - discount) + delivery_fee
 
     order = Order.objects.create(
-        user_email=data.get('email', ''),
+        user_email=data.get('email', '').strip().lower(),
         user_name=data.get('name', ''),
         user_phone=data.get('phone', ''),
         delivery_address=data.get('address', ''),
@@ -320,11 +320,26 @@ def place_order(request):
 
 
 @api_view(['GET'])
+def active_order(request):
+    email = request.headers.get('X-User-Email', '').strip().lower()
+    if not email:
+        return Response(None, status=200)
+    # Get most recent order that isn't finished
+    order = Order.objects.filter(
+        user_email__iexact=email
+    ).exclude(status__in=['delivered', 'cancelled']).order_by('-created_at').first()
+    
+    if not order:
+        return Response(None, status=200)
+    return Response(OrderSerializer(order).data)
+
+
+@api_view(['GET'])
 def order_list(request):
-    email = request.headers.get('X-User-Email', '')
+    email = request.headers.get('X-User-Email', '').strip().lower()
     if not email:
         return Response([], status=200)
-    orders = Order.objects.filter(user_email=email).order_by('-created_at')
+    orders = Order.objects.filter(user_email__iexact=email).order_by('-created_at')
     return Response(OrderSerializer(orders, many=True).data)
 
 

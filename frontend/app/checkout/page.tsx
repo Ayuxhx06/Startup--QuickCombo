@@ -140,7 +140,7 @@ export default function CheckoutPage() {
       setFinalTotal(currentCalculatedTotal);
       setSuccess(true);
       clearCart();
-      setTimeout(() => router.push(`/orders/${res.data.order_id}`), 30000);
+      setTimeout(() => router.push(`/orders/${res.data.order_id}`), 1000);
     } catch (err) {
       toast.error('Failed to place order. Please try again.');
     } finally {
@@ -165,25 +165,8 @@ export default function CheckoutPage() {
           Your food is being prepared. Check your email for details.
         </motion.p>
 
-        {/* Payment QR Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ delay: 0.8 }}
-          className="bg-[#1c1c1c] p-6 rounded-[32px] border border-white/10 mb-8 max-w-sm w-full"
-        >
-          <p className="text-white font-bold mb-4 uppercase tracking-widest text-xs">Scan to Pay (UPI)</p>
-          <div className="bg-white p-4 rounded-2xl mx-auto inline-block mb-4 shadow-xl">
-            <QRCodeSVG value={`upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${finalTotal}&cu=INR&tn=QuickCombo Order`} size={180} level="H" includeMargin={false} />
-          </div>
-          <div className="space-y-1">
-            <p className="text-green-400 font-black text-lg">₹{finalTotal}</p>
-            <p className="text-gray-500 text-xs font-medium">UPI ID: {UPI_ID}</p>
-          </div>
-        </motion.div>
-        
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} className="animate-pulse text-green-400 text-sm font-bold">
-          Redirecting to tracking in a few seconds...
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} className="text-green-400 text-sm font-bold bg-green-500/10 px-6 py-3 rounded-full border border-green-500/20">
+          Redirecting to live tracking...
         </motion.div>
       </div>
     );
