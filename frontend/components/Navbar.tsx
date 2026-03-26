@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
-import { ShoppingCart, MapPin, User, Loader2, Search, X } from 'lucide-react';
+import { ShoppingCart, MapPin, User, Loader2, Search, X, ClipboardList } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -141,16 +141,25 @@ export default function Navbar() {
                 </motion.button>
               )}
             </div>
-            {/* User Profile / Letter Tab */}
             {user ? (
-              <Link href="/profile">
-                <motion.div
-                  whileTap={{ scale: 0.9 }}
-                  className="w-8 h-8 rounded-full bg-green-500/20 border border-green-500/50 flex items-center justify-center text-green-400 text-sm font-black shadow-lg"
-                >
-                  {user.name?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
-                </motion.div>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link href="/orders">
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white"
+                  >
+                    <ClipboardList size={16} />
+                  </motion.button>
+                </Link>
+                <Link href="/profile">
+                  <motion.div
+                    whileTap={{ scale: 0.9 }}
+                    className="w-8 h-8 rounded-full bg-green-500/20 border border-green-500/50 flex items-center justify-center text-green-400 text-sm font-black shadow-lg"
+                  >
+                    {user.name?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
+                  </motion.div>
+                </Link>
+              </div>
             ) : (
               <motion.button
                 whileTap={{ scale: 0.9 }}

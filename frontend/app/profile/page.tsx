@@ -97,10 +97,11 @@ export default function ProfilePage() {
 
               {/* Order Stats */}
               <div className="mt-6 pt-5 border-t border-white/5 flex items-center justify-around text-center">
-                 <div>
+                 <button onClick={() => router.push('/orders')} className="hover:scale-105 transition-transform">
                     <p className="text-2xl font-black text-white">{profile.orders_count || 0}</p>
-                    <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mt-1">Total Orders</p>
-                 </div>
+                    <p className="text-[10px] uppercase tracking-wider text-green-500 font-bold mt-1">Total Orders</p>
+                    <p className="text-[9px] text-gray-500 font-bold">VIEW HISTORY ↗</p>
+                 </button>
                  <div className="w-[1px] h-8 bg-white/10" />
                  <div>
                     <p className="text-2xl font-black text-white flex items-center justify-center gap-1">

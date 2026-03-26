@@ -50,7 +50,7 @@ export default function ComboBuilder() {
       addItem({
         id: item.id,
         name: `${item.name} (Combo Part)`,
-        price: Math.floor(item.price * (1 - (discount / subtotal))), // Distribute discount
+        price: Math.floor(item.price * (1 - (discount / (subtotal || 1)))), // Distribute discount
         quantity: 1,
         image_url: item.image_url,
         is_veg: item.is_veg,

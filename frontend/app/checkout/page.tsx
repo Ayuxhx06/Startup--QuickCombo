@@ -22,7 +22,7 @@ const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || 'Ayush Tomar';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, total, updateQuantity, clearCart } = useCart();
   const { user, setShowAuthModal } = useAuth();
   
   const [address, setAddress] = useState('');
@@ -104,11 +104,11 @@ export default function CheckoutPage() {
 
   const currentCalculatedTotal = items.length > 0 ? (total - Math.floor(total * 0.1) + 40) : 0;
 
-  const hasFood = items.some(i => i.category_name?.toLowerCase() !== 'essentials' && i.category_name?.toLowerCase() !== 'grocery');
-  const hasEssentials = items.some(i => i.category_name?.toLowerCase() === 'essentials' || i.category_name?.toLowerCase() === 'grocery');
-  let etaRange = '35-40 mins';
+  const hasFood = items.some(i => !['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
+  const hasEssentials = items.some(i => ['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
+  let etaRange = '30-35 mins'; 
   if (hasFood && hasEssentials) etaRange = '40-45 mins';
-  else if (hasEssentials && !hasFood) etaRange = '15-20 mins';
+  else if (hasEssentials && !hasFood) etaRange = '20 mins';
 
   const handlePlaceOrder = async () => {
     if (!user) {
@@ -225,11 +225,18 @@ export default function CheckoutPage() {
                     )}
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white leading-tight max-w-[160px] truncate">{item.name}</h3>
-                    <p className="text-[11px] text-green-400 font-bold">₹{item.price} x {item.quantity}</p>
+                    <h3 className="text-sm font-bold text-white leading-tight max-w-[140px] truncate">{item.name}</h3>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <p className="text-[11px] text-green-400 font-bold">₹{(item.price || 0)}</p>
+                      <div className="flex items-center gap-2 bg-white/5 rounded-lg px-2 py-1 ml-1 scale-90 origin-left border border-white/10">
+                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="text-gray-400 hover:text-white transition-colors">-</button>
+                        <span className="text-[10px] font-black text-white w-4 text-center">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="text-green-500 hover:text-white transition-colors">+</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <span className="font-black text-white text-sm">₹{item.price * item.quantity}</span>
+                <span className="font-black text-white text-sm">₹{(item.price || 0) * (item.quantity || 1)}</span>
               </div>
             ))}
           </div>
@@ -329,8 +336,8 @@ export default function CheckoutPage() {
             <div className="flex justify-between font-bold text-lg text-white pt-1">
               <span>Total Bill</span>
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 text-sm line-through">₹{total + 40}</span>
-                <span>₹{total - Math.floor(total * 0.1) + 40}</span>
+                <span className="text-gray-500 text-sm line-through">₹{(total || 0) + 40}</span>
+                <span>₹{(total || 0) - Math.floor((total || 0) * 0.1) + 40}</span>
               </div>
             </div>
           </div>
