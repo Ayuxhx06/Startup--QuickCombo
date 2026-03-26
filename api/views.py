@@ -6,6 +6,7 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from django.views.decorators.cache import cache_page
 from .models import User, Category, MenuItem, Order, OrderItem, Address
 from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer,
                           OrderSerializer, AddressSerializer)
@@ -217,6 +218,7 @@ def user_profile(request):
 
 # ─── Menu ─────────────────────────────────────────────────────────────────────
 
+@cache_page(60 * 5)
 @api_view(['GET'])
 def menu_list(request):
     category_slug = request.GET.get('category', '')
@@ -241,6 +243,7 @@ def menu_list(request):
     return Response(MenuItemSerializer(items, many=True).data)
 
 
+@cache_page(60 * 60)
 @api_view(['GET'])
 def categories_list(request):
     categories = Category.objects.all()
@@ -256,6 +259,7 @@ def menu_item_detail(request, pk):
         return Response({'error': 'Not found'}, status=404)
 
 
+@cache_page(60 * 15)
 @api_view(['GET'])
 def restaurant_list(request):
     from .models import Restaurant
