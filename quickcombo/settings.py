@@ -109,10 +109,19 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [],
 }
 
-# Environment variables
+# Email Configuration (SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='ayushtomar061004@gmail.com')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = f"QuickCombo <{EMAIL_HOST_USER}>"
+
+# Legacy Brevo keys (to be removed once fully migrated)
 BREVO_API_KEY = config('BREVO_API_KEY', default='')
-BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='ayushtomar061004@gmail.com')
-ADMIN_EMAIL = config('ADMIN_EMAIL', default='ayushtomar061004@gmail.com')
+BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='support@quickcombo.in')
+ADMIN_EMAIL = config('ADMIN_EMAIL', default='support@quickcombo.in')
 GEOAPIFY_KEY = config('GEOAPIFY_KEY', default='')
 UPI_ID = config('UPI_ID', default='ayushtomar061004-1@okaxis')
 UPI_NAME = config('UPI_NAME', default='Ayush Tomar')

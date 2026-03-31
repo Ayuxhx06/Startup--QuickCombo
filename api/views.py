@@ -7,6 +7,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.cache import cache_page
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from .models import User, Category, MenuItem, Order, OrderItem, Address
 from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer,
                           OrderSerializer, AddressSerializer, RestaurantSerializer)
@@ -15,45 +18,38 @@ from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer
 # ─── Auth ─────────────────────────────────────────────────────────────────────
 
 def send_otp_email(to_email, otp, name="User"):
-    """Send OTP via Brevo SMTP API, fallback gracefully in dev mode."""
-    print(f"\n[SYSTEM NOTIFICATION] Generated OTP for {to_email}: {otp}\n")
-    if not settings.BREVO_API_KEY or settings.BREVO_API_KEY == 'your_brevo_api_key_here':
-        return True
-    payload = {
-        "sender": {"name": "QuickCombo", "email": settings.BREVO_SENDER_EMAIL},
-        "to": [{"email": to_email, "name": name}],
-        "subject": f"Your QuickCombo OTP: {otp}",
-        "htmlContent": f"""
-        <div style="font-family:Inter,sans-serif;max-width:480px;margin:auto;background:#0a0a0a;color:#fff;border-radius:16px;padding:32px;border:1px solid #22c55e22">
-          <h2 style="color:#22c55e;margin:0 0 8px">🥗 QuickCombo</h2>
-          <p style="color:#6b7280;margin:0 0 24px">Fast food + essentials delivery</p>
-          <p style="font-size:14px;color:#d1d5db">Hi {name}, your one-time password is:</p>
-          <div style="background:#111;border:2px solid #22c55e;border-radius:12px;text-align:center;padding:24px;margin:16px 0">
-            <span style="font-size:40px;font-weight:900;letter-spacing:12px;color:#22c55e">{otp}</span>
-          </div>
-          <p style="font-size:12px;color:#6b7280">Valid for 10 minutes. Never share this code.</p>
-        </div>"""
-    }
+    """Send OTP via SMTP."""
+    subject = f"Your QuickCombo OTP: {otp}"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    
+    html_content = f"""
+    <div style="font-family:Inter,sans-serif;max-width:480px;margin:auto;background:#0a0a0a;color:#fff;border-radius:16px;padding:32px;border:1px solid #22c55e22">
+      <h2 style="color:#22c55e;margin:0 0 8px">🥗 QuickCombo</h2>
+      <p style="color:#6b7280;margin:0 0 24px">Fast food + essentials delivery</p>
+      <p style="font-size:14px;color:#d1d5db">Hi {name}, your one-time password is:</p>
+      <div style="background:#111;border:2px solid #22c55e;border-radius:12px;text-align:center;padding:24px;margin:16px 0">
+        <span style="font-size:40px;font-weight:900;letter-spacing:12px;color:#22c55e">{otp}</span>
+      </div>
+      <p style="font-size:12px;color:#6b7280">Valid for 10 minutes. Never share this code.</p>
+    </div>"""
+    
+    text_content = f"Your QuickCombo OTP is {otp}. Valid for 10 minutes."
+    
     try:
-        r = requests.post("https://api.brevo.com/v3/smtp/email",
-                          json=payload,
-                          headers={"api-key": settings.BREVO_API_KEY},
-                          timeout=10)
-        if r.status_code != 201:
-            print(f"Brevo API error: {r.status_code} - {r.text}")
-            return False
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
         return True
     except Exception as e:
-        print(f"Brevo error: {e}")
+        print(f"SMTP Error (OTP): {e}")
         return False
 
 
 def send_order_confirmation_email(order):
-    """Send order confirmation via Brevo."""
-    if not settings.BREVO_API_KEY:
-        print(f"[DEV] Order {order.id} confirmed for {order.user_email}")
-        return True
-
+    """Send order confirmation via SMTP to user and admin."""
+    subject = f"🎉 Order Confirmed! #QC{order.id:04d}"
+    from_email = settings.DEFAULT_FROM_EMAIL
+    
     items_html = "".join([
         f"<tr><td style='padding:8px;color:#d1d5db'>{item.name}</td>"
         f"<td style='padding:8px;color:#6b7280;text-align:center'>x{item.quantity}</td>"
@@ -61,6 +57,7 @@ def send_order_confirmation_email(order):
         for item in order.items.all()
     ])
 
+    # ETA logic
     has_food, has_essentials = False, False
     for i in order.items.all():
         if i.menu_item and i.menu_item.category:
@@ -73,74 +70,57 @@ def send_order_confirmation_email(order):
     if has_food and has_essentials: eta = "40-45 mins"
     elif has_essentials and not has_food: eta = "15-20 mins"
 
-    payload = {
-        "sender": {"name": "QuickCombo", "email": settings.BREVO_SENDER_EMAIL},
-        "to": [{"email": order.user_email, "name": order.user_name}],
-        "subject": f"🎉 Order Confirmed! #QC{order.id:04d}",
-        "htmlContent": f"""
-        <div style="font-family:Inter,sans-serif;max-width:560px;margin:auto;background:#0a0a0a;color:#fff;border-radius:16px;padding:32px;border:1px solid #22c55e22">
-          <h2 style="color:#22c55e">🥗 QuickCombo — Order Confirmed!</h2>
-          <p style="color:#d1d5db">Hi {order.user_name}, your order is being prepared! 🚀</p>
-          <div style="background:#111;border-radius:12px;padding:16px;margin:16px 0">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <thead><tr>
-                <th style="text-align:left;color:#6b7280;padding:8px;border-bottom:1px solid #1f2937">Item</th>
-                <th style="color:#6b7280;padding:8px;border-bottom:1px solid #1f2937">Qty</th>
-                <th style="text-align:right;color:#6b7280;padding:8px;border-bottom:1px solid #1f2937">Price</th>
-              </tr></thead>
-              <tbody>{items_html}</tbody>
-            </table>
-            <div style="border-top:1px solid #1f2937;margin-top:8px;padding-top:12px;display:flex;justify-content:space-between">
-              <span style="color:#6b7280">Subtotal</span><span style="color:#d1d5db">₹{order.subtotal}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:4px 0">
-              <span style="color:#6b7280">Delivery Fee</span><span style="color:#d1d5db">₹{order.delivery_fee}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:18px;font-weight:700">
-              <span style="color:#fff">Total</span><span style="color:#22c55e">₹{order.total}</span>
-            </div>
-          </div>
-          <p style="color:#6b7280;font-size:13px">📍 Delivering to: {order.delivery_address}</p>
-          <p style="color:#6b7280;font-size:13px">Estimated time: {eta}</p>
-          <div style="margin-top: 20px; padding: 15px; border: 1px dashed #22c55e; border-radius: 8px;">
-            <p style="color:#22c55e; font-weight: bold; margin-bottom: 5px;">Payment Link / Info:</p>
-            <p style="color:#d1d5db; font-size: 14px;">UPI ID: {getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')}</p>
-          </div>
-        </div>"""
-    }
+    html_template = f"""
+    <div style="font-family:Inter,sans-serif;max-width:560px;margin:auto;background:#0a0a0a;color:#fff;border-radius:16px;padding:32px;border:1px solid #22c55e22">
+      <h2 style="color:#22c55e">@TITLE@</h2>
+      <p style="color:#d1d5db">@MESSAGE@</p>
+      <div style="background:#111;border-radius:12px;padding:16px;margin:16px 0">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <thead><tr>
+            <th style="text-align:left;color:#6b7280;padding:8px;border-bottom:1px solid #1f2937">Item</th>
+            <th style="color:#6b7280;padding:8px;border-bottom:1px solid #1f2937">Qty</th>
+            <th style="text-align:right;color:#6b7280;padding:8px;border-bottom:1px solid #1f2937">Price</th>
+          </tr></thead>
+          <tbody>{items_html}</tbody>
+        </table>
+        <div style="border-top:1px solid #1f2937;margin-top:8px;padding-top:12px;display:flex;justify-content:space-between">
+          <span style="color:#6b7280">Subtotal</span><span style="color:#d1d5db">₹{order.subtotal}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0">
+          <span style="color:#6b7280">Delivery Fee</span><span style="color:#d1d5db">₹{order.delivery_fee}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:18px;font-weight:700">
+          <span style="color:#fff">Total</span><span style="color:#22c55e">₹{order.total}</span>
+        </div>
+      </div>
+      <div style="text-align:center;color:#6b7280;font-size:14px">
+        <p>Estimated Delivery: <span style="color:#22c55e;font-weight:700">{eta}</span></p>
+        <p>Delivery to: {order.delivery_address}</p>
+        <p>UPI ID: {getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')}</p>
+      </div>
+    </div>"""
+
+    # Send to User
+    user_html = html_template.replace("@TITLE@", "🥗 QuickCombo — Order Confirmed!").replace("@MESSAGE@", f"Hi {order.user_name}, your order is being prepared! 🚀")
+    user_text = f"Order #{order.id:04d} confirmed! Total: ₹{order.total}. ETA: {eta}."
+    
     try:
-        r = requests.post("https://api.brevo.com/v3/smtp/email",
-                          json=payload,
-                          headers={"api-key": settings.BREVO_API_KEY},
-                          timeout=10)
-                          
-        if r.status_code != 201:
-            print(f"Brevo API error (User): {r.status_code} - {r.text}")
-            
+        msg = EmailMultiAlternatives(subject, user_text, from_email, [order.user_email])
+        msg.attach_alternative(user_html, "text/html")
+        msg.send()
+        
+        # Send to Admin
         admin_email = getattr(settings, 'ADMIN_EMAIL', None)
         if admin_email:
-            admin_payload = payload.copy()
-            admin_payload["to"] = [{"email": admin_email, "name": "QuickCombo Admin"}]
-            admin_payload["subject"] = f"🚨 New Order Alert! #QC{order.id:04d} from {order.user_name}"
+            admin_subject = f"🚨 New Order Alert! #QC{order.id:04d} from {order.user_name}"
+            admin_html = html_template.replace("@TITLE@", "🥗 QuickCombo — NEW ORDER!").replace("@MESSAGE@", f"New order received from {order.user_name}. Prepare immediately! 🚀")
+            admin_msg = EmailMultiAlternatives(admin_subject, admin_subject, from_email, [admin_email])
+            admin_msg.attach_alternative(admin_html, "text/html")
+            admin_msg.send()
             
-            admin_payload["htmlContent"] = payload["htmlContent"].replace(
-                f"Hi {order.user_name}, your order is being prepared! 🚀", 
-                f"New order received from {order.user_name}. Please prepare immediately! 🚀"
-            ).replace(
-                "QuickCombo — Order Confirmed!",
-                "QuickCombo — NEW ORDER RECEIVED!"
-            )
-            
-            r_admin = requests.post("https://api.brevo.com/v3/smtp/email",
-                          json=admin_payload,
-                          headers={"api-key": settings.BREVO_API_KEY},
-                          timeout=10)
-            if r_admin.status_code != 201:
-                print(f"Brevo API error (Admin): {r_admin.status_code} - {r_admin.text}")
-                          
-        return r.status_code == 201
+        return True
     except Exception as e:
-        print(f"Brevo order email error: {e}")
+        print(f"SMTP Error (Order): {e}")
         return False
 
 
