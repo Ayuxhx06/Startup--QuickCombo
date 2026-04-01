@@ -111,12 +111,12 @@ REST_FRAMEWORK = {
 
 # Email Configuration (SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.titan.email')  # Titan/GoDaddy Default
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='ayushtomar061004@gmail.com')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='support@quickcombo.in')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = f"QuickCombo <{EMAIL_HOST_USER}>"
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=f"QuickCombo <{EMAIL_HOST_USER}>")
 
 # Legacy Brevo keys (to be removed once fully migrated)
 BREVO_API_KEY = config('BREVO_API_KEY', default='')

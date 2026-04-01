@@ -18,9 +18,20 @@ from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer
 # ─── Auth ─────────────────────────────────────────────────────────────────────
 
 def send_otp_email(to_email, otp, name="User"):
-    """Send OTP via SMTP."""
-    subject = f"Your QuickCombo OTP: {otp}"
-    from_email = settings.DEFAULT_FROM_EMAIL
+    """Send OTP via Brevo HTTP API."""
+    api_key = getattr(settings, 'BREVO_API_KEY', None)
+    sender_email = getattr(settings, 'BREVO_SENDER_EMAIL', 'support@quickcombo.in')
+    
+    if not api_key:
+        print("Error: BREVO_API_KEY not configured.")
+        return False
+
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": api_key,
+        "content-type": "application/json"
+    }
     
     html_content = f"""
     <div style="font-family:Inter,sans-serif;max-width:480px;margin:auto;background:#0a0a0a;color:#fff;border-radius:16px;padding:32px;border:1px solid #22c55e22">
@@ -33,22 +44,40 @@ def send_otp_email(to_email, otp, name="User"):
       <p style="font-size:12px;color:#6b7280">Valid for 10 minutes. Never share this code.</p>
     </div>"""
     
-    text_content = f"Your QuickCombo OTP is {otp}. Valid for 10 minutes."
+    payload = {
+        "sender": {"name": "QuickCombo", "email": sender_email},
+        "to": [{"email": to_email, "name": name}],
+        "subject": f"Your QuickCombo OTP: {otp}",
+        "htmlContent": html_content
+    }
     
     try:
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-        return True
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        if response.status_code == 201:
+            return True
+        print(f"Brevo API Error (OTP): {response.status_code} - {response.text}")
+        return False
     except Exception as e:
-        print(f"SMTP Error (OTP): {e}")
+        print(f"Brevo API Exception (OTP): {e}")
         return False
 
 
 def send_order_confirmation_email(order):
-    """Send order confirmation via SMTP to user and admin."""
-    subject = f"🎉 Order Confirmed! #QC{order.id:04d}"
-    from_email = settings.DEFAULT_FROM_EMAIL
+    """Send order confirmation via Brevo HTTP API to user and admin."""
+    api_key = getattr(settings, 'BREVO_API_KEY', None)
+    sender_email = getattr(settings, 'BREVO_SENDER_EMAIL', 'support@quickcombo.in')
+    admin_email = getattr(settings, 'ADMIN_EMAIL', sender_email)
+    
+    if not api_key:
+        print("Error: BREVO_API_KEY not configured.")
+        return False
+
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": api_key,
+        "content-type": "application/json"
+    }
     
     items_html = "".join([
         f"<tr><td style='padding:8px;color:#d1d5db'>{item.name}</td>"
@@ -102,25 +131,32 @@ def send_order_confirmation_email(order):
 
     # Send to User
     user_html = html_template.replace("@TITLE@", "🥗 QuickCombo — Order Confirmed!").replace("@MESSAGE@", f"Hi {order.user_name}, your order is being prepared! 🚀")
-    user_text = f"Order #{order.id:04d} confirmed! Total: ₹{order.total}. ETA: {eta}."
+    
+    payload_user = {
+        "sender": {"name": "QuickCombo", "email": sender_email},
+        "to": [{"email": order.user_email, "name": order.user_name}],
+        "subject": f"🎉 Order Confirmed! #QC{order.id:04d}",
+        "htmlContent": user_html
+    }
     
     try:
-        msg = EmailMultiAlternatives(subject, user_text, from_email, [order.user_email])
-        msg.attach_alternative(user_html, "text/html")
-        msg.send()
+        requests.post(url, json=payload_user, headers=headers, timeout=10)
         
         # Send to Admin
-        admin_email = getattr(settings, 'ADMIN_EMAIL', None)
         if admin_email:
             admin_subject = f"🚨 New Order Alert! #QC{order.id:04d} from {order.user_name}"
             admin_html = html_template.replace("@TITLE@", "🥗 QuickCombo — NEW ORDER!").replace("@MESSAGE@", f"New order received from {order.user_name}. Prepare immediately! 🚀")
-            admin_msg = EmailMultiAlternatives(admin_subject, admin_subject, from_email, [admin_email])
-            admin_msg.attach_alternative(admin_html, "text/html")
-            admin_msg.send()
+            payload_admin = {
+                "sender": {"name": "QuickCombo", "email": sender_email},
+                "to": [{"email": admin_email}],
+                "subject": admin_subject,
+                "htmlContent": admin_html
+            }
+            requests.post(url, json=payload_admin, headers=headers, timeout=10)
             
         return True
     except Exception as e:
-        print(f"SMTP Error (Order): {e}")
+        print(f"Brevo API Error (Order): {e}")
         return False
 
 
