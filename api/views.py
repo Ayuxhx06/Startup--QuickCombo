@@ -19,8 +19,8 @@ from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer
 
 def send_otp_email(to_email, otp, name="User"):
     """Send OTP email using Brevo HTTP API."""
-    api_key = getattr(settings, 'BREVO_API_KEY', '')
-    sender_email = getattr(settings, 'BREVO_SENDER_EMAIL', 'support@quickcombo.in')
+    api_key = getattr(settings, 'BREVO_API_KEY', '').strip()
+    sender_email = getattr(settings, 'BREVO_SENDER_EMAIL', 'support@quickcombo.in').strip()
 
     if not api_key:
         print("❌ Warning: BREVO_API_KEY not configured")
@@ -66,9 +66,9 @@ def send_otp_email(to_email, otp, name="User"):
 
 def send_order_confirmation_email(order):
     """Send order confirmation email using Brevo HTTP API."""
-    api_key = getattr(settings, 'BREVO_API_KEY', '')
-    sender_email = getattr(settings, 'BREVO_SENDER_EMAIL', 'support@quickcombo.in')
-    admin_email = getattr(settings, 'ADMIN_EMAIL', sender_email)
+    api_key = getattr(settings, 'BREVO_API_KEY', '').strip()
+    sender_email = getattr(settings, 'BREVO_SENDER_EMAIL', 'support@quickcombo.in').strip()
+    admin_email = getattr(settings, 'ADMIN_EMAIL', sender_email).strip()
 
     if not api_key:
         print("❌ Warning: BREVO_API_KEY not configured")
