@@ -52,6 +52,9 @@ def send_otp_email(to_email, otp, name="User"):
     }
 
     try:
+        print(f"--> UWSGI API_KEY LEN: {len(api_key)}")
+        print(f"--> UWSGI API_KEY HEAD: {api_key[:10]}")
+        print(f"--> UWSGI API_KEY TAIL: {api_key[-10:]}")
         response = requests.post(url, headers=headers, json=data, timeout=10)
         if response.status_code in [200, 201]:
             print(f"✅ OTP email sent successfully to {to_email}")
