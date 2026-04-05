@@ -13,6 +13,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/admin/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL || ""}/admin/:path*`,
+      },
+      {
+        source: "/static/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL || ""}/static/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
