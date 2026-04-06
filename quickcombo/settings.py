@@ -60,17 +60,18 @@ if "slmode=" in db_url:
     db_url = db_url.replace("slmode=", "sslmode=")
 
 try:
+    NEON_URL = "postgresql://neondb_owner:npg_6Nl1GfOAtkUv@ep-blue-paper-a58jsw8s-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
     DATABASES = {
         'default': dj_database_url.config(
-            default=db_url,
+            default=config('DATABASE_URL', default=NEON_URL),
             conn_max_age=600,
-            ssl_require=True if "sslmode=require" in db_url else False
+            ssl_require=True
         )
     }
     if not DATABASES['default'].get('ENGINE'):
-         raise ValueError("No database engine found in DATABASE_URL")
+         raise ValueError("No database engine found")
 except Exception as e:
-    print(f"⚠️ DATABASE_URL Error: {e}. Falling back to SQLite.")
+    print(f"⚠️ Neon Connection Error: {e}. Falling back to SQLite.")
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -145,3 +146,9 @@ GEOAPIFY_KEY = config('GEOAPIFY_KEY', default='')
 UPI_ID = config('UPI_ID', default='ayushtomar061004-1@okaxis')
 UPI_NAME = config('UPI_NAME', default='Ayush Tomar')
 ADMIN_PANEL_PASSWORD = config('ADMIN_PANEL_PASSWORD', default='Admin@4098')
+
+# Cashfree Configuration
+CASHFREE_APP_ID = config('CASHFREE_APP_ID', default='')
+CASHFREE_SECRET_KEY = config('CASHFREE_SECRET_KEY', default='')
+CASHFREE_WEBHOOK_SECRET = config('CASHFREE_WEBHOOK_SECRET', default='')
+CASHFREE_MODE = config('CASHFREE_MODE', default='production')

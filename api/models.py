@@ -137,6 +137,10 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Cashfree Integration
+    cashfree_order_id = models.CharField(max_length=100, blank=True, null=True)
+    cashfree_payment_session_id = models.CharField(max_length=255, blank=True, null=True)
+
     # Simulated rider location
     rider_lat = models.FloatField(null=True, blank=True)
     rider_lng = models.FloatField(null=True, blank=True)

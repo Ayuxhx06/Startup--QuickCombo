@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import admin_views
+from . import views_payment
 
 urlpatterns = [
     # ADMIN DASHBOARD (TOP PRIORITY)
@@ -39,4 +40,8 @@ urlpatterns = [
 
     # Weather
     path('weather/', views.weather),
+
+    # Payments (Cashfree)
+    path('payment/create-session/', views_payment.create_payment_session),
+    path('payment/webhook/', views_payment.cashfree_webhook),
 ]
