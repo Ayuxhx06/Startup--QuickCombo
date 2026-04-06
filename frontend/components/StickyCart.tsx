@@ -9,8 +9,8 @@ export default function StickyCart() {
   const { itemCount, items } = useCart();
   const pathname = usePathname();
 
-  // Hide on checkout or tracking pages
-  if (pathname.includes('/checkout') || pathname.includes('/tracking')) {
+  // Hide on checkout, tracking, or admin pages
+  if (pathname.includes('/checkout') || pathname.includes('/tracking') || pathname.includes('/admin') || pathname.includes('/portal')) {
     return null;
   }
 

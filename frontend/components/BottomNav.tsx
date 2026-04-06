@@ -17,7 +17,7 @@ export default function BottomNav() {
   const pathname = usePathname();
   const { itemCount } = useCart();
 
-  if (pathname.includes('/checkout')) return null;
+  if (pathname.includes('/checkout') || pathname.includes('/admin') || pathname.includes('/portal')) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-white/5 bottom-nav">

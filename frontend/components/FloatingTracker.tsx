@@ -3,12 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { Bike, ChevronRight, X, Clock, MapPin } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
 export default function FloatingTracker() {
+  const pathname = usePathname();
   const { user } = useAuth();
   const [activeOrder, setActiveOrder] = useState<any>(null);
   const [visible, setVisible] = useState(false);
@@ -46,6 +48,7 @@ export default function FloatingTracker() {
     return () => clearInterval(interval);
   }, [fetchActiveOrder]);
 
+  if (pathname.includes('/admin') || pathname.includes('/portal')) return null;
   if (!visible || !activeOrder) return null;
 
   const getStepLabel = (status: string) => {

@@ -7,6 +7,9 @@ urlpatterns = [
     path('admin/stats/', admin_views.admin_stats),
     path('admin/orders/', admin_views.admin_orders),
     path('admin/menu/', admin_views.admin_menu_items),
+    path('admin/categories/', admin_views.admin_categories),
+    path('admin/restaurants/', admin_views.admin_restaurants),
+    path('admin/users/', admin_views.admin_users),
 
     # Auth
     path('auth/send-otp/', views.send_otp),

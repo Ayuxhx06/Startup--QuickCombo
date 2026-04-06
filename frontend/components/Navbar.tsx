@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { ShoppingCart, MapPin, User, Loader2, Search, X, ClipboardList } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import AuthModal from './AuthModal';
@@ -13,6 +13,7 @@ import LocationModal from './LocationModal';
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
 export default function Navbar() {
+  const pathname = usePathname();
   const router = useRouter();
   const { itemCount, setIsOpen } = useCart();
   const { user, setShowAuthModal } = useAuth();
@@ -26,6 +27,8 @@ export default function Navbar() {
     const saved = localStorage.getItem('qc_location');
     if (saved) setLocationName(saved);
   }, []);
+
+  if (pathname.includes('/admin') || pathname.includes('/portal')) return null;
 
   const onSelectLocation = (address: string, lat: number, lng: number) => {
     const shortName = address.split(',').slice(0, 2).join(', ');
