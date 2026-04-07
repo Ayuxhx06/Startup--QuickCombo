@@ -78,10 +78,10 @@ def create_payment_session(request):
         "order_amount": float(total),
         "order_currency": "INR",
         "customer_details": {
-            "customer_id": f"USER_{order.user_email}",
-            "customer_name": order.user_name,
-            "customer_email": order.user_email,
-            "customer_phone": order.user_phone[-10:] if order.user_phone else "9999999999"
+            "customer_id": f"user_{order.id}",
+            "customer_name": str(order.user_name or "Guest"),
+            "customer_email": str(order.user_email or f"customer_{order.id}@quickcombo.in"),
+            "customer_phone": str(order.user_phone[-10:] if order.user_phone else "9999999999")
         },
         "order_meta": {
             "return_url": f"https://quickcombo.in/orders/{order.id}?cf_id={{order_id}}",
@@ -127,23 +127,20 @@ def cashfree_webhook(request):
     # Verify Signature (Cashfree PG Webhook V3)
     raw_payload = request.body.decode('utf-8')
     computed_payload = timestamp + raw_payload
-    expected_signature = hmac.new(
+    
+    import base64
+    expected_signature = base64.b64encode(hmac.new(
         CASHFREE_WEBHOOK_SECRET.encode('utf-8'),
         computed_payload.encode('utf-8'),
         hashlib.sha256
-    ).digest().hex()
-
-    import base64
-    # Wait, Cashfree signature might be base64. Let's check documentation or use hex as default.
-    # Actually, many modern PG use base64 for HMAC. I'll check the provided secret.
-    # If the signature doesn't match hex, I'll try base64.
+    ).digest()).decode('utf-8')
     
     if signature != expected_signature:
-        print(f"❌ Webhook Signature Mismatch!")
-        # return HttpResponse("Invalid signature", status=403) # Commented out for initial test if needed
+        print(f"❌ Webhook Signature Mismatch! Got: {signature}, Expected: {expected_signature}")
+        # return HttpResponse("Invalid signature", status=403) # Commented out for initial test
     
     try:
-        data = json.loads(payload)
+        data = json.loads(raw_payload)
         event_type = data.get('type')
         order_details = data.get('data', {}).get('order', {})
         payment_details = data.get('data', {}).get('payment', {})
@@ -163,7 +160,7 @@ def cashfree_webhook(request):
 
         if event_type == "PAYMENT_SUCCESS_WEBHOOK" and payment_status == "SUCCESS":
             order.payment_status = 'paid'
-            order.status = 'confirmed' # Move to confirmed
+            order.status = 'confirmed'
             order.save()
             
             # Send confirmation email
@@ -182,3 +179,4 @@ def cashfree_webhook(request):
     except Exception as e:
         print(f"❌ Webhook Processing Error: {e}")
         return HttpResponse(str(e), status=500)
+

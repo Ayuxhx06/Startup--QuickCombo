@@ -175,6 +175,59 @@ export default function ProfilePage() {
                 </div>
               )}
             </motion.div>
+            {/* Support & Verification */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.4 }} className="pt-4 space-y-4">
+              <h3 className="font-bold text-gray-400 text-xs uppercase tracking-widest px-2 mb-1 flex items-center gap-2">
+                <ShieldCheck size={14} className="text-green-500" /> Support & Verification
+              </h3>
+              
+              <div className="bg-[#141414] border border-white/5 rounded-[32px] overflow-hidden shadow-2xl">
+                {/* Contact Items */}
+                <div className="p-5 space-y-4 border-b border-white/5">
+                   <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-500 shrink-0">
+                         <Mail size={20} />
+                      </div>
+                      <div>
+                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Email Support</p>
+                         <p className="text-sm font-bold text-white">support@quickcombo.in</p>
+                      </div>
+                   </div>
+                   <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
+                         <Phone size={20} />
+                      </div>
+                      <div>
+                         <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Call/WhatsApp</p>
+                         <p className="text-sm font-bold text-white">8248300384</p>
+                      </div>
+                   </div>
+                </div>
+
+                {/* MSME Banner */}
+                <div className="p-6 bg-gradient-to-br from-green-500/5 to-transparent flex flex-col items-center text-center">
+                   <div className="w-full max-w-[280px] aspect-[5/2] relative rounded-xl overflow-hidden border border-white/10 mb-4 bg-white/5">
+                      <img 
+                        src="/msme_verified.png" 
+                        alt="MSME Verified" 
+                        className="w-full h-full object-contain"
+                      />
+                   </div>
+                   <div className="flex items-center gap-2 mb-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 pulse-green" />
+                      <span className="text-xs font-black text-white uppercase tracking-widest">Verified under MSME</span>
+                   </div>
+                   <p className="text-[10px] text-gray-500 font-medium leading-relaxed max-w-[180px]">
+                      Registered as Micro, Small & Medium Enterprise (Udyam Registration)
+                   </p>
+                </div>
+              </div>
+
+              {/* Version Info */}
+              <div className="text-center py-4">
+                 <p className="text-[10px] text-gray-600 font-bold tracking-widest uppercase">QuickCombo v2.4.1 Production</p>
+              </div>
+            </motion.div>
           </>
         ) : null}
       </div>

@@ -26,7 +26,7 @@ export default function FloatingTracker() {
         headers: { 'X-User-Email': user.email }
       });
       
-      if (res.data) {
+      if (res.data && !['delivered', 'cancelled'].includes(res.data.status)) {
         setActiveOrder(res.data);
         setVisible(true);
         // Save to local storage for instant flash on next load

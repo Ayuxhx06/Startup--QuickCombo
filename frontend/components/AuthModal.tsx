@@ -27,6 +27,9 @@ export default function AuthModal() {
   };
 
   const handleSendOtp = async () => {
+    if (!name.trim()) { toast.error('Enter your name to proceed'); return; }
+    if (!phone.trim()) { toast.error('Enter your phone number to proceed'); return; }
+    if (phone.length < 10) { toast.error('Enter a valid 10-digit phone number'); return; }
     if (!email.includes('@')) { toast.error('Enter a valid email'); return; }
     setLoading(true);
     const { success, error } = await sendOtp(email);
@@ -98,11 +101,11 @@ export default function AuthModal() {
                     <div className="space-y-3">
                       <div className="relative">
                         <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                        <input className="qc-input !pl-10" placeholder="Your name (optional)" value={name} onChange={e => setName(e.target.value)} />
+                        <input className="qc-input !pl-10" placeholder="Your name (Required)" value={name} onChange={e => setName(e.target.value)} />
                       </div>
                       <div className="relative">
                         <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                        <input className="qc-input !pl-10" placeholder="Phone number (optional)" value={phone} onChange={e => setPhone(e.target.value)} />
+                        <input className="qc-input !pl-10" placeholder="Phone number (Required)" value={phone} onChange={e => setPhone(e.target.value)} />
                       </div>
                       <div className="relative">
                         <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />

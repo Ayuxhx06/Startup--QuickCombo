@@ -36,7 +36,7 @@ export default function CheckoutPage() {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
   
-  const [payment, setPayment] = useState<'upi' | 'cod' | 'online'>('online');
+  const [payment, setPayment] = useState<'cod' | 'online'>('online');
   const [notes, setNotes] = useState('');
   const [scheduledTime, setScheduledTime] = useState<string | null>(null);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -169,7 +169,7 @@ export default function CheckoutPage() {
         return; // SDK handles the rest
       }
 
-      // Standard COD/UPI Flow
+      // Standard COD Flow
       const res = await axios.post(`${API}/api/orders/place/`, payload);
       setOrderId(res.data.order_id);
       localStorage.setItem('activeOrderId', res.data.order_id.toString());
@@ -383,7 +383,7 @@ export default function CheckoutPage() {
         {/* 4. Payment Method Selection */}
         <section className="bg-[#1c1c1c] rounded-[20px] p-4">
           <h2 className="font-bold text-white mb-4">Payment Method</h2>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => setPayment('online')}
               className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${
@@ -394,18 +394,6 @@ export default function CheckoutPage() {
                 <ShieldCheck size={22} className="text-green-400" />
               </div>
               <span className="text-[10px] font-black text-white uppercase tracking-wider text-center">Online</span>
-            </button>
-
-            <button
-              onClick={() => setPayment('upi')}
-              className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${
-                payment === 'upi' ? 'bg-green-500/10 border-green-500' : 'bg-black/40 border-white/5 opacity-60'
-              }`}
-            >
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center p-2">
-                <svg viewBox="0 0 512 512" fill="none" className="w-full h-full text-blue-400"><path d="M414.9 144.9l-159-159L96.9 144.9l45.2 45.2 81.9-81.9V498.4h64V108.2l81.9 81.9 45.1-45.2z" fill="currentColor"/></svg>
-              </div>
-              <span className="text-[10px] font-black text-white uppercase tracking-wider text-center">UPI QR</span>
             </button>
 
             <button
@@ -422,24 +410,7 @@ export default function CheckoutPage() {
           </div>
         </section>
 
-        {/* Payment Prompt QR */}
-        <AnimatePresence>
-          {payment === 'upi' && (
-            <motion.section 
-              initial={{ height: 0, opacity: 0 }} 
-              animate={{ height: 'auto', opacity: 1 }} 
-              exit={{ height: 0, opacity: 0 }}
-              className="bg-[#1c1c1c] rounded-[20px] p-4 border border-green-500/20 overflow-hidden"
-            >
-              <h2 className="font-bold text-white mb-3 text-center">Scan to Pay</h2>
-              <div className="bg-white p-3 rounded-xl mx-auto w-fit mb-3">
-                <QRCodeSVG value={`upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${currentCalculatedTotal}&cu=INR&tn=QuickCombo Order`} size={150} level="H" includeMargin={false} />
-              </div>
-              <p className="text-center text-green-400 font-black text-lg">₹{currentCalculatedTotal}</p>
-              <p className="text-center text-gray-500 text-xs font-medium">UPI ID: {UPI_ID}</p>
-            </motion.section>
-          )}
-        </AnimatePresence>
+
 
       </div>
 
@@ -451,8 +422,6 @@ export default function CheckoutPage() {
           <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center border border-white/5">
             {payment === 'online' ? (
               <ShieldCheck size={20} className="text-green-500" />
-            ) : payment === 'upi' ? (
-              <svg viewBox="0 0 512 512" fill="none" className="w-5 h-5 text-blue-400"><path d="M414.9 144.9l-159-159L96.9 144.9l45.2 45.2 81.9-81.9V498.4h64V108.2l81.9 81.9 45.1-45.2z" fill="currentColor"/></svg>
             ) : (
               <Banknote size={20} className="text-orange-500" />
             )}
@@ -460,7 +429,7 @@ export default function CheckoutPage() {
           <div className="flex flex-col">
             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Payment</span>
             <span className="text-xs font-black text-white">
-                {payment === 'online' ? 'Online' : payment === 'upi' ? 'UPI QR' : 'Cash on Delivery'}
+                {payment === 'online' ? 'Online' : 'Cash on Delivery'}
             </span>
           </div>
         </div>

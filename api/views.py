@@ -200,11 +200,12 @@ def verify_otp(request):
     if user.otp_created_at and (timezone.now() - user.otp_created_at) > timedelta(minutes=10):
         return Response({'error': 'OTP expired'}, status=400)
 
+    if not name or not phone:
+        return Response({'error': 'Name and Phone Number are required for first-time login'}, status=400)
+
     # Update user info
-    if name:
-        user.name = name
-    if phone:
-        user.phone = phone
+    user.name = name
+    user.phone = phone
     user.otp = ''
     user.save()
 
