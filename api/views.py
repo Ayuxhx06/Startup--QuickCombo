@@ -188,40 +188,23 @@ def send_order_confirmation_email(order):
         # Send to Admin
         if admin_email:
             admin_subject = f"🚨 New Order Alert! #QC{order.id:04d} from {order.user_name}"
-            # Admin gets extra customer contact info block
-            customer_info_html = f"""
-            <div style="background:#0f1a0f;border:1px solid #22c55e44;border-radius:12px;padding:16px;margin-bottom:16px">
-              <p style="color:#22c55e;font-weight:800;margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:1px">📋 Customer Contact Details</p>
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="padding:6px 0;color:#9ca3af;font-size:13px;width:100px">👤 Name</td>
-                  <td style="padding:6px 0;color:#ffffff;font-size:13px;font-weight:700">{order.user_name}</td>
-                </tr>
-                <tr>
-                  <td style="padding:6px 0;color:#9ca3af;font-size:13px">📱 Phone</td>
-                  <td style="padding:6px 0;color:#22c55e;font-size:16px;font-weight:900;letter-spacing:1px">{order.user_phone}</td>
-                </tr>
-                <tr>
-                  <td style="padding:6px 0;color:#9ca3af;font-size:13px">✉️ Email</td>
-                  <td style="padding:6px 0;color:#d1d5db;font-size:13px">{order.user_email}</td>
-                </tr>
-                <tr>
-                  <td style="padding:6px 0;color:#9ca3af;font-size:13px">💳 Payment</td>
-                  <td style="padding:6px 0;color:#f59e0b;font-size:13px;font-weight:700;text-transform:uppercase">{order.payment_method} — {order.payment_status}</td>
-                </tr>
-              </table>
-            </div>"""
-            admin_html = html_template.replace(
-                "@TITLE@", "🥗 QuickCombo — NEW ORDER!"
-            ).replace(
-                "@MESSAGE@",
-                f"New order received from {order.user_name}. Prepare immediately! 🚀"
-            ).replace(
-                # inject before the items table
-                '<div style="background:#111;border-radius:12px;padding:16px;margin:16px 0">',
-                customer_info_html + '<div style="background:#111;border-radius:12px;padding:16px;margin:16px 0">'
+            admin_message = (
+                f"New order received. Prepare immediately! 🚀<br><br>"
+                f"<div style='background:#0f1a0f;border:1px solid #22c55e55;border-radius:12px;padding:16px;margin-top:8px'>"
+                f"<p style='color:#22c55e;font-weight:800;margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:1px'>📋 Customer Contact</p>"
+                f"<table width='100%' cellpadding='0' cellspacing='0' border='0'>"
+                f"<tr><td style='padding:5px 0;color:#9ca3af;font-size:13px;width:90px'>👤 Name</td>"
+                f"<td style='color:#ffffff;font-size:13px;font-weight:700'>{order.user_name}</td></tr>"
+                f"<tr><td style='padding:5px 0;color:#9ca3af;font-size:13px'>📱 Phone</td>"
+                f"<td style='color:#22c55e;font-size:17px;font-weight:900;letter-spacing:2px'>{order.user_phone}</td></tr>"
+                f"<tr><td style='padding:5px 0;color:#9ca3af;font-size:13px'>✉️ Email</td>"
+                f"<td style='color:#d1d5db;font-size:13px'>{order.user_email}</td></tr>"
+                f"<tr><td style='padding:5px 0;color:#9ca3af;font-size:13px'>💳 Payment</td>"
+                f"<td style='color:#f59e0b;font-size:13px;font-weight:700;text-transform:uppercase'>{order.payment_method} — {order.payment_status}</td></tr>"
+                f"</table></div>"
             )
-            
+            admin_html = html_template.replace("@TITLE@", "🥗 QuickCombo — NEW ORDER!").replace("@MESSAGE@", admin_message)
+
             admin_data = {
                 "sender": {"name": "QuickCombo", "email": sender_email},
                 "to": [{"email": admin_email, "name": "Admin"}],
