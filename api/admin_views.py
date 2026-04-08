@@ -7,7 +7,7 @@ from django.conf import settings
 
 # Use absolute imports for reliability on AlwaysData
 from api.models import User, Order, MenuItem, Restaurant, Category
-from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer
+from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer
 
 @api_view(['GET'])
 def admin_stats(request):
@@ -134,7 +134,7 @@ def admin_categories(request):
         except Category.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
 
-@api_view(['GET', 'PATCH'])
+@api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def admin_restaurants(request):
     if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
         return Response({'error': 'Unauthorized'}, status=401)
@@ -142,6 +142,13 @@ def admin_restaurants(request):
     if request.method == 'GET':
         restaurants = Restaurant.objects.all().order_by('name')
         return Response(RestaurantSerializer(restaurants, many=True).data)
+
+    elif request.method == 'POST':
+        serializer = RestaurantSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
     elif request.method == 'PATCH':
         res_id = request.data.get('id')
@@ -152,6 +159,15 @@ def admin_restaurants(request):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
+        except Restaurant.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+    elif request.method == 'DELETE':
+        res_id = request.data.get('id')
+        try:
+            restaurant = Restaurant.objects.get(pk=res_id)
+            restaurant.delete()
+            return Response(status=204)
         except Restaurant.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
 

@@ -6,7 +6,7 @@ import {
   TrendingUp, Clock, CheckCircle, Package, Search,
   Plus, Edit2, Trash2, ChevronRight, LogOut, Loader2, 
   Lock, Users, BarChart3, Layers, Store, ShieldCheck,
-  AlertCircle, ArrowUpRight, DollarSign, PieChart
+  AlertCircle, ArrowUpRight, DollarSign, PieChart, Menu, X
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -22,12 +22,21 @@ export default function PremiumAdmin() {
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // Entity Data
   const [stats, setStats] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<'restaurant' | 'menu' | 'category'>('restaurant');
+  const [selectedEntity, setSelectedEntity] = useState<any>(null);
+  const [formLoading, setFormLoading] = useState(false);
 
   // Auto-login check
   useEffect(() => {
@@ -120,6 +129,33 @@ export default function PremiumAdmin() {
     }
   };
 
+  const deleteEntity = async (type: string, id: number) => {
+    if (!confirm('Are you sure you want to delete this entity? This action cannot be undone.')) return;
+    
+    try {
+      let endpoint = '';
+      if (type === 'restaurant') endpoint = '/api/admin/restaurants/';
+      else if (type === 'menu') endpoint = '/api/admin/menu/';
+      else if (type === 'category') endpoint = '/api/admin/categories/';
+
+      await axios.delete(`${API}${endpoint}`, {
+        ...getHeaders(),
+        data: { id }
+      });
+      
+      toast.success('Deleted successfully');
+      fetchData();
+    } catch (e) {
+      toast.error('Deletion failed');
+    }
+  };
+
+  const openModal = (type: 'restaurant' | 'menu' | 'category', entity: any = null) => {
+    setModalType(type);
+    setSelectedEntity(entity);
+    setIsModalOpen(true);
+  };
+
   if (isChecking) {
     return <div className="min-h-screen bg-[#020202] flex items-center justify-center"><Loader2 className="animate-spin text-emerald-500 w-10 h-10"/></div>;
   }
@@ -169,82 +205,110 @@ export default function PremiumAdmin() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white flex font-sans selection:bg-emerald-500/30">
+      {/* MOBILE HEADER */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#080808] border-b border-white/5 flex items-center justify-between px-6 z-[60]">
+        <div className="flex items-center gap-3">
+          <Utensils className="text-emerald-500 w-6 h-6" />
+          <span className="font-black text-lg">QC MASTER</span>
+        </div>
+        <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-white/5 rounded-lg">
+          <Menu size={20} />
+        </button>
+      </div>
+
       {/* SIDEBAR */}
-      <motion.aside 
-        initial={{ x: -100 }} animate={{ x: 0 }}
-        className="w-72 bg-[#080808]/80 backdrop-blur-xl border-r border-white/5 p-8 flex flex-col gap-10 sticky top-0 h-screen z-20"
-      >
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.4)]">
-            <Utensils className="text-black w-7 h-7" />
-          </div>
-          <div>
-            <h1 className="font-black text-2xl tracking-tighter leading-none mb-1">QC MASTER</h1>
-            <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"/>
-                <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">System Online</span>
-            </div>
-          </div>
-        </div>
-
-        <nav className="flex flex-col gap-3 flex-grow">
-          {[
-            { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
-            { id: 'orders', label: 'Orders Hub', icon: ShoppingBag },
-            { id: 'menu', label: 'Food Items', icon: Utensils },
-            { id: 'categories', label: 'Categories', icon: Layers },
-            { id: 'restaurants', label: 'Partners', icon: Store },
-            { id: 'users', label: 'Customers', icon: Users },
-          ].map(item => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all relative group ${
-                activeTab === item.id 
-                ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]' 
-                : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
-              }`}
+      <AnimatePresence>
+        {(isSidebarOpen || (typeof window !== 'undefined' && window.innerWidth >= 1024)) && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] lg:hidden"
+            />
+            <motion.aside 
+              initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed lg:sticky top-0 left-0 w-72 bg-[#080808]/95 backdrop-blur-2xl border-r border-white/5 p-8 flex flex-col gap-10 h-screen z-[80] lg:z-20"
             >
-              <item.icon size={22} className={activeTab === item.id ? 'text-emerald-500' : 'text-gray-500'} />
-              <span className="font-bold text-sm">{item.label}</span>
-              {activeTab === item.id && (
-                  <motion.div layoutId="activeInd" className="absolute right-4 w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-              )}
-            </button>
-          ))}
-        </nav>
-
-        <div className="flex flex-col gap-4">
-            <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
-                <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Master Environment</p>
-                <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-white">AlwaysData Production</span>
-                    <BarChart3 size={14} className="text-emerald-500" />
+              <div className="flex items-center justify-between lg:justify-start gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.4)]">
+                    <Utensils className="text-black w-7 h-7" />
+                  </div>
+                  <div>
+                    <h1 className="font-black text-2xl tracking-tighter leading-none mb-1">QC MASTER</h1>
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"/>
+                        <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">System Online</span>
+                    </div>
+                  </div>
                 </div>
-            </div>
-            <button 
-                onClick={handleLogout}
-                className="flex items-center gap-4 px-5 py-4 rounded-2xl text-red-400 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20"
-            >
-                <LogOut size={20} />
-                <span className="font-bold text-sm">Lock Portal</span>
-            </button>
-        </div>
-      </motion.aside>
+                <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-gray-500">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <nav className="flex flex-col gap-3 flex-grow overflow-y-auto">
+                {[
+                  { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+                  { id: 'orders', label: 'Orders Hub', icon: ShoppingBag },
+                  { id: 'menu', label: 'Food Items', icon: Utensils },
+                  { id: 'categories', label: 'Categories', icon: Layers },
+                  { id: 'restaurants', label: 'Partners', icon: Store },
+                  { id: 'users', label: 'Customers', icon: Users },
+                ].map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); }}
+                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all relative group ${
+                      activeTab === item.id 
+                      ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]' 
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+                    }`}
+                  >
+                    <item.icon size={22} className={activeTab === item.id ? 'text-emerald-500' : 'text-gray-500'} />
+                    <span className="font-bold text-sm">{item.label}</span>
+                    {activeTab === item.id && (
+                        <motion.div layoutId="activeInd" className="absolute right-4 w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                    )}
+                  </button>
+                ))}
+              </nav>
+
+              <div className="flex flex-col gap-4">
+                  <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
+                      <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Master Environment</p>
+                      <div className="flex justify-between items-center">
+                          <span className="text-xs font-bold text-white">AlwaysData Production</span>
+                          <BarChart3 size={14} className="text-emerald-500" />
+                      </div>
+                  </div>
+                  <button 
+                      onClick={handleLogout}
+                      className="flex items-center gap-4 px-5 py-4 rounded-2xl text-red-400 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20"
+                  >
+                      <LogOut size={20} />
+                      <span className="font-bold text-sm">Lock Portal</span>
+                  </button>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* MAIN CONTENT */}
-      <main className="flex-grow p-12 overflow-y-auto relative">
-        <header className="flex justify-between items-end mb-16">
+      <main className="flex-grow p-4 lg:p-12 pt-20 lg:pt-12 overflow-y-auto relative">
+        <header className="flex flex-col lg:flex-row justify-between lg:items-end gap-6 mb-12 lg:mb-16">
           <div>
-            <h2 className="text-5xl font-black tracking-tight mb-2 uppercase italic">{activeTab}</h2>
-            <p className="text-gray-500 font-medium text-lg">Central Infrastructure Control Panel</p>
+            <h2 className="text-3xl lg:text-5xl font-black tracking-tight mb-2 uppercase italic">{activeTab}</h2>
+            <p className="text-gray-400 lg:text-gray-500 font-medium text-base lg:text-lg">Infrastructure Control Panel</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl px-6 py-4 flex items-center gap-4 min-w-[300px]">
-                <Search className="text-gray-600" size={20} />
+          <div className="flex items-center gap-3">
+            <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl px-4 lg:px-6 py-3 lg:py-4 flex items-center gap-4 flex-grow lg:min-w-[300px]">
+                <Search className="text-gray-600" size={18} />
                 <input placeholder="Search entities..." className="bg-transparent text-sm outline-none w-full" />
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-emerald-500">
+            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-emerald-500 shrink-0">
                 <Settings size={22} />
             </div>
           </div>
@@ -262,26 +326,26 @@ export default function PremiumAdmin() {
                 key="dashboard" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }}
                 className="flex flex-col gap-10"
               >
-                <div className="grid grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
                   <StatCard label="Live Revenue" value={`₹${stats?.total_sales || 0}`} icon={DollarSign} trend="+12% Since yesterday" color="emerald" />
                   <StatCard label="Total Orders" value={stats?.total_orders || 0} icon={Package} trend="Global count" color="blue" />
                   <StatCard label="Active Items" value={stats?.total_items || 0} icon={Utensils} trend="Menu inventory" color="amber" />
                   <StatCard label="User Base" value={stats?.total_users || 0} icon={Users} trend="Registered accounts" color="purple" />
                 </div>
                 
-                <div className="grid grid-cols-3 gap-10">
-                    <div className="col-span-2 bg-[#080808] rounded-[2.5rem] p-10 border border-white/5 shadow-2xl">
-                        <div className="flex justify-between items-center mb-10">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-10">
+                    <div className="xl:col-span-2 bg-[#080808] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl">
+                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-10">
                             <div>
-                                <h3 className="text-2xl font-black mb-1">REAL-TIME ORDERS</h3>
-                                <p className="text-gray-500 text-sm">Most recent activity from the stream</p>
+                                <h3 className="text-xl lg:text-2xl font-black mb-1 text-white">REAL-TIME ORDERS</h3>
+                                <p className="text-gray-500 text-sm">Most recent activity stream</p>
                             </div>
-                            <button onClick={() => setActiveTab('orders')} className="bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-xl text-xs font-bold transition-all">VIEW FULL HUB</button>
+                            <button onClick={() => setActiveTab('orders')} className="bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-xl text-[10px] font-black transition-all border border-white/10 uppercase tracking-widest self-start sm:self-auto">VIEW FULL HUB</button>
                         </div>
                         <OrderList items={orders} onUpdate={updateOrderStatus} compact />
                     </div>
 
-                    <div className="bg-gradient-to-br from-[#0a0a0a] to-[#050505] rounded-[2.5rem] p-10 border border-white/5 shadow-2xl flex flex-col justify-between">
+                    <div className="bg-gradient-to-br from-[#0a0a0a] to-[#050505] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl flex flex-col justify-between">
                         <div>
                             <PieChart className="text-emerald-500 mb-6" size={40} />
                             <h3 className="text-2xl font-black mb-4">SYSTEM HEALTH</h3>
@@ -305,15 +369,10 @@ export default function PremiumAdmin() {
             {activeTab === 'orders' && (
               <motion.div 
                 key="orders" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                className="bg-[#080808] rounded-[2.5rem] p-10 border border-white/5 shadow-2xl"
+                className="bg-[#080808] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-x-auto"
               >
                 <div className="flex justify-between items-center mb-10">
-                    <h3 className="text-3xl font-black">ORDERS HUB</h3>
-                    <div className="flex gap-3">
-                        <button className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2">
-                             EXPORT DATA
-                        </button>
-                    </div>
+                    <h3 className="text-2xl lg:text-3xl font-black">ORDERS HUB</h3>
                 </div>
                 <OrderList items={orders} onUpdate={updateOrderStatus} />
               </motion.div>
@@ -322,34 +381,40 @@ export default function PremiumAdmin() {
             {activeTab === 'menu' && (
               <motion.div 
                 key="menu" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                className="bg-[#080808] rounded-[2.5rem] p-10 border border-white/5 shadow-2xl"
+                className="bg-[#080808] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl"
               >
-                 <div className="flex justify-between items-center mb-10">
+                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-10">
                     <div>
-                        <h3 className="text-3xl font-black">FOOD INVENTORY</h3>
+                        <h3 className="text-2xl lg:text-3xl font-black">FOOD INVENTORY</h3>
                         <p className="text-gray-500">Manage Menu Items and pricing</p>
                     </div>
-                    <button className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2">
+                    <button 
+                        onClick={() => openModal('menu')}
+                        className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto"
+                    >
                         <Plus size={18} /> ADD NEW ITEM
                     </button>
                  </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
                    {menuItems.map(item => (
-                     <div key={item.id} className="bg-white/5 rounded-3xl p-5 group hover:bg-white/10 transition-all border border-transparent hover:border-emerald-500/20 relative">
-                       <div className="aspect-square rounded-2xl overflow-hidden mb-5 relative">
-                          <img src={item.image_url || 'https://via.placeholder.com/200'} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                     <div key={item.id} className="bg-white/5 rounded-3xl p-5 group hover:bg-white/10 transition-all border border-white/5 hover:border-emerald-500/20 relative">
+                       <div className="aspect-video sm:aspect-square rounded-2xl overflow-hidden mb-5 relative">
+                          <img src={item.image_url || 'https://via.placeholder.com/200'} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                           <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black text-emerald-400 uppercase border border-white/10 italic">
                             {item.category_name}
                           </div>
                        </div>
                        <h4 className="font-black text-lg mb-1 truncate uppercase">{item.name}</h4>
-                       <div className="flex justify-between items-center mb-4">
+                       <div className="flex justify-between items-center mb-4 text-white">
                             <span className="text-2xl font-black text-emerald-500 italic">₹{item.price}</span>
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">ID: {item.id}</span>
                        </div>
-                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                           <button className="flex-grow bg-white/10 hover:bg-white/20 py-2.5 rounded-xl text-xs font-bold border border-white/5 transition-all">EDIT</button>
-                           <button className="p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all border border-red-500/20">
+                       <div className="flex gap-2">
+                           <button onClick={() => openModal('menu', item)} className="flex-grow bg-white/10 hover:bg-white/20 py-2.5 rounded-xl text-[10px] font-black border border-white/5 transition-all uppercase tracking-widest">EDIT ITEM</button>
+                           <button 
+                             onClick={() => deleteEntity('menu', item.id)}
+                             className="p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all border border-red-500/20"
+                           >
                              <Trash2 size={16} />
                            </button>
                        </div>
@@ -360,19 +425,22 @@ export default function PremiumAdmin() {
             )}
 
             {activeTab === 'categories' && (
-                <motion.div key="categories" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-3 gap-8">
+                <motion.div key="categories" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
                     {categories.map(cat => (
-                        <div key={cat.id} className="bg-[#080808] p-8 rounded-[2rem] border border-white/5 hover:border-emerald-500/20 transition-all group">
-                            <div className="text-5xl mb-6 grayscale group-hover:grayscale-0 transition-all scale-100 group-hover:scale-110 origin-left">{cat.icon}</div>
-                            <h4 className="text-2xl font-black uppercase mb-1">{cat.name}</h4>
-                            <p className="text-gray-500 text-sm mb-6">Slug: {cat.slug}</p>
+                        <div key={cat.id} className="bg-[#080808] p-6 lg:p-8 rounded-[1.5rem] lg:rounded-[2rem] border border-white/5 hover:border-emerald-500/20 transition-all group">
+                            <div className="text-4xl lg:text-5xl mb-6 grayscale group-hover:grayscale-0 transition-all scale-100 group-hover:scale-110 origin-left">{cat.icon}</div>
+                            <h4 className="text-xl lg:text-2xl font-black uppercase mb-1">{cat.name}</h4>
+                            <p className="text-gray-500 text-xs mb-6 font-mono">/{cat.slug}</p>
                             <div className="flex gap-2">
-                                <button className="p-2 border border-white/10 rounded-lg hover:bg-white/5 transition-all"><Edit2 size={16}/></button>
-                                <button className="p-2 border border-white/10 rounded-lg hover:bg-red-500/10 hover:text-red-500 transition-all"><Trash2 size={16}/></button>
+                                <button onClick={() => openModal('category', cat)} className="p-2 border border-white/10 rounded-lg hover:bg-white/5 transition-all hover:text-emerald-500"><Edit2 size={16}/></button>
+                                <button onClick={() => deleteEntity('category', cat.id)} className="p-2 border border-white/10 rounded-lg hover:bg-red-500/10 hover:text-red-500 transition-all"><Trash2 size={16}/></button>
                             </div>
                         </div>
                     ))}
-                    <button className="bg-emerald-500/5 border-2 border-dashed border-emerald-500/20 rounded-[2rem] flex flex-col items-center justify-center gap-3 p-8 hover:bg-emerald-500/10 transition-all text-emerald-500 font-black uppercase text-sm">
+                    <button 
+                        onClick={() => openModal('category')}
+                        className="bg-emerald-500/5 border-2 border-dashed border-emerald-500/20 rounded-[1.5rem] lg:rounded-[2rem] flex flex-col items-center justify-center gap-3 p-8 hover:bg-emerald-500/10 transition-all text-emerald-500 font-black uppercase text-sm"
+                    >
                         <Plus size={30} />
                         New Category
                     </button>
@@ -380,24 +448,31 @@ export default function PremiumAdmin() {
             )}
 
             {activeTab === 'restaurants' && (
-                <motion.div key="restaurants" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-6">
+                <motion.div key="restaurants" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-4 lg:gap-6">
+                    <button 
+                        onClick={() => openModal('restaurant')}
+                        className="bg-emerald-500 text-black font-black px-6 py-4 rounded-2xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start mb-4"
+                    >
+                        <Plus size={20} /> ADD PARTNER RESTAURANT
+                    </button>
                     {restaurants.map(res => (
-                        <div key={res.id} className="bg-[#080808] p-6 rounded-3xl border border-white/5 flex items-center justify-between group">
-                            <div className="flex items-center gap-6">
-                                <img src={res.image_url} className="w-20 h-20 rounded-2xl object-cover" />
+                        <div key={res.id} className="bg-[#080808] p-4 lg:p-6 rounded-2xl lg:rounded-3xl border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
+                            <div className="flex items-center gap-4 lg:gap-6">
+                                <img src={res.image_url} alt={res.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-xl lg:rounded-2xl object-cover" />
                                 <div>
-                                    <h4 className="text-xl font-black uppercase">{res.name}</h4>
-                                    <div className="flex items-center gap-3 mt-1">
-                                        <div className="flex items-center gap-1 text-amber-500 text-sm font-bold"><ArrowUpRight size={14}/> {res.rating} Rating</div>
-                                        <div className="text-gray-500 text-sm">{res.cuisines}</div>
+                                    <h4 className="text-lg lg:text-xl font-black uppercase italic">{res.name}</h4>
+                                    <div className="flex flex-wrap items-center gap-3 mt-1">
+                                        <div className="flex items-center gap-1 text-emerald-500 text-xs font-black uppercase tracking-tighter"><ArrowUpRight size={12}/> {res.rating} Rating</div>
+                                        <div className="text-gray-500 text-xs font-medium uppercase">{res.cuisines}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-8">
-                                <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border ${res.is_featured ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-500/10 text-gray-500 border-gray-500/20'}`}>
-                                    {res.is_featured ? 'Featured' : 'Standard'}
+                            <div className="flex items-center gap-4 self-end sm:self-auto w-full sm:w-auto">
+                                <div className={`hidden xs:block px-4 py-1.5 rounded-full text-[9px] font-black uppercase border italic flex-grow sm:flex-grow-0 text-center ${res.is_featured ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-500/10 text-gray-500 border-gray-500/20'}`}>
+                                    {res.is_featured ? 'Featured_Partner' : 'Standard'}
                                 </div>
-                                <button className="p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all"><Edit2 size={20}/></button>
+                                <button onClick={() => openModal('restaurant', res)} className="p-3 bg-white/5 rounded-xl hover:bg-emerald-500 hover:text-black transition-all border border-white/10"><Edit2 size={18}/></button>
+                                <button onClick={() => deleteEntity('restaurant', res.id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-500/20"><Trash2 size={18}/></button>
                             </div>
                         </div>
                     ))}
@@ -405,8 +480,8 @@ export default function PremiumAdmin() {
             )}
 
             {activeTab === 'users' && (
-                <motion.div key="users" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="bg-[#080808] rounded-[2.5rem] p-10 border border-white/5">
-                    <table className="w-full text-left">
+                <motion.div key="users" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="bg-[#080808] rounded-[2.5rem] p-4 lg:p-10 border border-white/5 overflow-x-auto">
+                    <table className="w-full text-left min-w-[800px]">
                         <thead>
                             <tr className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] border-b border-white/5">
                                 <th className="pb-6 px-4">User Identity</th>
@@ -444,11 +519,159 @@ export default function PremiumAdmin() {
                     </table>
                 </motion.div>
             )}
+
           </AnimatePresence>
         )}
+        
+        {/* MODAL OVERLAY */}
+         <AnimatePresence>
+            {isModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
+                    <EntityModal 
+                        type={modalType} 
+                        entity={selectedEntity} 
+                        onClose={() => setIsModalOpen(false)} 
+                        onSave={fetchData} 
+                        headers={getHeaders()}
+                        categories={categories}
+                        restaurants={restaurants}
+                    />
+                </div>
+            )}
+         </AnimatePresence>
       </main>
     </div>
   );
+}
+
+function EntityModal({ type, entity, onClose, onSave, headers, categories, restaurants }: any) {
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState<any>(entity || {});
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            let endpoint = '';
+            if (type === 'restaurant') endpoint = '/api/admin/restaurants/';
+            else if (type === 'menu') endpoint = '/api/admin/menu/';
+            else if (type === 'category') endpoint = '/api/admin/categories/';
+
+            if (entity?.id) {
+                await axios.patch(`${API}${endpoint}`, { ...formData, id: entity.id }, headers);
+                toast.success('Updated successfully');
+            } else {
+                await axios.post(`${API}${endpoint}`, formData, headers);
+                toast.success('Created successfully');
+            }
+            onSave();
+            onClose();
+        } catch (err: any) {
+            console.error(err);
+            toast.error(err.response?.data?.detail || 'Operation failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <motion.div 
+            initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            className="w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-8 shadow-2xl relative z-10 overflow-y-auto max-h-[90vh]"
+        >
+            <div className="flex justify-between items-center mb-8">
+                <h3 className="text-2xl font-black uppercase italic">{entity ? 'Edit' : 'Add New'} {type}</h3>
+                <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg"><X size={20}/></button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 gap-6">
+                    {/* Common Name Field */}
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Display Identity</label>
+                        <input 
+                            required 
+                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50"
+                            placeholder={`Enter ${type} name`}
+                            value={formData.name || ''}
+                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                        />
+                    </div>
+
+                    {type === 'restaurant' && (
+                        <>
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormInput label="Rating" placeholder="4.5" value={formData.rating} onChange={(v: any) => setFormData({ ...formData, rating: v })} type="number" step="0.1" />
+                                <FormInput label="Delivery (min)" placeholder="30" value={formData.delivery_time} onChange={(v: any) => setFormData({ ...formData, delivery_time: v })} type="number" />
+                            </div>
+                            <FormInput label="Cuisines" placeholder="North Indian, Chinese" value={formData.cuisines} onChange={(v: any) => setFormData({ ...formData, cuisines: v })} />
+                            <FormInput label="Image Stream URL" placeholder="https://..." value={formData.image_url} onChange={(v: any) => setFormData({ ...formData, image_url: v })} />
+                        </>
+                    )}
+
+                    {type === 'menu' && (
+                        <>
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormInput label="Price (₹)" placeholder="299" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
+                                <FormInput label="Prep Time" placeholder="15" value={formData.prep_time} onChange={(v: any) => setFormData({ ...formData, prep_time: v })} type="number" />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Category Node</label>
+                                <select 
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 appearance-none"
+                                    value={formData.category || ''}
+                                    onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                >
+                                    <option value="">Select Category</option>
+                                    {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Partner Node</label>
+                                <select 
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 appearance-none"
+                                    value={formData.restaurant || ''}
+                                    onChange={e => setFormData({ ...formData, restaurant: e.target.value })}
+                                >
+                                    <option value="">Select Restaurant</option>
+                                    {restaurants.map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                                </select>
+                            </div>
+                            <FormInput label="Asset URL" placeholder="https://..." value={formData.image_url} onChange={(v: any) => setFormData({ ...formData, image_url: v })} />
+                        </>
+                    )}
+
+                    {type === 'category' && (
+                        <>
+                            <FormInput label="Emoji/Icon" placeholder="🍔" value={formData.icon} onChange={(v: any) => setFormData({ ...formData, icon: v })} />
+                            <FormInput label="System Slug" placeholder="fast-food" value={formData.slug} onChange={(v: any) => setFormData({ ...formData, slug: v })} />
+                        </>
+                    )}
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                    <button type="button" onClick={onClose} className="flex-grow py-4 bg-white/5 rounded-2xl font-bold hover:bg-white/10 transition-all">ABORT</button>
+                    <button type="submit" disabled={loading} className="flex-grow py-4 bg-emerald-500 text-black font-black rounded-2xl hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50">
+                        {loading ? 'PROCESSING...' : 'SYNC DATA'}
+                    </button>
+                </div>
+            </form>
+        </motion.div>
+    );
+}
+
+function FormInput({ label, onChange, ...props }: any) {
+    return (
+        <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">{label}</label>
+            <input 
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50"
+                {...props}
+                onChange={e => onChange(e.target.value)}
+            />
+        </div>
+    );
 }
 
 function StatCard({ label, value, icon: Icon, trend, color }: any) {
