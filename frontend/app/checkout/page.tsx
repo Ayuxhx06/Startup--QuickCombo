@@ -20,7 +20,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.ne
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, updateQuantity, clearCart } = useCart();
+  const { items, total, updateQuantity, clearCart, specialRequests, clearSpecialRequests } = useCart();
   const { user, setShowAuthModal } = useAuth();
   
   const [address, setAddress] = useState('');
@@ -133,13 +133,22 @@ export default function CheckoutPage() {
         lng,
         payment_method: payment,
         notes: scheduledTime ? `[SCHEDULED: ${scheduledTime}] ${notes}` : notes,
-        items: items.map(i => ({ 
-          id: i.id, 
-          name: i.name, 
-          price: parseFloat(i.price as any) || 0, 
-          quantity: i.quantity || 1,
-          unit: i.unit || 'piece'
-        }))
+        items: [
+          ...items.map(i => ({ 
+            id: i.id, 
+            name: i.name, 
+            price: parseFloat(i.price as any) || 0, 
+            quantity: i.quantity || 1,
+            unit: i.unit || 'piece'
+          })),
+          ...specialRequests.map(r => ({
+            id: `req-${r.id}`,
+            name: r.name,
+            price: 0,
+            quantity: r.quantity,
+            unit: r.unit
+          }))
+        ]
       };
       
       if (payment === 'online') {
@@ -175,6 +184,7 @@ export default function CheckoutPage() {
       setFinalTotal(isNaN(currentCalculatedTotal) ? 0 : currentCalculatedTotal);
       setSuccess(true);
       clearCart();
+      clearSpecialRequests();
       setTimeout(() => router.push(`/orders/${res.data.order_id}`), 1000);
     } catch (err: any) {
       const msg = err.response?.data?.details?.message || err.response?.data?.error || 'Failed to place order';
@@ -260,6 +270,33 @@ export default function CheckoutPage() {
             ))}
           </div>
         </section>
+
+        {/* Special Requests Section */}
+        {specialRequests.length > 0 && (
+          <section className="bg-[#1c1c1c] rounded-[20px] p-4 border border-orange-500/20">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">📦</span>
+              <div>
+                <h2 className="font-bold text-white text-sm">Special Requests</h2>
+                <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wider">Pay directly to delivery partner</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {specialRequests.map(req => (
+                <div key={req.id} className="flex justify-between items-center bg-black/30 px-3 py-2.5 rounded-xl border border-white/5">
+                  <div className="flex gap-2 items-center">
+                    <span className="text-base">🛍️</span>
+                    <p className="text-sm font-bold text-white">{req.quantity} {req.unit === 'piece' ? 'pc' : req.unit} {req.name}</p>
+                  </div>
+                  <span className="text-[10px] text-orange-300 font-black bg-orange-500/10 px-2 py-1 rounded-lg border border-orange-500/20">On Delivery</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-gray-500 mt-3 leading-relaxed">
+              💬 Final cost of special items will be collected by our delivery partner at your doorstep.
+            </p>
+          </section>
+        )}
 
         {/* 2. Delivery Estimate Card */}
         <section className="bg-[#1c1c1c] rounded-[20px] p-4 flex gap-4">

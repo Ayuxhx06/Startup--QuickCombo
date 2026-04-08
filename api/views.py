@@ -84,23 +84,43 @@ def send_order_confirmation_email(order):
         "content-type": "application/json"
     }
 
+    all_items = list(order.items.all())
+    regular_items = [i for i in all_items if not (i.menu_item is None and float(i.price) == 0)]
+    special_items = [i for i in all_items if i.menu_item is None and float(i.price) == 0]
+
     items_html = "".join([
-        f"<tr><td style='padding:8px;color:#d1d5db'>{item.quantity} {item.unit if item.unit != 'piece' else 'pc'} {item.name}"
-        f"{' <span style=\"color:#22c55e;font-size:10px;font-weight:700;background:#22c55e22;padding:2px 6px;border-radius:4px;margin-left:8px\">SPECIAL REQUEST</span>' if not item.menu_item else ''}</td>"
+        f"<tr><td style='padding:8px;color:#d1d5db'>{item.quantity} {item.unit if item.unit != 'piece' else 'pc'} {item.name}</td>"
         f"<td style='padding:8px;color:#6b7280;text-align:center'>x{item.quantity}</td>"
         f"<td style='padding:8px;color:#22c55e;text-align:right'>₹{item.price * item.quantity}</td></tr>"
-        for item in order.items.all()
+        for item in regular_items
     ])
+
+    special_requests_html = ""
+    if special_items:
+        rows = "".join([
+            f"<tr><td style='padding:6px 8px;color:#d1d5db'>📦 {item.quantity} {item.unit if item.unit != 'piece' else 'pc'} {item.name}</td>"
+            f"<td style='padding:6px 8px;color:#fb923c;text-align:right;font-size:11px;font-weight:700'>Pay on delivery</td></tr>"
+            for item in special_items
+        ])
+        special_requests_html = f"""
+        <div style="background:#fb923c11;border:1px solid #fb923c33;border-radius:12px;padding:16px;margin-top:16px">
+          <p style="color:#fb923c;font-weight:800;margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:1px">📦 Special Requests</p>
+          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tbody>{rows}</tbody>
+          </table>
+          <p style="color:#9ca3af;font-size:11px;margin:10px 0 0;line-height:1.5">
+            Cost of special items will be collected by the delivery partner at your doorstep.
+          </p>
+        </div>"""
 
     # ETA logic
     has_food, has_essentials = False, False
-    for i in order.items.all():
+    for i in all_items:
         if i.menu_item and i.menu_item.category:
             n = i.menu_item.category.name.lower()
             if 'essential' in n or 'grocery' in n: has_essentials = True
             else: has_food = True
-        else:
-            # Manual items are usually essentials
+        elif i.menu_item is None and float(i.price) == 0:
             has_essentials = True
         
     eta = "35-40 mins"
@@ -108,7 +128,7 @@ def send_order_confirmation_email(order):
     elif has_essentials and not has_food: eta = "15-20 mins"
 
     billing_update_html = ""
-    if has_essentials:
+    if has_essentials and regular_items:
         billing_update_html = f"""
         <div style="background:#22c55e11;border:1px solid #22c55e33;border-radius:12px;padding:16px;margin-top:20px;text-align:left">
           <p style="color:#22c55e;font-weight:800;margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:1px">⚠️ Important Billing Update</p>
@@ -142,12 +162,14 @@ def send_order_confirmation_email(order):
           <span style="color:#fff">Total</span><span style="color:#22c55e">₹{order.total}</span>
         </div>
       </div>
-      <div style="text-align:center;color:#6b7280;font-size:14px">
+      {special_requests_html}
+      <div style="text-align:center;color:#6b7280;font-size:14px;margin-top:16px">
         <p>Estimated Delivery: <span style="color:#22c55e;font-weight:700">{eta}</span></p>
         <p>Delivery to: {order.delivery_address}</p>
         {billing_update_html}
       </div>
     </div>"""
+
 
     # Send to User
     user_subject = f"🎉 Order Confirmed! #QC{order.id:04d}"

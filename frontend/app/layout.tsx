@@ -21,8 +21,19 @@ export const metadata: Metadata = {
   keywords: "food delivery, quick delivery, combo meals, beverages, essentials",
   manifest: "/manifest.json",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [
+      { url: "/logo.png", sizes: "192x192", type: "image/png" },
+      { url: "/logo.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/logo.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/logo.png",
+  },
+  appleWebApp: {
+    capable: true,
+    title: "QuickCombo",
+    statusBarStyle: "black-translucent",
   },
   openGraph: {
     title: "QuickCombo — Fast Food + Essentials Delivery",

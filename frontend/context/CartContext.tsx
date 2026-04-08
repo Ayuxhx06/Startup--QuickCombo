@@ -1,6 +1,5 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import toast from 'react-hot-toast';
 
 export interface CartItem {
   id: string | number;
@@ -11,6 +10,13 @@ export interface CartItem {
   is_veg: boolean;
   category_name?: string;
   unit?: string; // piece, kg, litre
+}
+
+export interface SpecialRequest {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
 }
 
 interface CartContextType {
@@ -25,6 +31,11 @@ interface CartContextType {
   setIsOpen: (open: boolean) => void;
   flyItem: CartItem | null;
   setFlyItem: (item: CartItem | null) => void;
+  // Special Requests
+  specialRequests: SpecialRequest[];
+  addSpecialRequest: (req: SpecialRequest) => void;
+  removeSpecialRequest: (id: string) => void;
+  clearSpecialRequests: () => void;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -33,20 +44,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [flyItem, setFlyItem] = useState<CartItem | null>(null);
+  const [specialRequests, setSpecialRequests] = useState<SpecialRequest[]>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem('qc_cart');
     if (saved) setItems(JSON.parse(saved));
+    const savedReqs = localStorage.getItem('qc_special_requests');
+    if (savedReqs) setSpecialRequests(JSON.parse(savedReqs));
   }, []);
 
   useEffect(() => {
     localStorage.setItem('qc_cart', JSON.stringify(items));
   }, [items]);
 
+  useEffect(() => {
+    localStorage.setItem('qc_special_requests', JSON.stringify(specialRequests));
+  }, [specialRequests]);
+
   const addItem = (item: CartItem) => {
     const newItem = { ...item, quantity: item.quantity || 1, unit: item.unit || 'piece' };
     setItems(prev => {
-      // For manual items, we might have multiple entries with same name but different units
       const existing = prev.find(i => i.id === newItem.id);
       if (existing) {
         return prev.map(i => i.id === newItem.id
@@ -74,13 +91,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => setItems([]);
 
+  const addSpecialRequest = (req: SpecialRequest) => {
+    setSpecialRequests(prev => [...prev, req]);
+  };
+
+  const removeSpecialRequest = (id: string) => {
+    setSpecialRequests(prev => prev.filter(r => r.id !== id));
+  };
+
+  const clearSpecialRequests = () => setSpecialRequests([]);
+
   const total = items.reduce((acc, i) => acc + (parseFloat(i.price as any) || 0) * (i.quantity || 1), 0);
   const itemCount = items.reduce((acc, i) => acc + i.quantity, 0);
 
   return (
     <CartContext.Provider value={{
       items, addItem, removeItem, updateQuantity, clearCart,
-      total, itemCount, isOpen, setIsOpen, flyItem, setFlyItem
+      total, itemCount, isOpen, setIsOpen, flyItem, setFlyItem,
+      specialRequests, addSpecialRequest, removeSpecialRequest, clearSpecialRequests,
     }}>
       {children}
     </CartContext.Provider>
