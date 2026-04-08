@@ -106,14 +106,9 @@ export default function Navbar() {
           <div className="flex flex-col items-start justify-center">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1 group">
-              <Image 
-                src="/logo.png" 
-                alt="QuickCombo Logo" 
-                width={140} 
-                height={40} 
-                className="h-9 w-auto object-contain"
-                priority
-              />
+              <span className="font-black text-xl tracking-tight text-white mb-0.5">
+                Quick<span className="text-green-500">Combo</span>
+              </span>
             </Link>
 
             {/* Location */}

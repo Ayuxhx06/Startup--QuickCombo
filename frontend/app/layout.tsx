@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   title: "QuickCombo — Fast Food + Essentials Delivery",
   description: "Order food, beverages & daily essentials in minutes. Premium combos delivered to your door.",
   keywords: "food delivery, quick delivery, combo meals, beverages, essentials",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     title: "QuickCombo — Fast Food + Essentials Delivery",
     description: "Order food, beverages & daily essentials in minutes.",

@@ -103,7 +103,7 @@ export default function AuthModal() {
                         <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
                         <input 
                           className="qc-input !pl-10 !border-red-500/20 focus:!border-green-500" 
-                          placeholder="Full Name (Required) *" 
+                          placeholder="Full Name" 
                           value={name} 
                           onChange={e => setName(e.target.value)} 
                           required
@@ -113,7 +113,7 @@ export default function AuthModal() {
                         <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
                         <input 
                           className="qc-input !pl-10 !border-red-500/20 focus:!border-green-500" 
-                          placeholder="Contact Number (Required) *" 
+                          placeholder="Contact Number" 
                           value={phone} 
                           onChange={e => setPhone(e.target.value)} 
                           type="tel"
