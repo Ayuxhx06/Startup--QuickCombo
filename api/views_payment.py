@@ -23,73 +23,80 @@ def create_payment_session(request):
     """
     Creates a Cashfree Order and returns a payment_session_id.
     """
-    data = request.data
-    items_data = data.get('items', [])
-    if not items_data:
-        return Response({'error': 'No items in order'}, status=400)
+    try:
+        data = request.data
+        items_data = data.get('items', [])
+        if not items_data:
+            return Response({'error': 'No items in order'}, status=400)
 
-    # Calculate Total (matching existing logic in place_order)
-    subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
-    delivery_fee = 40
-    discount = int(subtotal * 0.1) 
-    total = (subtotal - discount) + delivery_fee
+        # Calculate Total
+        subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
+        delivery_fee = 40
+        discount = int(subtotal * 0.1) 
+        total = (subtotal - discount) + delivery_fee
 
-    # 1. Create Django Order (Pending Payment)
-    order = Order.objects.create(
-        user_email=data.get('email', '').strip().lower(),
-        user_name=data.get('name', ''),
-        user_phone=data.get('phone', ''),
-        delivery_address=data.get('address', ''),
-        delivery_lat=data.get('lat'),
-        delivery_lng=data.get('lng'),
-        payment_method='cashfree', # New method identifier
-        payment_status='pending',
-        subtotal=subtotal,
-        delivery_fee=delivery_fee,
-        total=total,
-        notes=data.get('notes', ''),
-        status='pending', # Wait for payment confirmation
-    )
-
-    for item_data in items_data:
-        try:
-            menu_item = MenuItem.objects.get(pk=item_data.get('id'))
-        except MenuItem.DoesNotExist:
-            menu_item = None
-        OrderItem.objects.create(
-            order=order,
-            menu_item=menu_item,
-            name=item_data['name'],
-            price=item_data['price'],
-            quantity=item_data['quantity'],
+        # 1. Create Django Order (Pending Payment)
+        order = Order.objects.create(
+            user_email=data.get('email', '').strip().lower(),
+            user_name=data.get('name', ''),
+            user_phone=data.get('phone', ''),
+            delivery_address=data.get('address', ''),
+            delivery_lat=data.get('lat'),
+            delivery_lng=data.get('lng'),
+            payment_method='cashfree', 
+            payment_status='pending',
+            subtotal=subtotal,
+            delivery_fee=delivery_fee,
+            total=total,
+            notes=data.get('notes', ''),
+            status='pending', 
         )
 
-    # 2. Create Cashfree Order
-    cf_url = f"{BASE_URL}/orders"
-    headers = {
-        "x-api-version": "2023-08-01",
-        "x-client-id": CASHFREE_APP_ID,
-        "x-client-secret": CASHFREE_SECRET_KEY,
-        "content-type": "application/json"
-    }
-    
-    cf_payload = {
-        "order_id": f"QC_ORDER_{order.id}",
-        "order_amount": float(total),
-        "order_currency": "INR",
-        "customer_details": {
-            "customer_id": f"user_{order.id}",
-            "customer_name": str(order.user_name or "Guest"),
-            "customer_email": str(order.user_email or f"customer_{order.id}@quickcombo.in"),
-            "customer_phone": str(order.user_phone[-10:] if order.user_phone else "9999999999")
-        },
-        "order_meta": {
-            "return_url": f"https://quickcombo.in/orders/{order.id}?cf_id={{order_id}}",
-            "notify_url": "https://quickcombo.alwaysdata.net/api/payment/webhook/"
-        }
-    }
+        for item_data in items_data:
+            item_id = item_data.get('id')
+            menu_item = None
+            
+            # Safe numeric check for special requests
+            try:
+                numeric_val = float(str(item_id))
+                menu_item = MenuItem.objects.get(pk=int(numeric_val))
+            except (MenuItem.DoesNotExist, ValueError, TypeError):
+                menu_item = None
 
-    try:
+            OrderItem.objects.create(
+                order=order,
+                menu_item=menu_item,
+                name=item_data['name'],
+                price=item_data['price'],
+                quantity=item_data['quantity'],
+                unit=item_data.get('unit') or 'piece'
+            )
+
+        # 2. Create Cashfree Order
+        cf_url = f"{BASE_URL}/orders"
+        headers = {
+            "x-api-version": "2023-08-01",
+            "x-client-id": CASHFREE_APP_ID,
+            "x-client-secret": CASHFREE_SECRET_KEY,
+            "content-type": "application/json"
+        }
+        
+        cf_payload = {
+            "order_id": f"QC_ORDER_{order.id}",
+            "order_amount": float(total),
+            "order_currency": "INR",
+            "customer_details": {
+                "customer_id": f"user_{order.id}",
+                "customer_name": str(order.user_name or "Guest"),
+                "customer_email": str(order.user_email or f"customer_{order.id}@quickcombo.in"),
+                "customer_phone": str(order.user_phone[-10:] if order.user_phone else "9999999999")
+            },
+            "order_meta": {
+                "return_url": f"https://quickcombo.in/orders/{order.id}?cf_id={{order_id}}",
+                "notify_url": "https://quickcombo.alwaysdata.net/api/payment/webhook/"
+            }
+        }
+
         response = requests.post(cf_url, headers=headers, json=cf_payload, timeout=10)
         cf_data = response.json()
         
@@ -104,11 +111,11 @@ def create_payment_session(request):
                 'cf_order_id': order.cashfree_order_id
             }, status=201)
         else:
-            print(f"❌ Cashfree Error: {cf_data}")
             return Response({'error': 'Failed to initialize payment', 'details': cf_data}, status=400)
             
     except Exception as e:
-        print(f"❌ Cashfree Request Exception: {e}")
+        import traceback
+        traceback.print_exc()
         return Response({'error': str(e)}, status=500)
 
 @csrf_exempt

@@ -330,52 +330,67 @@ def restaurant_list(request):
 
 @api_view(['POST'])
 def place_order(request):
-    data = request.data
-    items_data = data.get('items', [])
-    if not items_data:
-        return Response({'error': 'No items in order'}, status=400)
-    
-    if not data.get('name') or not data.get('phone'):
-        return Response({'error': 'Name and Phone Number are required to place an order'}, status=400)
+    try:
+        data = request.data
+        items_data = data.get('items', [])
+        if not items_data:
+            return Response({'error': 'No items in order'}, status=400)
+        
+        if not data.get('name') or not data.get('phone'):
+            return Response({'error': 'Name and Phone Number are required to place an order'}, status=400)
 
-    subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
-    delivery_fee = 40
-    discount = int(subtotal * 0.1)  # 10% platform discount matching frontend
-    total = (subtotal - discount) + delivery_fee
+        # 1. Calculate Total
+        subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
+        delivery_fee = 40
+        discount = int(subtotal * 0.1)
+        total = (subtotal - discount) + delivery_fee
 
-    order = Order.objects.create(
-        user_email=data.get('email', '').strip().lower(),
-        user_name=data.get('name', ''),
-        user_phone=data.get('phone', ''),
-        delivery_address=data.get('address', ''),
-        delivery_lat=data.get('lat') or 12.8231, # Fallback to Estancia IT Park
-        delivery_lng=data.get('lng') or 80.0453,
-        payment_method=data.get('payment_method', 'cod'),
-        subtotal=subtotal,
-        delivery_fee=delivery_fee,
-        total=total,
-        notes=data.get('notes', ''),
-        status='out_for_delivery',
-    )
-
-    for item_data in items_data:
-        try:
-            menu_item = MenuItem.objects.get(pk=item_data.get('id'))
-        except MenuItem.DoesNotExist:
-            menu_item = None
-        OrderItem.objects.create(
-            order=order,
-            menu_item=menu_item,
-            name=item_data['name'],
-            price=item_data['price'],
-            quantity=item_data['quantity'],
-            unit=item_data.get('unit', 'piece')
+        # 2. Create Order
+        order = Order.objects.create(
+            user_email=data.get('email', '').strip().lower(),
+            user_name=data.get('name', ''),
+            user_phone=data.get('phone', ''),
+            delivery_address=data.get('address', ''),
+            delivery_lat=data.get('lat') or 12.8231,
+            delivery_lng=data.get('lng') or 80.0453,
+            payment_method=data.get('payment_method', 'cod'),
+            subtotal=subtotal,
+            delivery_fee=delivery_fee,
+            total=total,
+            notes=data.get('notes', ''),
+            status='out_for_delivery',
         )
 
-    # Send confirmation email (async would be better in production)
-    send_order_confirmation_email(order)
+        # 3. Create Items
+        for item_data in items_data:
+            item_id = item_data.get('id')
+            menu_item = None
+            
+            # Safe numeric check for database lookup
+            try:
+                numeric_val = float(str(item_id))
+                menu_item = MenuItem.objects.get(pk=int(numeric_val))
+            except (MenuItem.DoesNotExist, ValueError, TypeError):
+                menu_item = None
 
-    return Response({'order_id': order.id, 'total': total, 'status': 'out_for_delivery'}, status=201)
+            OrderItem.objects.create(
+                order=order,
+                menu_item=menu_item,
+                name=item_data['name'],
+                price=item_data['price'],
+                quantity=item_data['quantity'],
+                unit=item_data.get('unit') or 'piece'
+            )
+
+        # 4. Send Confirmation
+        send_order_confirmation_email(order)
+
+        return Response({'order_id': order.id, 'total': float(total), 'status': 'out_for_delivery'}, status=201)
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return Response({'error': str(e)}, status=500)
 
 
 @api_view(['GET'])
@@ -663,6 +678,7 @@ def debug_db(request):
     
     return Response({
         'status': 'healthy' if db_ok else 'unhealthy',
+        'version_timestamp': '2026-04-08_12:35_FINAL_FIX',
         'database': {
             'connected': db_ok,
             'error': db_error if not db_ok else None,
@@ -674,5 +690,31 @@ def debug_db(request):
             'brevo_preview': f"{brevo_key[:10]}...{brevo_key[-4:]}" if brevo_key else "MISSING",
             'geoapify_configured': bool(geo_key),
             'geoapify_preview': f"{geo_key[:10]}...{geo_key[-4:]}" if geo_key else "MISSING",
+        }
+    })
+
+@api_view(['GET'])
+def check_config(request):
+    """
+    EMERGENCY DIAGNOSTIC ENDPOINT
+    Returns masked versions of loaded keys to verify environment loading.
+    """
+    import os
+    from django.conf import settings
+    
+    def mask(val):
+        if not val or len(val) < 8: return "MISSING/TOO_SHORT"
+        return f"{val[:4]}...{val[-4:]} (len: {len(val)})"
+
+    return Response({
+        "status": "online",
+        "database": settings.DATABASES['default']['ENGINE'],
+        "env_path": os.path.abspath('.env'),
+        "env_exists": os.path.exists('.env'),
+        "keys": {
+            "CASHFREE_APP_ID": mask(getattr(settings, 'CASHFREE_APP_ID', '')),
+            "CASHFREE_SECRET_KEY": mask(getattr(settings, 'CASHFREE_SECRET_KEY', '')),
+            "BREVO_API_KEY": mask(getattr(settings, 'BREVO_API_KEY', '')),
+            "CASHFREE_MODE": getattr(settings, 'CASHFREE_MODE', 'NOT_SET')
         }
     })

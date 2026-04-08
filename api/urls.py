@@ -36,6 +36,7 @@ urlpatterns = [
     path('orders/<int:order_id>/', views.order_detail),
     path('orders/<int:order_id>/tracking/', views.order_tracking),
     path('debug-db/', views.debug_db),
+    path('check-config/', views.check_config),
 
     # Location
     path('location/autocomplete/', views.location_autocomplete),

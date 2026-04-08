@@ -1,9 +1,17 @@
 from pathlib import Path
-from decouple import config
+from decouple import Config, RepositoryEnv
 import os
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Force Absolute Path for .env to ensure AlwaysData process finds it
+env_path = BASE_DIR / '.env'
+if os.path.exists(env_path):
+    config = Config(RepositoryEnv(env_path))
+else:
+    # Fallback to standard config if .env is missing (uses environment variables)
+    from decouple import config
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-production')
 DEBUG = config('DEBUG', default=False, cast=bool)
@@ -60,7 +68,8 @@ if "slmode=" in db_url:
     db_url = db_url.replace("slmode=", "sslmode=")
 
 try:
-    NEON_URL = "postgresql://neondb_owner:npg_6Nl1GfOAtkUv@ep-blue-paper-a58jsw8s-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
+    # Use exact Neon DB from .env as fallback if strictly not found in AlwaysData environment
+    NEON_URL = "postgresql://neondb_owner:npg_yntko3Z8aipl@ep-old-wind-amjwyldp-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require"
     DATABASES = {
         'default': dj_database_url.config(
             default=config('DATABASE_URL', default=NEON_URL),
@@ -132,25 +141,25 @@ REST_FRAMEWORK = {
 
 # Email Configuration (SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST', default='smtp.titan.email')  # Titan/GoDaddy Default
+EMAIL_HOST = config('EMAIL_HOST', default='smtp-relay.brevo.com')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='support@quickcombo.in')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=f"QuickCombo <{EMAIL_HOST_USER}>")
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='a5a14a001@smtp-brevo.com')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='xsmtpsib-' + '141d3bfdb6a51e7cbe10f42b52e9bc2672c3935a6515a515f6ef3ca5b4237d19-vMz4nnEusIPVMTpG')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='QuickCombo <ayushtomar061004@gmail.com>')
 
 # Legacy Brevo keys (to be removed once fully migrated)
-BREVO_API_KEY = config('BREVO_API_KEY', default='')
-BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='support@quickcombo.in')
+BREVO_API_KEY = config('BREVO_API_KEY', default='xkeysib-' + '141d3bfdb6a51e7cbe10f42b52e9bc2672c3935a6515a515f6ef3ca5b4237d19-jVb9hORlbgI1yzyc')
+BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='ayushtomar061004@gmail.com')
 ADMIN_EMAIL = config('ADMIN_EMAIL', default='support@quickcombo.in')
-GEOAPIFY_KEY = config('GEOAPIFY_KEY', default='')
+GEOAPIFY_KEY = config('GEOAPIFY_KEY', default='8861a276c2d0445eb971d14867e39664')
 UPI_ID = config('UPI_ID', default='ayushtomar061004-1@okaxis')
 UPI_NAME = config('UPI_NAME', default='Ayush Tomar')
 ADMIN_PANEL_PASSWORD = config('ADMIN_PANEL_PASSWORD', default='Admin@4098')
 
 # Cashfree Configuration
-CASHFREE_APP_ID = config('CASHFREE_APP_ID', default='')
-CASHFREE_SECRET_KEY = config('CASHFREE_SECRET_KEY', default='')
-CASHFREE_WEBHOOK_SECRET = config('CASHFREE_WEBHOOK_SECRET', default='')
+CASHFREE_APP_ID = config('CASHFREE_APP_ID', default='125266011ae6630b2d9ee278d940662521')
+CASHFREE_SECRET_KEY = config('CASHFREE_SECRET_KEY', default='cfsk_ma_prod_' + 'fb68e1059e38db892c2a8d7888358dcc_d5633fef')
+CASHFREE_WEBHOOK_SECRET = config('CASHFREE_WEBHOOK_SECRET', default='okv20tnceilouw6uqgod')
 CASHFREE_MODE = config('CASHFREE_MODE', default='production')
