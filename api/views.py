@@ -85,7 +85,7 @@ def send_order_confirmation_email(order):
     }
 
     items_html = "".join([
-        f"<tr><td style='padding:8px;color:#d1d5db'>{item.name}</td>"
+        f"<tr><td style='padding:8px;color:#d1d5db'>{item.quantity} {item.unit if item.unit != 'piece' else 'pc'} {item.name}</td>"
         f"<td style='padding:8px;color:#6b7280;text-align:center'>x{item.quantity}</td>"
         f"<td style='padding:8px;color:#22c55e;text-align:right'>₹{item.price * item.quantity}</td></tr>"
         for item in order.items.all()
@@ -130,6 +130,7 @@ def send_order_confirmation_email(order):
       <div style="text-align:center;color:#6b7280;font-size:14px">
         <p>Estimated Delivery: <span style="color:#22c55e;font-weight:700">{eta}</span></p>
         <p>Delivery to: {order.delivery_address}</p>
+        <p style="color:#22c55e;font-weight:700;margin-top:12px;font-size:12px">Note: Final bill will be sent to you via whatsapp. You can pay the remaining amount to the delivery person when delivered.</p>
         <p>UPI ID: {getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')}</p>
       </div>
     </div>"""
@@ -356,6 +357,7 @@ def place_order(request):
             name=item_data['name'],
             price=item_data['price'],
             quantity=item_data['quantity'],
+            unit=item_data.get('unit', 'piece')
         )
 
     # Send confirmation email (async would be better in production)

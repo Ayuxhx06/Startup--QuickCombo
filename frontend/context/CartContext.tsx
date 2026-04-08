@@ -3,20 +3,21 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import toast from 'react-hot-toast';
 
 export interface CartItem {
-  id: number;
+  id: string | number;
   name: string;
   price: number;
   quantity: number;
   image_url: string;
   is_veg: boolean;
   category_name?: string;
+  unit: string; // piece, kg, litre
 }
 
 interface CartContextType {
   items: CartItem[];
   addItem: (item: CartItem, triggerAnim?: boolean) => void;
-  removeItem: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  removeItem: (id: string | number) => void;
+  updateQuantity: (id: string | number, quantity: number) => void;
   clearCart: () => void;
   total: number;
   itemCount: number;
@@ -44,24 +45,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = (item: CartItem) => {
     setItems(prev => {
+      // For manual items, we might have multiple entries with same name but different units
       const existing = prev.find(i => i.id === item.id);
       if (existing) {
         return prev.map(i => i.id === item.id
-          ? { ...i, quantity: i.quantity + 1 }
+          ? { ...i, quantity: i.quantity + (item.quantity || 1) }
           : i
         );
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, { ...item, quantity: item.quantity || 1 }];
     });
     setFlyItem(item);
     setTimeout(() => setFlyItem(null), 700);
   };
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: string | number) => {
     setItems(prev => prev.filter(i => i.id !== id));
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string | number, quantity: number) => {
     if (quantity <= 0) {
       removeItem(id);
       return;

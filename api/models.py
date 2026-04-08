@@ -155,6 +155,7 @@ class OrderItem(models.Model):
     name = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     quantity = models.IntegerField(default=1)
+    unit = models.CharField(max_length=20, default='piece') # piece, kg, litre
 
     @property
     def subtotal(self):

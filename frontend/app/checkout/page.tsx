@@ -137,7 +137,8 @@ export default function CheckoutPage() {
           id: i.id, 
           name: i.name, 
           price: parseFloat(i.price as any) || 0, 
-          quantity: i.quantity || 1 
+          quantity: i.quantity || 1,
+          unit: i.unit || 'piece'
         }))
       };
       

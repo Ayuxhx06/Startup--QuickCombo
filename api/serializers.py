@@ -33,7 +33,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ['id', 'name', 'price', 'quantity', 'subtotal']
+        fields = ['id', 'name', 'price', 'quantity', 'subtotal', 'unit']
 
 
 class OrderSerializer(serializers.ModelSerializer):
