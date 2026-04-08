@@ -321,6 +321,9 @@ def place_order(request):
     items_data = data.get('items', [])
     if not items_data:
         return Response({'error': 'No items in order'}, status=400)
+    
+    if not data.get('name') or not data.get('phone'):
+        return Response({'error': 'Name and Phone Number are required to place an order'}, status=400)
 
     subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
     delivery_fee = 40

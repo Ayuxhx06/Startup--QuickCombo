@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { QRCodeSVG } from 'qrcode.react';
 import Confetti from 'react-confetti';
 import toast from 'react-hot-toast';
 import { useCart } from '@/context/CartContext';
@@ -18,8 +17,6 @@ const ManualMap = dynamic(() => import('@/components/ManualMap'), {
 });
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
-const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || 'ayushtomar061004-1@okaxis';
-const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || 'Ayush Tomar';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -173,6 +170,7 @@ export default function CheckoutPage() {
       const res = await axios.post(`${API}/api/orders/place/`, payload);
       setOrderId(res.data.order_id);
       localStorage.setItem('activeOrderId', res.data.order_id.toString());
+      localStorage.setItem('showOrderPopup', 'true');
       setFinalTotal(isNaN(currentCalculatedTotal) ? 0 : currentCalculatedTotal);
       setSuccess(true);
       clearCart();
@@ -201,7 +199,7 @@ export default function CheckoutPage() {
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-gray-400 mb-8">
           Your food is being prepared. Check your email for details.
         </motion.p>
-
+ 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} className="text-green-400 text-sm font-bold bg-green-500/10 px-6 py-3 rounded-full border border-green-500/20">
           Redirecting to live tracking...
         </motion.div>

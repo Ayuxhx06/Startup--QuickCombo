@@ -34,3 +34,11 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Scratch Scripts
+/*.py
+!api/**/*.py
+!quickcombo/**/*.py
+!frontend/**/*.py
+!__init__.py
+!manage.py

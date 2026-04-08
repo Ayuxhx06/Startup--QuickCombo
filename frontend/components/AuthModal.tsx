@@ -99,31 +99,48 @@ export default function AuthModal() {
                   >
                     <p className="text-gray-400 text-sm">Login or create your QuickCombo account with email OTP.</p>
                     <div className="space-y-3">
-                      <div className="relative">
-                        <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                        <input className="qc-input !pl-10" placeholder="Your name (Required)" value={name} onChange={e => setName(e.target.value)} />
+                      <div className="relative group">
+                        <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
+                        <input 
+                          className="qc-input !pl-10 !border-red-500/20 focus:!border-green-500" 
+                          placeholder="Full Name (Required) *" 
+                          value={name} 
+                          onChange={e => setName(e.target.value)} 
+                          required
+                        />
                       </div>
-                      <div className="relative">
-                        <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-                        <input className="qc-input !pl-10" placeholder="Phone number (Required)" value={phone} onChange={e => setPhone(e.target.value)} />
+                      <div className="relative group">
+                        <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
+                        <input 
+                          className="qc-input !pl-10 !border-red-500/20 focus:!border-green-500" 
+                          placeholder="Contact Number (Required) *" 
+                          value={phone} 
+                          onChange={e => setPhone(e.target.value)} 
+                          type="tel"
+                          required
+                        />
                       </div>
-                      <div className="relative">
-                        <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                      <div className="relative group">
+                        <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
                         <input
-                          className="qc-input !pl-10" placeholder="Your email address *" type="email"
-                          value={email} onChange={e => setEmail(e.target.value)}
+                          className="qc-input !pl-10" 
+                          placeholder="Email Address *" 
+                          type="email"
+                          value={email} 
+                          onChange={e => setEmail(e.target.value)}
                           onKeyDown={e => e.key === 'Enter' && handleSendOtp()}
+                          required
                         />
                       </div>
                     </div>
                     <motion.button
                       whileTap={{ scale: 0.97 }}
                       onClick={handleSendOtp}
-                      disabled={loading}
-                      className="w-full btn-primary py-3.5 font-bold flex items-center justify-center gap-2"
+                      disabled={loading || !name.trim() || !phone.trim() || !email.includes('@')}
+                      className="w-full btn-primary py-3.5 font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale transition-all shadow-[0_4px_16px_rgba(34,197,94,0.2)]"
                     >
                       {loading ? <Loader2 size={18} className="animate-spin" /> : <Mail size={18} />}
-                      {loading ? 'Sending...' : 'Send OTP'}
+                      {loading ? 'Sending...' : 'Continue to OTP'}
                     </motion.button>
                   </motion.div>
                 ) : (

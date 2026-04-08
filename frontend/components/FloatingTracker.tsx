@@ -26,14 +26,18 @@ export default function FloatingTracker() {
         headers: { 'X-User-Email': user.email }
       });
       
-      if (res.data && !['delivered', 'cancelled'].includes(res.data.status)) {
+      const shouldShow = localStorage.getItem('showOrderPopup') === 'true';
+      
+      if (res.data && !['delivered', 'cancelled'].includes(res.data.status) && shouldShow) {
         setActiveOrder(res.data);
         setVisible(true);
-        // Save to local storage for instant flash on next load
         localStorage.setItem('activeOrderId', res.data.id.toString());
       } else {
         setVisible(false);
-        localStorage.removeItem('activeOrderId');
+        if (res.data && ['delivered', 'cancelled'].includes(res.data.status)) {
+          localStorage.removeItem('showOrderPopup');
+          localStorage.removeItem('activeOrderId');
+        }
       }
     } catch (err) {
       console.error('Tracker sync failed', err);
@@ -118,7 +122,11 @@ export default function FloatingTracker() {
         
         {/* Compact close trigger */}
         <button 
-          onClick={(e) => { e.preventDefault(); setVisible(false); }}
+          onClick={(e) => { 
+            e.preventDefault(); 
+            setVisible(false); 
+            localStorage.removeItem('showOrderPopup');
+          }}
           className="absolute -top-1 -right-1 w-6 h-6 bg-black/80 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-colors z-20 shadow-lg"
         >
           <X size={12} />

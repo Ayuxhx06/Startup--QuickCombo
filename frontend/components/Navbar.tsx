@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { ShoppingCart, MapPin, User, Loader2, Search, X, ClipboardList } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -105,9 +106,14 @@ export default function Navbar() {
           <div className="flex flex-col items-start justify-center">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1 group">
-              <span className="font-black text-xl tracking-tight text-white mb-0.5">
-                Quick<span className="text-green-500">Combo</span>
-              </span>
+              <Image 
+                src="/logo.png" 
+                alt="QuickCombo Logo" 
+                width={140} 
+                height={40} 
+                className="h-9 w-auto object-contain"
+                priority
+              />
             </Link>
 
             {/* Location */}
