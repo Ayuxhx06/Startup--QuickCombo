@@ -80,7 +80,18 @@ def admin_menu_items(request):
         return Response(MenuItemSerializer(items, many=True).data)
     
     elif request.method == 'POST':
-        serializer = MenuItemSerializer(data=request.data)
+        data = request.data.copy()
+        
+        # Self-healing: If category is missing but slug is provided (e.g. 'essentials'), find or create it.
+        if not data.get('category') and data.get('category_slug'):
+            slug = data.get('category_slug')
+            cat_name = slug.capitalize()
+            # Special case for essentials
+            icon = '📦' if 'essential' in slug else '🍽️'
+            category, _ = Category.objects.get_or_create(slug=slug, defaults={'name': cat_name, 'icon': icon})
+            data['category'] = category.id
+
+        serializer = MenuItemSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             clear_admin_caches()

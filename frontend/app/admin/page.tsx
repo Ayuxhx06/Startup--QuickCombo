@@ -531,7 +531,7 @@ export default function PremiumAdmin() {
                         <p className="text-gray-500">Manage non-food inventory and groceries</p>
                     </div>
                     <button 
-                        onClick={() => openModal('menu', { category: categories.find(c => c.slug === 'essentials')?.id })}
+                        onClick={() => openModal('menu', { category: categories.find(c => c.slug === 'essentials')?.id, category_slug: 'essentials' })}
                         className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto"
                     >
                         <Plus size={18} /> ADD ESSENTIAL
@@ -552,7 +552,7 @@ export default function PremiumAdmin() {
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">ID: {item.id}</span>
                        </div>
                        <div className="flex gap-2">
-                           <button onClick={() => openModal('menu', item)} className="flex-grow bg-white/10 hover:bg-white/20 py-2.5 rounded-xl text-[10px] font-black border border-white/5 transition-all uppercase tracking-widest">EDIT ITEM</button>
+                           <button onClick={() => openModal('menu', { ...item, category_slug: 'essentials' })} className="flex-grow bg-white/10 hover:bg-white/20 py-2.5 rounded-xl text-[10px] font-black border border-white/5 transition-all uppercase tracking-widest">EDIT ITEM</button>
                            <button onClick={() => deleteEntity('menu', item.id)} className="p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition-all border border-red-500/20"><Trash2 size={16}/></button>
                        </div>
                      </div>
@@ -718,10 +718,10 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
             else if (type === 'category') endpoint = '/api/admin/categories/';
 
             if (entity?.id) {
-                await axios.patch(`${API}${endpoint}`, { ...formData, id: entity.id }, headers);
+                await axios.patch(`${API}${endpoint}`, { ...formData, id: entity.id, category_slug: entity.category_slug }, headers);
                 toast.success('Updated successfully');
             } else {
-                await axios.post(`${API}${endpoint}`, formData, headers);
+                await axios.post(`${API}${endpoint}`, { ...formData, category_slug: entity?.category_slug }, headers);
                 toast.success('Created successfully');
             }
             onSave();
