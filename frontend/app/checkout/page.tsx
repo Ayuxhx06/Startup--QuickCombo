@@ -379,36 +379,6 @@ export default function CheckoutPage() {
           </div>
         </section>
 
-        {/* 4. Payment Method Selection */}
-        <section className="bg-[#1c1c1c] rounded-[20px] p-4">
-          <h2 className="font-bold text-white mb-4">Payment Method</h2>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => setPayment('online')}
-              className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${
-                payment === 'online' ? 'bg-green-500/10 border-green-500' : 'bg-black/40 border-white/5 opacity-60'
-              }`}
-            >
-              <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                <ShieldCheck size={22} className="text-green-400" />
-              </div>
-              <span className="text-[10px] font-black text-white uppercase tracking-wider text-center">Online</span>
-            </button>
-
-            <button
-              onClick={() => setPayment('cod')}
-              className={`flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all ${
-                payment === 'cod' ? 'bg-green-500/10 border-green-500' : 'bg-black/40 border-white/5 opacity-60'
-              }`}
-            >
-              <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
-                <Banknote size={22} className="text-orange-400" />
-              </div>
-              <span className="text-[10px] font-black text-white uppercase tracking-wider text-center">COD</span>
-            </button>
-          </div>
-        </section>
-
 
 
       </div>
@@ -416,22 +386,26 @@ export default function CheckoutPage() {
       {/* Floating Action Bar (Zomato Style) */}
       <div className="fixed bottom-0 left-0 right-0 z-40 max-w-lg mx-auto bg-[#1c1c1c] border-t border-white/5 p-3 flex items-center justify-between shadow-[0_-8px_30px_rgba(0,0,0,0.6)]">
         
-        {/* Payment Method Display */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center border border-white/5">
+        {/* Payment Toggle in bottom bar */}
+        <button
+          onClick={() => setPayment(payment === 'online' ? 'cod' : 'online')}
+          className="flex items-center gap-3 bg-white/5 hover:bg-white/10 transition-all rounded-2xl px-3 py-2 border border-white/10 active:scale-95"
+        >
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-white/10" style={{background: payment === 'online' ? 'rgba(34,197,94,0.15)' : 'rgba(251,146,60,0.15)'}}>
             {payment === 'online' ? (
-              <ShieldCheck size={20} className="text-green-500" />
+              <ShieldCheck size={18} className="text-green-500" />
             ) : (
-              <Banknote size={20} className="text-orange-500" />
+              <Banknote size={18} className="text-orange-400" />
             )}
           </div>
-          <div className="flex flex-col">
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Payment</span>
-            <span className="text-xs font-black text-white">
-                {payment === 'online' ? 'Online' : 'Cash on Delivery'}
+          <div className="flex flex-col text-left">
+            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Payment</span>
+            <span className="text-[11px] font-black text-white leading-tight">
+              {payment === 'online' ? 'Online' : 'Cash on Delivery'}
             </span>
           </div>
-        </div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="text-gray-500 ml-1"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
 
         {/* Place Order Button */}
         <motion.button

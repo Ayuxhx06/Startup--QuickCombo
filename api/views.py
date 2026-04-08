@@ -107,8 +107,6 @@ def send_order_confirmation_email(order):
     if has_food and has_essentials: eta = "40-45 mins"
     elif has_essentials and not has_food: eta = "15-20 mins"
 
-    upi_id = getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')
-    
     billing_update_html = ""
     if has_essentials:
         billing_update_html = f"""
@@ -148,7 +146,6 @@ def send_order_confirmation_email(order):
         <p>Estimated Delivery: <span style="color:#22c55e;font-weight:700">{eta}</span></p>
         <p>Delivery to: {order.delivery_address}</p>
         {billing_update_html}
-        <p style="margin-top:20px">UPI ID: {upi_id}</p>
       </div>
     </div>"""
 

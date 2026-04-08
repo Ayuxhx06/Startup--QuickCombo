@@ -1,13 +1,13 @@
 'use client';
 import { useState } from 'react';
-import { Package, Plus, Minus, ShoppingCart } from 'lucide-react';
+import { Package, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import toast from 'react-hot-toast';
 
 export default function ManualAddBox() {
     const { addItem } = useCart();
     const [name, setName] = useState('');
-    const [qty, setQty] = useState(1);
+    const [qtyText, setQtyText] = useState('1');
     const [unit, setUnit] = useState('piece');
 
     const handleAdd = (e: React.MouseEvent) => {
@@ -17,18 +17,23 @@ export default function ManualAddBox() {
             toast.error('Please enter item name');
             return;
         }
+        const parsedQty = parseFloat(qtyText);
+        if (isNaN(parsedQty) || parsedQty <= 0) {
+            toast.error('Enter a valid quantity (e.g. 1, 0.5, 2.5)');
+            return;
+        }
         addItem({
             id: `manual-${Date.now()}`,
             name: name.trim(),
             price: 0,
-            quantity: qty,
+            quantity: parsedQty,
             unit: unit,
             image_url: '',
             is_veg: true,
             category_name: 'Essentials'
         });
         setName('');
-        setQty(1);
+        setQtyText('1');
         toast.success(`Added ${name} to cart`);
     };
 
@@ -47,60 +52,57 @@ export default function ManualAddBox() {
                 </div>
             </div>
 
-            <div className="space-y-5">
-                <div className="relative">
-                    <input 
-                        type="text"
-                        value={name}
-                        onChange={e => setName(e.target.value)}
-                        placeholder="E.g. 555 Cigarette, 1L Milk, Specific medicine..."
-                        className="w-full bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-sm outline-none focus:border-green-500/50 transition-all font-medium placeholder:text-gray-600"
-                    />
-                </div>
+            <div className="space-y-4">
+                {/* Item Name */}
+                <input 
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    placeholder="E.g. 555 Cigarette, Specific medicine, 0.5L Milk..."
+                    className="w-full bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-sm outline-none focus:border-green-500/50 transition-all font-medium placeholder:text-gray-600"
+                />
 
-                <div className="flex flex-col gap-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                        <div className="flex items-center bg-black/60 border border-white/10 rounded-2xl p-1.5 h-12">
-                            <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:bg-white/5 active:scale-90 transition-all"><Minus size={18}/></button>
-                            <span className="w-10 text-center font-black text-sm text-white">{qty}</span>
-                            <button onClick={() => setQty(qty + 1)} className="w-9 h-9 rounded-xl flex items-center justify-center text-green-500 hover:bg-white/5 active:scale-90 transition-all"><Plus size={18}/></button>
-                        </div>
-
-                        {/* Quick Increment Buttons */}
-                        <div className="flex gap-2">
-                            {[1, 2, 5].map(v => (
-                                <button 
-                                    key={v}
-                                    onClick={() => setQty(qty + v)}
-                                    className="h-10 px-4 rounded-xl border border-white/10 bg-white/5 text-[11px] font-black text-gray-400 hover:text-green-400 hover:border-green-500/30 transition-all active:scale-95"
-                                >
-                                    +{v}
-                                </button>
-                            ))}
-                        </div>
+                {/* Quantity + Unit Row */}
+                <div className="flex items-center gap-3">
+                    {/* Qty Typed Input */}
+                    <div className="flex flex-col gap-1 flex-1">
+                        <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Qty</label>
+                        <input
+                            type="number"
+                            inputMode="decimal"
+                            step="0.5"
+                            min="0.1"
+                            value={qtyText}
+                            onChange={e => setQtyText(e.target.value)}
+                            placeholder="e.g. 0.5"
+                            className="w-full bg-black/60 border border-white/10 rounded-2xl px-4 py-3 text-sm outline-none focus:border-green-500/50 transition-all font-black text-white placeholder:text-gray-600 text-center"
+                        />
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
-                        <div className="flex bg-black/60 border border-white/10 rounded-2xl p-1 h-12">
+                    {/* Unit Selector */}
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Unit</label>
+                        <div className="flex bg-black/60 border border-white/10 rounded-2xl p-1 h-[46px]">
                             {['piece', 'kg', 'litre'].map(u => (
                                 <button 
                                     key={u}
                                     onClick={() => setUnit(u)}
-                                    className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase transition-all ${unit === u ? 'bg-green-500 text-black shadow-lg shadow-green-500/20' : 'text-gray-500 hover:text-white'}`}
+                                    className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase transition-all ${unit === u ? 'bg-green-500 text-black shadow-lg shadow-green-500/20' : 'text-gray-500 hover:text-white'}`}
                                 >
                                     {u === 'piece' ? 'Pc' : u === 'kg' ? 'Kg' : 'Lt'}
                                 </button>
                             ))}
                         </div>
-
-                        <button 
-                            onClick={handleAdd}
-                            className="flex-grow bg-green-500 text-black font-black uppercase h-12 px-6 rounded-2xl flex items-center justify-center gap-2 hover:bg-green-400 transition-all text-xs tracking-widest shadow-xl shadow-green-500/10 active:scale-[0.98]"
-                        >
-                            <ShoppingCart size={18} /> Add to Cart
-                        </button>
                     </div>
                 </div>
+
+                {/* Add Button */}
+                <button 
+                    onClick={handleAdd}
+                    className="w-full bg-green-500 text-black font-black uppercase h-12 px-6 rounded-2xl flex items-center justify-center gap-2 hover:bg-green-400 transition-all text-xs tracking-widest shadow-xl shadow-green-500/10 active:scale-[0.98]"
+                >
+                    <ShoppingCart size={18} /> Add to Cart
+                </button>
             </div>
         </div>
     );
