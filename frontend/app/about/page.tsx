@@ -20,18 +20,22 @@ export default function AboutPage() {
 
       <div className="p-4 space-y-6">
         {/* Intro */}
-        <section className="space-y-4">
-          <div className="w-20 h-20 rounded-3xl bg-green-500/10 flex items-center justify-center p-3 border border-green-500/20">
-            <Image src="/logo.png" alt="QuickCombo" width={80} height={80} className="object-contain" />
+        <section className="space-y-6">
+          <div className="w-24 h-24 rounded-[2rem] bg-white/5 flex items-center justify-center p-4 border border-white/10 shadow-2xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-green-500/5 group-hover:bg-green-500/10 transition-colors" />
+            <Image src="/logo.png" alt="QuickCombo" width={80} height={80} className="object-contain relative z-10" />
           </div>
-          <h2 className="text-3xl font-black text-white leading-tight">
-            Fastest Delivery<br />
-            <span className="gradient-text">For Your Essentials.</span>
-          </h2>
-          <p className="text-gray-400 text-sm leading-relaxed">
-            QuickCombo is dedicated to bringing you the best food combos and daily essentials in record time. 
-            We partner with the best local restaurants and vendors to ensure quality and speed.
-          </p>
+          <div>
+            <h2 className="text-4xl font-black text-white leading-none tracking-tighter mb-4 uppercase italic">
+              Revolutionizing<br />
+              <span className="text-green-500">Hyper-Local</span> Delivery.
+            </h2>
+            <p className="text-gray-400 text-sm leading-relaxed font-medium">
+              QuickCombo is your elite gateway to instant cravings and daily essentials. 
+              We've engineered a logistics network that connects you with premium local 
+              partners to deliver quality, speed, and reliability—straight to your door.
+            </p>
+          </div>
         </section>
 
         {/* Contact info */}
@@ -62,41 +66,46 @@ export default function AboutPage() {
         </section>
 
         {/* MSME Section */}
-        <section className="space-y-4">
+        <section className="space-y-6">
           <div className="flex items-center justify-between px-2">
-            <h3 className="font-bold text-gray-400 text-xs uppercase tracking-widest flex items-center gap-2">
-              <ShieldCheck size={14} className="text-green-500" /> MSME Verification
+            <h3 className="font-black text-gray-500 text-[10px] uppercase tracking-[0.3em] flex items-center gap-2 italic">
+              <ShieldCheck size={14} className="text-green-500" /> OFFICIAL_IDENTITY_VERIFIED
             </h3>
           </div>
-          <div className="bg-[#141414] border border-white/5 rounded-[32px] p-6 text-center space-y-4">
-            <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden border border-white/10 bg-white/5 group">
+          <div className="bg-[#141414] border border-white/5 rounded-[2.5rem] p-8 text-center space-y-6 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            </div>
+            <div className="relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 bg-white/5 group shadow-inner">
               <Image 
                 src="/cert_msme.png" 
                 alt="MSME Certificate" 
                 fill 
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-sm">
                 <a 
                   href="/cert_msme.png" 
                   download 
-                  className="bg-green-500 text-black p-4 rounded-full shadow-2xl hover:scale-110 transition-transform"
+                  className="bg-green-500 text-black px-8 py-3 rounded-full font-black text-xs shadow-2xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-2"
                 >
-                  <Download size={24} />
+                  <Download size={18} /> DOWNLOAD_ASSET
                 </a>
               </div>
             </div>
-            <div className="pt-2">
-              <p className="text-white font-bold mb-1">Registered Enterprise</p>
-              <p className="text-xs text-gray-500 leading-relaxed max-w-[200px] mx-auto mb-4">
-                QuickCombo is a registered Micro enterprise under the Ministry of MSME, Government of India.
+            <div className="pt-2 text-left">
+              <p className="text-white font-black text-xl uppercase italic mb-1">Micro Enterprise Registered</p>
+              <p className="text-xs text-gray-500 leading-relaxed mb-6 font-medium">
+                QuickCombo.in is officially recognized as a Micro Enterprise under the Ministry of MSME, 
+                Government of India (Udyam Registration). We are committed to the highest standards of 
+                operational excellence and legal compliance.
               </p>
               <a 
                 href="/cert_msme.png" 
                 target="_blank" 
-                className="inline-flex items-center gap-2 text-xs font-bold text-green-500 bg-green-500/10 px-4 py-2 rounded-full border border-green-500/20"
+                className="inline-flex items-center gap-2 text-[10px] font-black text-green-500 bg-green-500/10 px-6 py-3 rounded-xl border border-green-500/20 uppercase tracking-widest hover:bg-green-500 hover:text-black transition-all"
               >
-                View Certificate <ExternalLink size={12} />
+                OPEN FULL CERTIFICATE <ExternalLink size={12} />
               </a>
             </div>
           </div>

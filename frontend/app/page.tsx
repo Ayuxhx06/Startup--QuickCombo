@@ -265,13 +265,12 @@ export default function HomePage() {
       <section className="px-4 mb-20">
         <div className="glass rounded-[32px] overflow-hidden border border-white/10 shadow-2xl">
           <div className="p-6 bg-gradient-to-br from-green-500/5 to-transparent flex flex-col items-center text-center">
-            <div className="w-full max-w-[280px] aspect-[5/2] relative rounded-xl overflow-hidden border border-white/5 mb-4 bg-white/5 p-2">
+            <div className="w-full max-w-[280px] h-[100px] relative rounded-xl overflow-hidden mb-4 bg-white/5 p-2">
               <Image 
                 src="/msme_logo.png" 
                 alt="MSME Udyam Registration" 
-                width={280}
-                height={112}
-                className="w-full h-full object-contain"
+                fill
+                className="object-contain"
               />
             </div>
             <div className="flex items-center gap-2 mb-2">
@@ -279,20 +278,20 @@ export default function HomePage() {
               <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Verified MSME Enterprise</span>
             </div>
             <p className="text-[11px] text-gray-500 font-medium leading-relaxed max-w-[240px] mb-4">
-              Registered under Ministry of Micro, Small & Medium Enterprises (Udyam Registration)
+              QuickCombo is a registered enterprise under India's Ministry of MSME.
             </p>
             <Link href="/about">
               <motion.button 
                 whileTap={{ scale: 0.95 }}
-                className="text-xs font-bold text-green-400 border border-green-500/30 px-6 py-2 rounded-full hover:bg-green-500/10 transition-all"
+                className="text-xs font-bold text-green-400 border border-green-500/30 px-6 py-2 rounded-full hover:bg-green-500/10 transition-all font-mono tracking-tighter"
               >
-                About Us & Certification
+                VIEW_CERTIFICATION_HUB
               </motion.button>
             </Link>
           </div>
         </div>
         <div className="text-center mt-8 pb-4">
-          <p className="text-[10px] text-gray-600 font-bold tracking-widest uppercase">QuickCombo • Made with ❤️ in India</p>
+          <p className="text-[10px] text-gray-700 font-black tracking-widest uppercase italic">QuickCombo • Made with ❤️ in India</p>
         </div>
       </section>
     </div>

@@ -105,8 +105,11 @@ export default function Navbar() {
           {/* Left: Logo + Location Stack */}
           <div className="flex flex-col items-start justify-center">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-1 group">
-              <span className="font-black text-xl tracking-tight text-white mb-0.5">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-8 h-8 relative rounded-lg overflow-hidden border border-white/10 group-hover:border-green-500/50 transition-colors">
+                <Image src="/logo.png" alt="QuickCombo Logo" fill className="object-contain" />
+              </div>
+              <span className="font-black text-xl tracking-tighter text-white mb-0.5 group-hover:text-green-400 transition-colors">
                 Quick<span className="text-green-500">Combo</span>
               </span>
             </Link>
