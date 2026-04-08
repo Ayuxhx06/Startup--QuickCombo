@@ -98,6 +98,13 @@ export default function PremiumAdmin() {
           const res = await axios.get(`${base}/api/admin/users/`, getHeaders());
           setUsers(res.data);
       }
+
+      // GLOBAL REFRESH: Always fetch these as they are needed for selection modals in other tabs
+      const catsRes = await axios.get(`${base}/api/admin/categories/`, getHeaders());
+      setCategories(catsRes.data);
+      const restsRes = await axios.get(`${base}/api/admin/restaurants/`, getHeaders());
+      setRestaurants(restsRes.data);
+      
     } catch (e: any) {
       // Emergency Second Chance: If the initial fetch fails and wasn't already using LIVE_BACKEND, try it now.
       if (base !== LIVE_BACKEND) {

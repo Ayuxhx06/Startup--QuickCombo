@@ -4,12 +4,20 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Sum, Count
 from django.conf import settings
+from django.core.cache import cache
 
 # Use absolute imports for reliability on AlwaysData
 from api.models import User, Order, MenuItem, Restaurant, Category
 from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer
 import csv
 import io
+
+def clear_admin_caches():
+    """Invalidate public listing caches after admin mutations."""
+    # We clear the specific keys used by @cache_page if known, 
+    # but since they are dynamic based on params, clear() is safest for consistency.
+    cache.clear()
+    print("✨ Admin mutation: Cache cleared for instance reflection.")
 
 @api_view(['GET'])
 def admin_stats(request):
@@ -75,6 +83,7 @@ def admin_menu_items(request):
         serializer = MenuItemSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            clear_admin_caches()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -85,6 +94,7 @@ def admin_menu_items(request):
             serializer = MenuItemSerializer(item, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                clear_admin_caches()
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
         except MenuItem.DoesNotExist:
@@ -95,6 +105,7 @@ def admin_menu_items(request):
         try:
             item = MenuItem.objects.get(pk=item_id)
             item.delete()
+            clear_admin_caches()
             return Response(status=204)
         except MenuItem.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
@@ -112,6 +123,7 @@ def admin_categories(request):
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            clear_admin_caches()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -122,6 +134,7 @@ def admin_categories(request):
             serializer = CategorySerializer(category, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                clear_admin_caches()
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
         except Category.DoesNotExist:
@@ -132,6 +145,7 @@ def admin_categories(request):
         try:
             category = Category.objects.get(pk=cat_id)
             category.delete()
+            clear_admin_caches()
             return Response(status=204)
         except Category.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
@@ -149,6 +163,7 @@ def admin_restaurants(request):
         serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            clear_admin_caches()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -159,6 +174,7 @@ def admin_restaurants(request):
             serializer = RestaurantSerializer(restaurant, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                clear_admin_caches()
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
         except Restaurant.DoesNotExist:
@@ -169,6 +185,7 @@ def admin_restaurants(request):
         try:
             restaurant = Restaurant.objects.get(pk=res_id)
             restaurant.delete()
+            clear_admin_caches()
             return Response(status=204)
         except Restaurant.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
@@ -221,9 +238,19 @@ def admin_bulk_import(request):
                     )
                     created_count += 1
                 elif target_type == 'menu':
+                    # Dynamic Lookup for related fields to make CSV import more robust
+                    r_id = row.get('restaurant_id')
+                    if not r_id and row.get('restaurant_name'):
+                        r_match = Restaurant.objects.filter(name__icontains=row['restaurant_name']).first()
+                        if r_match: r_id = r_match.id
+                    
+                    c_id = row.get('category_id')
+                    if not c_id and row.get('category_name'):
+                        c_match = Category.objects.filter(name__icontains=row['category_name']).first()
+                        if c_match: c_id = c_match.id
+
                     MenuItem.objects.update_or_create(
                         name=row['name'],
-                        restaurant_name=row.get('restaurant_name'), # Helper or actual ID
                         defaults={
                             'description': row.get('description', ''),
                             'price': float(row.get('price', 0)),
@@ -231,14 +258,17 @@ def admin_bulk_import(request):
                             'is_veg': row.get('is_veg', 'true').lower() == 'true',
                             'rating': float(row.get('rating', 4.5)),
                             'prep_time': int(row.get('prep_time', 25)),
-                            'category_id': int(row.get('category_id', 1)),
-                            'restaurant_id': int(row.get('restaurant_id', 1)),
+                            'category_id': int(c_id or 1),
+                            'restaurant_id': int(r_id or 1),
                             'is_featured': row.get('is_featured', 'false').lower() == 'true'
                         }
                     )
                     created_count += 1
             except Exception as e:
                 errors.append(f"Row error: {str(e)}")
+
+        if created_count > 0:
+            clear_admin_caches()
 
         return Response({
             'success': True,
