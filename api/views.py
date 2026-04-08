@@ -107,6 +107,20 @@ def send_order_confirmation_email(order):
     if has_food and has_essentials: eta = "40-45 mins"
     elif has_essentials and not has_food: eta = "15-20 mins"
 
+    upi_id = getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')
+    
+    billing_update_html = ""
+    if has_essentials:
+        billing_update_html = f"""
+        <div style="background:#22c55e11;border:1px solid #22c55e33;border-radius:12px;padding:16px;margin-top:20px;text-align:left">
+          <p style="color:#22c55e;font-weight:800;margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:1px">⚠️ Important Billing Update</p>
+          <p style="color:#d1d5db;font-size:13px;margin:0;line-height:1.5">
+            Final bill will be shared with you via WhatsApp. <br/><br/>
+            • If you have already paid the cart amount, you can pay the remaining amount to the delivery person. <br/>
+            • If you selected Cash on Delivery, please pay the full final bill amount directly to the delivery person.
+          </p>
+        </div>"""
+
     html_template = f"""
     <div style="font-family:Inter,sans-serif;max-width:560px;margin:auto;background:#0a0a0a;color:#fff;border-radius:16px;padding:32px;border:1px solid #22c55e22">
       <h2 style="color:#22c55e">@TITLE@</h2>
@@ -121,31 +135,22 @@ def send_order_confirmation_email(order):
           <tbody>{items_html}</tbody>
         </table>
         <div style="border-top:1px solid #1f2937;margin-top:8px;padding-top:12px;display:flex;justify-content:space-between">
-          <span style="color:#6b7280">Subtotal</span><span style="color:#d1d5db">₹{{order.subtotal}}</span>
+          <span style="color:#6b7280">Subtotal</span><span style="color:#d1d5db">₹{order.subtotal}</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:4px 0">
-          <span style="color:#6b7280">Delivery Fee</span><span style="color:#d1d5db">₹{{order.delivery_fee}}</span>
+          <span style="color:#6b7280">Delivery Fee</span><span style="color:#d1d5db">₹{order.delivery_fee}</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:18px;font-weight:700">
-          <span style="color:#fff">Total</span><span style="color:#22c55e">₹{{order.total}}</span>
+          <span style="color:#fff">Total</span><span style="color:#22c55e">₹{order.total}</span>
         </div>
       </div>
       <div style="text-align:center;color:#6b7280;font-size:14px">
         <p>Estimated Delivery: <span style="color:#22c55e;font-weight:700">{eta}</span></p>
-        <p>Delivery to: {{order.delivery_address}}</p>
-        
-        <div style="background:#22c55e11;border:1px solid #22c55e33;border-radius:12px;padding:16px;margin-top:20px;text-align:left">
-          <p style="color:#22c55e;font-weight:800;margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:1px">⚠️ Important Billing Update</p>
-          <p style="color:#d1d5db;font-size:13px;margin:0;line-height:1.5">
-            Final bill will be shared with you via WhatsApp. <br/><br/>
-            • If you have already paid the cart amount, you can pay the remaining amount to the delivery person. <br/>
-            • If you selected Cash on Delivery, please pay the full final bill amount directly to the delivery person.
-          </p>
-        </div>
-
-        <p style="margin-top:20px">UPI ID: {{getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')}}</p>
+        <p>Delivery to: {order.delivery_address}</p>
+        {billing_update_html}
+        <p style="margin-top:20px">UPI ID: {upi_id}</p>
       </div>
-    </div>""".replace("{{order.subtotal}}", str(order.subtotal)).replace("{{order.delivery_fee}}", str(order.delivery_fee)).replace("{{order.total}}", str(order.total)).replace("{{order.delivery_address}}", order.delivery_address).replace("{{getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')}}", getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis'))
+    </div>"""
 
     # Send to User
     user_subject = f"🎉 Order Confirmed! #QC{order.id:04d}"
