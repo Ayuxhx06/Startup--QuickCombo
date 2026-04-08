@@ -141,25 +141,25 @@ REST_FRAMEWORK = {
 
 # Email Configuration (SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST', default='smtp-relay.brevo.com')
-EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='a5a14a001@smtp-brevo.com')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='xsmtpsib-' + '141d3bfdb6a51e7cbe10f42b52e9bc2672c3935a6515a515f6ef3ca5b4237d19-vMz4nnEusIPVMTpG')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='QuickCombo <ayushtomar061004@gmail.com>')
+EMAIL_HOST = config('EMAIL_HOST', default='') or 'smtp-relay.brevo.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='') or 'a5a14a001@smtp-brevo.com'
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='') or 'xsmtpsib-' + '141d3bfdb6a51e7cbe10f42b52e9bc2672c3935a6515a515f6ef3ca5b4237d19-vMz4nnEusIPVMTpG'
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='') or 'QuickCombo <ayushtomar061004@gmail.com>'
 
 # Legacy Brevo keys (to be removed once fully migrated)
-BREVO_API_KEY = config('BREVO_API_KEY', default='xkeysib-' + '141d3bfdb6a51e7cbe10f42b52e9bc2672c3935a6515a515f6ef3ca5b4237d19-jVb9hORlbgI1yzyc')
-BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='ayushtomar061004@gmail.com')
-ADMIN_EMAIL = config('ADMIN_EMAIL', default='support@quickcombo.in')
-GEOAPIFY_KEY = config('GEOAPIFY_KEY', default='8861a276c2d0445eb971d14867e39664')
-UPI_ID = config('UPI_ID', default='ayushtomar061004-1@okaxis')
-UPI_NAME = config('UPI_NAME', default='Ayush Tomar')
-ADMIN_PANEL_PASSWORD = config('ADMIN_PANEL_PASSWORD', default='Admin@4098')
+BREVO_API_KEY = config('BREVO_API_KEY', default='') or 'xkeysib-' + '141d3bfdb6a51e7cbe10f42b52e9bc2672c3935a6515a515f6ef3ca5b4237d19-jVb9hORlbgI1yzyc'
+BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='') or 'ayushtomar061004@gmail.com'
+ADMIN_EMAIL = config('ADMIN_EMAIL', default='') or 'support@quickcombo.in'
+GEOAPIFY_KEY = config('GEOAPIFY_KEY', default='') or '8861a276c2d0445eb971d14867e39664'
+UPI_ID = config('UPI_ID', default='') or 'ayushtomar061004-1@okaxis'
+UPI_NAME = config('UPI_NAME', default='') or 'Ayush Tomar'
+ADMIN_PANEL_PASSWORD = config('ADMIN_PANEL_PASSWORD', default='') or 'Admin@4098'
 
 # Cashfree Configuration
-CASHFREE_APP_ID = config('CASHFREE_APP_ID', default='125266011ae6630b2d9ee278d940662521')
-CASHFREE_SECRET_KEY = config('CASHFREE_SECRET_KEY', default='cfsk_ma_prod_' + 'fb68e1059e38db892c2a8d7888358dcc_d5633fef')
-CASHFREE_WEBHOOK_SECRET = config('CASHFREE_WEBHOOK_SECRET', default='okv20tnceilouw6uqgod')
-CASHFREE_MODE = config('CASHFREE_MODE', default='production')
+CASHFREE_APP_ID = config('CASHFREE_APP_ID', default='') or '125266011ae6630b2d9ee278d940662521'
+CASHFREE_SECRET_KEY = config('CASHFREE_SECRET_KEY', default='') or 'cfsk_ma_prod_' + 'fb68e1059e38db892c2a8d7888358dcc_d5633fef'
+CASHFREE_WEBHOOK_SECRET = config('CASHFREE_WEBHOOK_SECRET', default='') or 'okv20tnceilouw6uqgod'
+CASHFREE_MODE = config('CASHFREE_MODE', default='') or 'production'
