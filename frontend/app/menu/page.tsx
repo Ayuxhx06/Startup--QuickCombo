@@ -8,7 +8,7 @@ import FoodCard from '@/components/FoodCard';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import toast from 'react-hot-toast';
-import { Plus, Minus, Package, ShoppingCart } from 'lucide-react';
+import ManualAddBox from '@/components/ManualAddBox';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
@@ -22,84 +22,6 @@ interface MenuItem {
   id: number; name: string; description: string; price: number;
   image_url: string; is_veg: boolean; rating: number; prep_time: number;
   category_name: string; is_featured: boolean; restaurant_name?: string;
-}
-
-function ManualAddBox() {
-    const { addItem } = useCart();
-    const [name, setName] = useState('');
-    const [qty, setQty] = useState(1);
-    const [unit, setUnit] = useState('piece');
-
-    const handleAdd = () => {
-        if (!name.trim()) {
-            toast.error('Please enter item name');
-            return;
-        }
-        addItem({
-            id: `manual-${Date.now()}`,
-            name: name.trim(),
-            price: 0,
-            quantity: qty,
-            unit: unit,
-            image_url: '',
-            is_veg: true,
-            category_name: 'Essentials'
-        });
-        setName('');
-        setQty(1);
-        toast.success(`Added ${name} to cart`);
-    };
-
-    return (
-        <div className="bg-[#111] border border-green-500/20 rounded-3xl p-6 mb-8 shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
-                    <Package size={20} />
-                </div>
-                <div>
-                    <h3 className="font-black uppercase italic text-sm tracking-wider">Didn't find what you need?</h3>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase">Add it manually below!</p>
-                </div>
-            </div>
-
-            <div className="space-y-4">
-                <input 
-                    type="text"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="E.g. 555 Cigarette, 1L Milk..."
-                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 text-sm outline-none focus:border-green-500/50 transition-all font-medium"
-                />
-
-                <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex items-center bg-black/40 border border-white/5 rounded-2xl p-1.5">
-                        <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-400 hover:bg-white/5"><Minus size={16}/></button>
-                        <span className="w-10 text-center font-black text-sm">{qty}</span>
-                        <button onClick={() => setQty(qty + 1)} className="w-8 h-8 rounded-xl flex items-center justify-center text-green-500 hover:bg-white/5"><Plus size={16}/></button>
-                    </div>
-
-                    <div className="flex bg-black/40 border border-white/5 rounded-2xl p-1">
-                        {['piece', 'kg', 'litre'].map(u => (
-                            <button 
-                                key={u}
-                                onClick={() => setUnit(u)}
-                                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all ${unit === u ? 'bg-green-500 text-black' : 'text-gray-500 hover:text-white'}`}
-                            >
-                                {u === 'piece' ? 'Pc' : u === 'kg' ? 'Kg' : 'Lt'}
-                            </button>
-                        ))}
-                    </div>
-
-                    <button 
-                        onClick={handleAdd}
-                        className="flex-grow bg-green-500 text-black font-black uppercase py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-green-400 transition-all text-xs tracking-widest shadow-lg shadow-green-500/10"
-                    >
-                        <ShoppingCart size={16} /> Add to Cart
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
 }
 
 function MenuContent() {

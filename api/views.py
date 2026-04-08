@@ -85,7 +85,8 @@ def send_order_confirmation_email(order):
     }
 
     items_html = "".join([
-        f"<tr><td style='padding:8px;color:#d1d5db'>{item.quantity} {item.unit if item.unit != 'piece' else 'pc'} {item.name}</td>"
+        f"<tr><td style='padding:8px;color:#d1d5db'>{item.quantity} {item.unit if item.unit != 'piece' else 'pc'} {item.name}"
+        f"{' <span style=\"color:#22c55e;font-size:10px;font-weight:700;background:#22c55e22;padding:2px 6px;border-radius:4px;margin-left:8px\">SPECIAL REQUEST</span>' if not item.menu_item else ''}</td>"
         f"<td style='padding:8px;color:#6b7280;text-align:center'>x{item.quantity}</td>"
         f"<td style='padding:8px;color:#22c55e;text-align:right'>₹{item.price * item.quantity}</td></tr>"
         for item in order.items.all()
@@ -98,7 +99,9 @@ def send_order_confirmation_email(order):
             n = i.menu_item.category.name.lower()
             if 'essential' in n or 'grocery' in n: has_essentials = True
             else: has_food = True
-        else: has_food = True
+        else:
+            # Manual items are usually essentials
+            has_essentials = True
         
     eta = "35-40 mins"
     if has_food and has_essentials: eta = "40-45 mins"
@@ -118,22 +121,31 @@ def send_order_confirmation_email(order):
           <tbody>{items_html}</tbody>
         </table>
         <div style="border-top:1px solid #1f2937;margin-top:8px;padding-top:12px;display:flex;justify-content:space-between">
-          <span style="color:#6b7280">Subtotal</span><span style="color:#d1d5db">₹{order.subtotal}</span>
+          <span style="color:#6b7280">Subtotal</span><span style="color:#d1d5db">₹{{order.subtotal}}</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:4px 0">
-          <span style="color:#6b7280">Delivery Fee</span><span style="color:#d1d5db">₹{order.delivery_fee}</span>
+          <span style="color:#6b7280">Delivery Fee</span><span style="color:#d1d5db">₹{{order.delivery_fee}}</span>
         </div>
         <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:18px;font-weight:700">
-          <span style="color:#fff">Total</span><span style="color:#22c55e">₹{order.total}</span>
+          <span style="color:#fff">Total</span><span style="color:#22c55e">₹{{order.total}}</span>
         </div>
       </div>
       <div style="text-align:center;color:#6b7280;font-size:14px">
         <p>Estimated Delivery: <span style="color:#22c55e;font-weight:700">{eta}</span></p>
-        <p>Delivery to: {order.delivery_address}</p>
-        <p style="color:#22c55e;font-weight:700;margin-top:12px;font-size:12px">Note: Final bill will be sent to you via whatsapp. You can pay the remaining amount to the delivery person when delivered.</p>
-        <p>UPI ID: {getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')}</p>
+        <p>Delivery to: {{order.delivery_address}}</p>
+        
+        <div style="background:#22c55e11;border:1px solid #22c55e33;border-radius:12px;padding:16px;margin-top:20px;text-align:left">
+          <p style="color:#22c55e;font-weight:800;margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:1px">⚠️ Important Billing Update</p>
+          <p style="color:#d1d5db;font-size:13px;margin:0;line-height:1.5">
+            Final bill will be shared with you via WhatsApp. <br/><br/>
+            • If you have already paid the cart amount, you can pay the remaining amount to the delivery person. <br/>
+            • If you selected Cash on Delivery, please pay the full final bill amount directly to the delivery person.
+          </p>
+        </div>
+
+        <p style="margin-top:20px">UPI ID: {{getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')}}</p>
       </div>
-    </div>"""
+    </div>""".replace("{{order.subtotal}}", str(order.subtotal)).replace("{{order.delivery_fee}}", str(order.delivery_fee)).replace("{{order.total}}", str(order.total)).replace("{{order.delivery_address}}", order.delivery_address).replace("{{getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis')}}", getattr(settings, 'UPI_ID', 'ayushtomar061004-1@okaxis'))
 
     # Send to User
     user_subject = f"🎉 Order Confirmed! #QC{order.id:04d}"

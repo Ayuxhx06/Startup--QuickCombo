@@ -9,7 +9,8 @@ import { ArrowRight, Zap, Star, Clock, MapPin, ChevronRight, Search } from 'luci
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 const WeatherWidget = dynamic(() => import('@/components/WeatherWidget'), { ssr: false });
-const FoodCard = dynamic(() => import('@/components/FoodCard'), { ssr: false });
+import FoodCard from '@/components/FoodCard';
+import ManualAddBox from '@/components/ManualAddBox';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
@@ -249,7 +250,7 @@ export default function HomePage() {
         <Link href="/menu?category=essentials">
           <motion.div
             whileTap={{ scale: 0.98 }}
-            className="glass rounded-2xl p-4 flex items-center justify-between hover:border-green-500/20 transition-all"
+            className="glass rounded-2xl p-4 flex items-center justify-between hover:border-green-500/20 transition-all mb-4"
           >
             <div className="flex items-center gap-4">
               <div className="text-3xl">🛒</div>
@@ -261,6 +262,9 @@ export default function HomePage() {
             <ChevronRight size={20} className="text-gray-500" />
           </motion.div>
         </Link>
+        
+        {/* Special Request Box on Home Page */}
+        <ManualAddBox />
       </section>
       <section className="px-4 mb-20">
         <div className="glass rounded-[32px] overflow-hidden border border-white/10 shadow-2xl">
