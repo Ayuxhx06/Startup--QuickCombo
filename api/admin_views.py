@@ -287,3 +287,12 @@ def admin_clear_cache(request):
     
     clear_admin_caches()
     return Response({'success': True, 'message': 'Global cache cleared successfully'})
+
+@api_view(['GET'])
+def admin_version(request):
+    """Return the current infrastructure version for drift detection."""
+    return Response({
+        'version': '1.2.1',
+        'status': 'operational',
+        'features': ['manual_sync', 'multi_case_auth', 'hardened_cors']
+    })

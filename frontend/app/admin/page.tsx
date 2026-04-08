@@ -41,6 +41,8 @@ export default function PremiumAdmin() {
   const [formLoading, setFormLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [serverVersion, setServerVersion] = useState<string | null>(null);
+  const [outOfSync, setOutOfSync] = useState(false);
 
   // Auto-login check
   useEffect(() => {
@@ -108,12 +110,24 @@ export default function PremiumAdmin() {
       await safeFetch(`${base}/api/admin/categories/`, setCategories);
       await safeFetch(`${base}/api/admin/restaurants/`, setRestaurants);
       
+      // Check Version
+      try {
+          const vRes = await axios.get(`${base}/api/admin/version/`);
+          setServerVersion(vRes.data.version);
+          if (vRes.data.version !== '1.2.1') setOutOfSync(true);
+      } catch (e) {
+          // If version endpoint exists but fails preflight, it's definitely out of sync
+          setOutOfSync(true);
+      }
+      
     } catch (e: any) {
       if (e.response?.status === 401) {
         toast.error('Invalid Master Password');
         handleLogout();
       } else {
-        // We've already logged individual errors, don't spam toasts
+        // Detected a general request failure (likely CORS/Security block)
+        setOutOfSync(true);
+        toast.error('Security System Blocked - Please Sync & Restart Server', { duration: 6000 });
       }
     } finally {
       setLoading(false);
@@ -357,6 +371,18 @@ export default function PremiumAdmin() {
             <h2 className="text-3xl lg:text-5xl font-black tracking-tight mb-2 uppercase italic">{activeTab}</h2>
             <p className="text-gray-400 lg:text-gray-500 font-medium text-base lg:text-lg">Infrastructure Control Panel</p>
           </div>
+          {outOfSync && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                className="bg-red-500/10 border border-red-500/30 p-4 rounded-2xl flex items-center gap-4 lg:min-w-[400px]"
+              >
+                  <AlertCircle className="text-red-500 w-8 h-8 shrink-0 animate-pulse" />
+                  <div>
+                      <h4 className="text-red-500 font-black text-xs uppercase tracking-widest">CRITICAL: SERVER OUT OF SYNC</h4>
+                      <p className="text-[10px] text-red-500/80 font-bold uppercase">Please Pull Latest Code on AlwaysData & Restart</p>
+                  </div>
+              </motion.div>
+          )}
           <div className="flex items-center gap-3">
             <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl px-4 lg:px-6 py-3 lg:py-4 flex items-center gap-4 flex-grow lg:min-w-[300px]">
                 <Search className="text-gray-600" size={18} />
