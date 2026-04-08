@@ -10,7 +10,7 @@ export interface CartItem {
   image_url: string;
   is_veg: boolean;
   category_name?: string;
-  unit: string; // piece, kg, litre
+  unit?: string; // piece, kg, litre
 }
 
 interface CartContextType {
@@ -44,18 +44,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addItem = (item: CartItem) => {
+    const newItem = { ...item, quantity: item.quantity || 1, unit: item.unit || 'piece' };
     setItems(prev => {
       // For manual items, we might have multiple entries with same name but different units
-      const existing = prev.find(i => i.id === item.id);
+      const existing = prev.find(i => i.id === newItem.id);
       if (existing) {
-        return prev.map(i => i.id === item.id
-          ? { ...i, quantity: i.quantity + (item.quantity || 1) }
+        return prev.map(i => i.id === newItem.id
+          ? { ...i, quantity: i.quantity + (newItem.quantity || 1) }
           : i
         );
       }
-      return [...prev, { ...item, quantity: item.quantity || 1 }];
+      return [...prev, newItem];
     });
-    setFlyItem(item);
+    setFlyItem(newItem);
     setTimeout(() => setFlyItem(null), 700);
   };
 
