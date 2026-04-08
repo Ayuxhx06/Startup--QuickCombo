@@ -109,7 +109,7 @@ def send_order_confirmation_email(order):
             <tbody>{rows}</tbody>
           </table>
           <p style="color:#9ca3af;font-size:11px;margin:10px 0 0;line-height:1.5">
-            Cost of special items will be collected by the delivery partner at your doorstep.
+            The amount of special order is to be paid when delivered to the delivery person and will be informed by them.
           </p>
         </div>"""
 
