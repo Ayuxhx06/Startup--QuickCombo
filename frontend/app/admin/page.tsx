@@ -6,8 +6,10 @@ import {
   TrendingUp, Clock, CheckCircle, Package, Search,
   Plus, Edit2, Trash2, ChevronRight, LogOut, Loader2, 
   Lock, Users, BarChart3, Layers, Store, ShieldCheck,
-  AlertCircle, ArrowUpRight, DollarSign, PieChart, Menu, X
+  AlertCircle, ArrowUpRight, DollarSign, PieChart, Menu, X,
+  FileUp, Download
 } from 'lucide-react';
+import { useRef } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -37,6 +39,8 @@ export default function PremiumAdmin() {
   const [modalType, setModalType] = useState<'restaurant' | 'menu' | 'category'>('restaurant');
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
   const [formLoading, setFormLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
   // Auto-login check
   useEffect(() => {
@@ -147,6 +151,42 @@ export default function PremiumAdmin() {
       fetchData();
     } catch (e) {
       toast.error('Deletion failed');
+    }
+  };
+
+  const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'restaurants' | 'menu') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+
+    setUploading(true);
+    const toastId = toast.loading(`Importing ${type}...`);
+    
+    try {
+      const res = await axios.post(`${API}/api/admin/bulk-import/`, formData, {
+        headers: {
+          ...getHeaders().headers,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      if (res.data.success) {
+        toast.success(`Imported ${res.data.created} items successfully!`, { id: toastId });
+        if (res.data.errors?.length > 0) {
+          console.warn('Import warnings:', res.data.errors);
+          toast('Some rows had errors (check console)', { icon: '⚠️' });
+        }
+        fetchData();
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Bulk import failed', { id: toastId });
+    } finally {
+      setUploading(false);
+      // @ts-ignore
+      if (e.target) e.target.value = '';
     }
   };
 
@@ -388,12 +428,27 @@ export default function PremiumAdmin() {
                         <h3 className="text-2xl lg:text-3xl font-black">FOOD INVENTORY</h3>
                         <p className="text-gray-500">Manage Menu Items and pricing</p>
                     </div>
-                    <button 
-                        onClick={() => openModal('menu')}
-                        className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto"
-                    >
-                        <Plus size={18} /> ADD NEW ITEM
-                    </button>
+                    <div className="flex gap-3">
+                        <input 
+                            type="file" 
+                            accept=".csv" 
+                            className="hidden" 
+                            ref={fileInputRef}
+                            onChange={(e) => handleBulkUpload(e, 'menu')}
+                        />
+                        <button 
+                            onClick={() => fileInputRef.current?.click()}
+                            className="bg-white/5 text-emerald-500 font-bold px-5 py-3 rounded-xl border border-emerald-500/20 hover:bg-emerald-500/10 transition-all flex items-center gap-2"
+                        >
+                            <FileUp size={18} /> BULK IMPORT
+                        </button>
+                        <button 
+                            onClick={() => openModal('menu')}
+                            className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto"
+                        >
+                            <Plus size={18} /> ADD NEW ITEM
+                        </button>
+                    </div>
                  </div>
                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
                    {menuItems.map(item => (
@@ -449,12 +504,31 @@ export default function PremiumAdmin() {
 
             {activeTab === 'restaurants' && (
                 <motion.div key="restaurants" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-4 lg:gap-6">
-                    <button 
-                        onClick={() => openModal('restaurant')}
-                        className="bg-emerald-500 text-black font-black px-6 py-4 rounded-2xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start mb-4"
-                    >
-                        <Plus size={20} /> ADD PARTNER RESTAURANT
-                    </button>
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex gap-4">
+                            <button 
+                                onClick={() => openModal('restaurant')}
+                                className="bg-emerald-500 text-black font-black px-6 py-4 rounded-2xl hover:bg-emerald-400 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10"
+                            >
+                                <Plus size={20} /> ADD PARTNER
+                            </button>
+                            <button 
+                                onClick={() => {
+                                    const input = document.createElement('input');
+                                    input.type = 'file';
+                                    input.accept = '.csv';
+                                    input.onchange = (e: any) => handleBulkUpload(e, 'restaurants');
+                                    input.click();
+                                }}
+                                className="bg-white/5 text-gray-400 font-bold px-6 py-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-all flex items-center gap-2"
+                            >
+                                <FileUp size={20} /> BULK IMPORT (CSV)
+                            </button>
+                        </div>
+                        <div className="text-[10px] text-gray-600 font-black tracking-[0.2em] uppercase italic">
+                            Required: name, rating, delivery_time, cuisines
+                        </div>
+                    </div>
                     {restaurants.map(res => (
                         <div key={res.id} className="bg-[#080808] p-4 lg:p-6 rounded-2xl lg:rounded-3xl border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
                             <div className="flex items-center gap-4 lg:gap-6">

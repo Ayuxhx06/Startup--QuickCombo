@@ -8,6 +8,8 @@ from django.conf import settings
 # Use absolute imports for reliability on AlwaysData
 from api.models import User, Order, MenuItem, Restaurant, Category
 from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer
+import csv
+import io
 
 @api_view(['GET'])
 def admin_stats(request):
@@ -178,3 +180,71 @@ def admin_users(request):
 
     users = User.objects.all().order_by('-date_joined')
     return Response(UserSerializer(users, many=True).data)
+
+@api_view(['POST'])
+def admin_bulk_import(request):
+    """
+    Bulk import from CSV. 
+    Payload: { 'type': 'restaurants'|'menu', 'file': CSV_FILE }
+    Headers: X-Admin-Password
+    """
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    target_type = request.data.get('type')
+    csv_file = request.FILES.get('file')
+
+    if not csv_file or not target_type:
+        return Response({'error': 'Missing type or file'}, status=400)
+
+    try:
+        decoded_file = csv_file.read().decode('utf-8')
+        io_string = io.StringIO(decoded_file)
+        reader = csv.DictReader(io_string)
+        
+        created_count = 0
+        errors = []
+
+        for row in reader:
+            try:
+                if target_type == 'restaurants':
+                    Restaurant.objects.update_or_create(
+                        name=row['name'],
+                        defaults={
+                            'rating': float(row.get('rating', 4.0)),
+                            'delivery_time': int(row.get('delivery_time', 30)),
+                            'cuisines': row.get('cuisines', 'Various'),
+                            'image_url': row.get('image_url', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'),
+                            'is_featured': row.get('is_featured', 'false').lower() == 'true',
+                            'is_popular': row.get('is_popular', 'false').lower() == 'true'
+                        }
+                    )
+                    created_count += 1
+                elif target_type == 'menu':
+                    MenuItem.objects.update_or_create(
+                        name=row['name'],
+                        restaurant_name=row.get('restaurant_name'), # Helper or actual ID
+                        defaults={
+                            'description': row.get('description', ''),
+                            'price': float(row.get('price', 0)),
+                            'image_url': row.get('image_url', ''),
+                            'is_veg': row.get('is_veg', 'true').lower() == 'true',
+                            'rating': float(row.get('rating', 4.5)),
+                            'prep_time': int(row.get('prep_time', 25)),
+                            'category_id': int(row.get('category_id', 1)),
+                            'restaurant_id': int(row.get('restaurant_id', 1)),
+                            'is_featured': row.get('is_featured', 'false').lower() == 'true'
+                        }
+                    )
+                    created_count += 1
+            except Exception as e:
+                errors.append(f"Row error: {str(e)}")
+
+        return Response({
+            'success': True,
+            'created': created_count,
+            'errors': errors
+        })
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
