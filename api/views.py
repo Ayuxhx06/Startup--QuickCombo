@@ -6,7 +6,7 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.decorators.cache import cache_page
+from django.core.cache import cache as django_cache
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -188,7 +188,39 @@ def send_order_confirmation_email(order):
         # Send to Admin
         if admin_email:
             admin_subject = f"🚨 New Order Alert! #QC{order.id:04d} from {order.user_name}"
-            admin_html = html_template.replace("@TITLE@", "🥗 QuickCombo — NEW ORDER!").replace("@MESSAGE@", f"New order received from {order.user_name}. Prepare immediately! 🚀")
+            # Admin gets extra customer contact info block
+            customer_info_html = f"""
+            <div style="background:#0f1a0f;border:1px solid #22c55e44;border-radius:12px;padding:16px;margin-bottom:16px">
+              <p style="color:#22c55e;font-weight:800;margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:1px">📋 Customer Contact Details</p>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding:6px 0;color:#9ca3af;font-size:13px;width:100px">👤 Name</td>
+                  <td style="padding:6px 0;color:#ffffff;font-size:13px;font-weight:700">{order.user_name}</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0;color:#9ca3af;font-size:13px">📱 Phone</td>
+                  <td style="padding:6px 0;color:#22c55e;font-size:16px;font-weight:900;letter-spacing:1px">{order.user_phone}</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0;color:#9ca3af;font-size:13px">✉️ Email</td>
+                  <td style="padding:6px 0;color:#d1d5db;font-size:13px">{order.user_email}</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0;color:#9ca3af;font-size:13px">💳 Payment</td>
+                  <td style="padding:6px 0;color:#f59e0b;font-size:13px;font-weight:700;text-transform:uppercase">{order.payment_method} — {order.payment_status}</td>
+                </tr>
+              </table>
+            </div>"""
+            admin_html = html_template.replace(
+                "@TITLE@", "🥗 QuickCombo — NEW ORDER!"
+            ).replace(
+                "@MESSAGE@",
+                f"New order received from {order.user_name}. Prepare immediately! 🚀"
+            ).replace(
+                # inject before the items table
+                '<div style="background:#111;border-radius:12px;padding:16px;margin:16px 0">',
+                customer_info_html + '<div style="background:#111;border-radius:12px;padding:16px;margin:16px 0">'
+            )
             
             admin_data = {
                 "sender": {"name": "QuickCombo", "email": sender_email},
@@ -279,7 +311,6 @@ def user_profile(request):
 
 # ─── Menu ─────────────────────────────────────────────────────────────────────
 
-@cache_page(60 * 5)
 @api_view(['GET'])
 def menu_list(request):
     category_slug = request.GET.get('category', '')
@@ -287,6 +318,13 @@ def menu_list(request):
     featured = request.GET.get('featured', '')
     combo_eligible = request.GET.get('combo', '')
     restaurant_id = request.GET.get('restaurant', '')
+
+    # Build a cache key that includes all query params so restaurant/category
+    # filters get their own separate cache entries.
+    cache_key = f"menu_list|cat={category_slug}|search={search}|feat={featured}|combo={combo_eligible}|rest={restaurant_id}"
+    cached = django_cache.get(cache_key)
+    if cached is not None:
+        return Response(cached)
 
     items = MenuItem.objects.filter(is_available=True).select_related('category', 'restaurant')
 
@@ -301,14 +339,20 @@ def menu_list(request):
     if restaurant_id:
         items = items.filter(restaurant_id=restaurant_id)
 
-    return Response(MenuItemSerializer(items, many=True).data)
+    data = MenuItemSerializer(items, many=True).data
+    django_cache.set(cache_key, data, 60 * 5)  # 5 min per unique filter combo
+    return Response(data)
 
 
-@cache_page(60 * 60)
 @api_view(['GET'])
 def categories_list(request):
+    cached = django_cache.get('categories_list')
+    if cached is not None:
+        return Response(cached)
     categories = Category.objects.all()
-    return Response(CategorySerializer(categories, many=True).data)
+    data = CategorySerializer(categories, many=True).data
+    django_cache.set('categories_list', data, 60 * 10)  # 10 min cache
+    return Response(data)
 
 
 @api_view(['GET'])
@@ -342,12 +386,16 @@ def debug_db(request):
     })
 
 
-@cache_page(60 * 15)
 @api_view(['GET'])
 def restaurant_list(request):
     from .models import Restaurant
+    cached = django_cache.get('restaurant_list')
+    if cached is not None:
+        return Response(cached)
     restaurants = Restaurant.objects.all().order_by('-rating')
-    return Response(RestaurantSerializer(restaurants, many=True).data)
+    data = RestaurantSerializer(restaurants, many=True).data
+    django_cache.set('restaurant_list', data, 60 * 15)  # 15 min cache
+    return Response(data)
 
 
 # ─── Orders ───────────────────────────────────────────────────────────────────

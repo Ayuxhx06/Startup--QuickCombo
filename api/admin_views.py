@@ -14,8 +14,8 @@ import io
 
 def clear_admin_caches():
     """Invalidate public listing caches after admin mutations."""
-    # We clear the specific keys used by @cache_page if known, 
-    # but since they are dynamic based on params, clear() is safest for consistency.
+    # Clear all caches (blanket clear is safest since menu_list now uses
+    # dynamic keys like  menu_list|cat=...|rest=5  for each filter combo).
     cache.clear()
     print("✨ Admin mutation: Cache cleared for instance reflection.")
 
