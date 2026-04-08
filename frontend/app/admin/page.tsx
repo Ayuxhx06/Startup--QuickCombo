@@ -73,60 +73,61 @@ export default function PremiumAdmin() {
 
   const fetchData = async () => {
     setLoading(true);
-    // Determine which base to use
     const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
     
+    // Helper to fetch without crashing the whole loop
+    const safeFetch = async (url: string, setter: (data: any) => void) => {
+        try {
+            const res = await axios.get(url, getHeaders());
+            setter(res.data);
+            return true;
+        } catch (err) {
+            console.error(`Fetch failed for ${url}:`, err);
+            return false;
+        }
+    };
+
     try {
       if (activeTab === 'dashboard') {
-        const res = await axios.get(`${base}/api/admin/stats/`, getHeaders());
-        setStats(res.data);
+        await safeFetch(`${base}/api/admin/stats/`, setStats);
         const ordersRes = await axios.get(`${base}/api/admin/orders/`, getHeaders());
         setOrders(ordersRes.data.slice(0, 5));
       } else if (activeTab === 'orders') {
-        const res = await axios.get(`${base}/api/admin/orders/`, getHeaders());
-        setOrders(res.data);
+        await safeFetch(`${base}/api/admin/orders/`, setOrders);
       } else if (activeTab === 'menu') {
-        const res = await axios.get(`${base}/api/admin/menu/`, getHeaders());
-        setMenuItems(res.data);
+        await safeFetch(`${base}/api/admin/menu/`, setMenuItems);
       } else if (activeTab === 'categories') {
-        const res = await axios.get(`${base}/api/admin/categories/`, getHeaders());
-        setCategories(res.data);
+        await safeFetch(`${base}/api/admin/categories/`, setCategories);
       } else if (activeTab === 'restaurants') {
-        const res = await axios.get(`${base}/api/admin/restaurants/`, getHeaders());
-        setRestaurants(res.data);
+        await safeFetch(`${base}/api/admin/restaurants/`, setRestaurants);
       } else if (activeTab === 'users') {
-          const res = await axios.get(`${base}/api/admin/users/`, getHeaders());
-          setUsers(res.data);
+        await safeFetch(`${base}/api/admin/users/`, setUsers);
       }
 
-      // GLOBAL REFRESH: Always fetch these as they are needed for selection modals in other tabs
-      const catsRes = await axios.get(`${base}/api/admin/categories/`, getHeaders());
-      setCategories(catsRes.data);
-      const restsRes = await axios.get(`${base}/api/admin/restaurants/`, getHeaders());
-      setRestaurants(restsRes.data);
+      // GLOBAL REFRESH (Individual safe fetches)
+      await safeFetch(`${base}/api/admin/categories/`, setCategories);
+      await safeFetch(`${base}/api/admin/restaurants/`, setRestaurants);
       
     } catch (e: any) {
-      // Emergency Second Chance: If the initial fetch fails and wasn't already using LIVE_BACKEND, try it now.
-      if (base !== LIVE_BACKEND) {
-          try {
-             // Retry with absolute production URL
-             if (activeTab === 'dashboard') {
-                const res = await axios.get(`${LIVE_BACKEND}/api/admin/stats/`, getHeaders());
-                setStats(res.data);
-             }
-             // ... other retries could go here if needed, but for now we fallback for the dashboard
-          } catch (retryErr) {
-             console.error("Critical API Failure:", retryErr);
-          }
-      }
       if (e.response?.status === 401) {
         toast.error('Invalid Master Password');
         handleLogout();
       } else {
-        toast.error('Failed to load data');
+        // We've already logged individual errors, don't spam toasts
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const forceClearCache = async () => {
+    const toastId = toast.loading('Force clearing global cache...');
+    try {
+      await axios.post(`${API}/api/admin/clear-cache/`, {}, getHeaders());
+      toast.success('Site cache cleared! Changes are now live.', { id: toastId });
+      fetchData();
+    } catch (e) {
+      toast.error('Force clear failed', { id: toastId });
     }
   };
 
@@ -323,12 +324,18 @@ export default function PremiumAdmin() {
               </nav>
 
               <div className="flex flex-col gap-4">
-                  <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
+                   <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
                       <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Master Environment</p>
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center mb-3">
                           <span className="text-xs font-bold text-white">AlwaysData Production</span>
                           <BarChart3 size={14} className="text-emerald-500" />
                       </div>
+                      <button 
+                        onClick={forceClearCache}
+                        className="w-full py-2 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-black text-[10px] font-black rounded-lg border border-emerald-500/20 transition-all uppercase italic"
+                      >
+                        Force Sync Site
+                      </button>
                   </div>
                   <button 
                       onClick={handleLogout}

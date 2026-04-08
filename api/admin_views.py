@@ -278,3 +278,12 @@ def admin_bulk_import(request):
 
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+
+@api_view(['POST'])
+def admin_clear_cache(request):
+    """Manually clear the public site cache."""
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+    
+    clear_admin_caches()
+    return Response({'success': True, 'message': 'Global cache cleared successfully'})

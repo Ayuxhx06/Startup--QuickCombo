@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/restaurants/', admin_views.admin_restaurants),
     path('admin/users/', admin_views.admin_users),
     path('admin/bulk-import/', admin_views.admin_bulk_import),
+    path('admin/clear-cache/', admin_views.admin_clear_cache),
 
     # Auth
     path('auth/send-otp/', views.send_otp),

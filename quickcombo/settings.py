@@ -121,6 +121,7 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'x-user-email',
+    'x-admin-password',
 ]
 
 REST_FRAMEWORK = {
