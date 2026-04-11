@@ -213,70 +213,59 @@ def admin_users(request):
 
 # Keyword rules: category_slug -> list of keywords to match against item name
 CATEGORY_KEYWORD_MAP = [
-    # Essentials / Grocery
-    ('essentials', [
-        'milk', 'bread', 'eggs', 'egg', 'butter', 'ghee', 'oil', 'rice', 'atta',
-        'flour', 'sugar', 'salt', 'soap', 'shampoo', 'detergent', 'washing',
-        'toothpaste', 'toothbrush', 'tissue', 'napkin', 'grocery', 'essential',
-        'daal', 'dal', 'pulses', 'lentil', 'maida', 'semolina', 'suji', 'rava',
-        'mustard', 'turmeric', 'haldi', 'masala', 'spice', 'pickle', 'ketchup',
-        'sauce', 'vinegar', 'tea', 'chai', 'coffee', 'biscuit', 'juice', 'water',
-        'mineral', 'cold drink', 'soft drink', 'aata', 'poha', 'oats', 'cereal',
+    # Biryani (Highly specific)
+    ('biryani', [
+        'biryani', 'hyderabadi', 'luknowi', 'pulao', 'pilau', 'tahari',
+    ]),
+    # South Indian
+    ('south-indian', [
+        'dosa', 'idli', 'vada', 'pongal', 'uttapam', 'chettinad', 'sambar',
+        'rasam', 'appam', 'akki roti', 'pesarattu', 'upma', 'curry leaf',
+        'coconut chutney', 'malabar',
+    ]),
+    # Chinese
+    ('chinese', [
+        'momo', 'chowmein', 'manchurian', 'noodles', 'schezwan', 'fried rice',
+        'soup', 'chinese', 'spring roll', 'dim sum', 'hakka', 'manchow',
+    ]),
+    # Italian
+    ('italian', [
+        'pizza', 'pasta', 'spaghetti', 'lasagna', 'risotto', 'garlic bread',
+        'bruschetta', 'penne', 'arrabiata', 'alfredo',
     ]),
     # Beverages
     ('beverages', [
-        'lassi', 'shake', 'milkshake', 'smoothie', 'lemonade', 'nimbu pani',
-        'mojito', 'frappe', 'cold coffee', 'iced tea', 'soda', 'sprite',
-        'cola', 'pepsi', 'coke', 'thanda', 'sharbat', 'thandai',
+        'tea', 'coffee', 'chai', 'juice', 'shake', 'milkshake', 'lassi',
+        'smoothie', 'soda', 'coke', 'pepsi', 'sprite', 'water', 'mineral water',
+        'cold drink', 'thanda', 'mojito', 'frappe',
     ]),
-    # Combos / Meals
-    ('combos', [
-        'combo', 'meal', 'thali', 'platter', 'set', 'deal', 'value pack',
-        'family pack', 'double', 'triple', 'mega', 'feast',
-    ]),
-    # Snacks / Street Food
-    ('snacks', [
-        'samosa', 'kachori', 'vada', 'pakora', 'bhajiya', 'pav', 'bhaji',
-        'pani puri', 'gol gappa', 'papdi', 'chaat', 'tikki', 'aloo tikki',
-        'sev', 'bhel', 'dahi', 'puri', 'cutlet', 'nugget', 'roll', 'wrap',
-        'sandwich', 'toast', 'nachos', 'fries', 'chips', 'popcorn', 'spring roll',
-        'momos', 'dim sum',
-    ]),
-    # Main Course / Rice / Roti
-    ('main-course', [
-        'biryani', 'pulao', 'rice', 'roti', 'naan', 'paratha', 'chapati',
-        'butter naan', 'laccha', 'kulcha', 'sabzi', 'curry', 'gravy',
-        'paneer', 'dal makhani', 'dal fry', 'rajma', 'chole', 'kadai',
-        'palak', 'shahi', 'korma', 'makhni', 'butter chicken', 'chicken tikka',
-        'mutton', 'keema', 'kofta', 'nihari', 'haleem', 'bhuna',
-    ]),
-    # Pizza / Pasta / International
-    ('pizza-pasta', [
-        'pizza', 'pasta', 'spaghetti', 'penne', 'lasagna', 'risotto',
-        'garlic bread', 'bruschetta', 'calzone', 'focaccia',
-    ]),
-    # Burgers / Fast Food
-    ('burgers', [
-        'burger', 'double patty', 'veggie burger', 'cheese burger',
-        'chicken burger', 'whopper', 'zinger', 'mcaloo', 'hotdog',
-    ]),
-    # Desserts / Sweets
+    # Desserts
     ('desserts', [
-        'ice cream', 'kulfi', 'gulab jamun', 'rasgulla', 'kheer', 'halwa',
-        'ladoo', 'barfi', 'jalebi', 'rabri', 'basundi', 'phirni', 'payasam',
-        'brownie', 'cake', 'pastry', 'dessert', 'sweet', 'mithai', 'mousse',
-        'pudding', 'cheesecake', 'waffle', 'pancake',
+        'cake', 'ice cream', 'dessert', 'sweet', 'mithai', 'gulab jamun',
+        'rasgulla', 'halwa', 'kheer', 'brownie', 'pastry', 'waffle', 'pudding',
+        'kulfi', 'jalebi',
     ]),
-    # Breakfast
-    ('breakfast', [
-        'idli', 'dosa', 'uttapam', 'upma', 'poha', 'pongal', 'vada',
-        'medu vada', 'akki roti', 'pesarattu', 'appam', 'paratha', 'aloo paratha',
-        'chole bhature', 'puri bhaji', 'breakfast', 'morning',
+    # Fast Food / Snacks
+    ('fast-food', [
+        'burger', 'sandwich', 'wrap', 'fries', 'nugget', 'hotdog', 'chaat',
+        'pav bhaji', 'samosa', 'kachori', 'pakora', 'tikki', 'roll', 'nachos',
     ]),
-    # Salads / Healthy
-    ('salads', [
-        'salad', 'healthy', 'diet', 'low calorie', 'green', 'sprouts',
-        'quinoa', 'protein bowl', 'buddha bowl', 'fruit bowl',
+    # North Indian / Main Course
+    ('north-indian', [
+        'paneer', 'chicken', 'mutton', 'dal', 'roti', 'naan', 'paratha',
+        'kulcha', 'curry', 'gravy', 'thali', 'main course', 'sabzi',
+        'butter chicken', 'tikka', 'korma', 'kofta', 'rajma', 'chole',
+        'kadai', 'makhani', 'shahi', 'nihari',
+    ]),
+    # Healthy / Salads
+    ('healthy', [
+        'salad', 'healthy', 'diet', 'low calorie', 'sprouts', 'quinoa',
+        'fruit bowl', 'oats',
+    ]),
+    # Essentials (Grocery)
+    ('essentials', [
+        'milk', 'bread', 'eggs', 'flour', 'grocery', 'atta', 'oil', 'ghee',
+        'sugar', 'salt', 'soap', 'shampoo', 'detergent', 'toothpaste',
     ]),
 ]
 

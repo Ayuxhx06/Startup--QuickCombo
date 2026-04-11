@@ -945,7 +945,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                     {type === 'menu' && (
                         <>
                             <div className="grid grid-cols-2 gap-4">
-                                <FormInput label="Price (ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹)" placeholder="299" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
+                                <FormInput label="Price (₹)" placeholder="299" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
                                 <FormInput label="Prep Time" placeholder="15" value={formData.prep_time} onChange={(v: any) => setFormData({ ...formData, prep_time: v })} type="number" />
                             </div>
                             <div className="space-y-2">
