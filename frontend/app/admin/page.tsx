@@ -46,6 +46,8 @@ export default function PremiumAdmin() {
   const [showImportLog, setShowImportLog] = useState(false);
   const menuFileInputRef = useRef<HTMLInputElement>(null);
   const restaurantFileInputRef = useRef<HTMLInputElement>(null);
+  const perRestaurantFileInputRef = useRef<HTMLInputElement>(null);
+  const [targetRestaurant, setTargetRestaurant] = useState<{id: number, name: string} | null>(null);
 
   // Auto-login check
   useEffect(() => {
@@ -195,7 +197,7 @@ export default function PremiumAdmin() {
     formData.append('type', type);
 
     setUploading(true);
-    const toastId = toast.loading(`ðŸ”„ Importing ${type} from CSV... Auto-categorizing items...`);
+    const toastId = toast.loading(`ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Importing ${type} from CSV... Auto-categorizing items...`);
 
     try {
       // IMPORTANT: Pass only the raw header values, NOT the axios config wrapper
@@ -208,7 +210,7 @@ export default function PremiumAdmin() {
 
       if (res.data.success) {
         const { created, updated, total, categorization_log, errors } = res.data;
-        const summary = `âœ… Import complete! ${created} new, ${updated} updated (${total} total)`;
+        const summary = `ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã¢â‚¬Å“ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ Import complete! ${created} new, ${updated} updated (${total} total)`;
         toast.success(summary, { id: toastId, duration: 5000 });
 
         if (categorization_log?.length > 0) {
@@ -218,16 +220,67 @@ export default function PremiumAdmin() {
 
         if (errors?.length > 0) {
           console.warn('Import row errors:', errors);
-          toast(`âš ï¸ ${errors.length} row(s) had errors â€” check browser console`, { icon: 'âš ï¸' });
+          toast(`ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â ${errors.length} row(s) had errors ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â check browser console`, { icon: 'ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â' });
         }
         fetchData();
       }
     } catch (err: any) {
       const errMsg = err.response?.data?.error || err.message || 'Bulk import failed';
-      toast.error(`âŒ ${errMsg}`, { id: toastId });
+      toast.error(`ÃƒÆ’Ã‚Â¢Ãƒâ€šÃ‚ÂÃƒâ€¦Ã¢â‚¬â„¢ ${errMsg}`, { id: toastId });
       console.error('Import error:', err.response?.data);
     } finally {
       setUploading(false);
+      if (e.target) e.target.value = '';
+    }
+  };
+
+  // Import menu CSV locked to a specific restaurant
+  const handlePerRestaurantImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !targetRestaurant) return;
+
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      toast.error('Please select a valid CSV file');
+      if (e.target) e.target.value = '';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'menu');
+    formData.append('lock_restaurant_id', String(targetRestaurant.id));
+
+    setUploading(true);
+    const toastId = toast.loading(`ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ¢â‚¬Å¾ Importing menu for ${targetRestaurant.name}...`);
+
+    try {
+      const res = await axios.post(`${API}/api/admin/bulk-import/`, formData, {
+        headers: {
+          'X-Admin-Password': adminPassword,
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+
+      if (res.data.success) {
+        const { created, updated, total, categorization_log, errors } = res.data;
+        toast.success(`ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ ${targetRestaurant.name}: ${created} new, ${updated} updated (${total} items)`, { id: toastId, duration: 5000 });
+        if (categorization_log?.length > 0) {
+          setImportLog(categorization_log);
+          setShowImportLog(true);
+        }
+        if (errors?.length > 0) {
+          console.warn('Row errors:', errors);
+          toast(`ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â ${errors.length} row(s) had errors ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â check console`, { icon: 'ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â' });
+        }
+        fetchData();
+      }
+    } catch (err: any) {
+      const errMsg = err.response?.data?.error || err.message || 'Import failed';
+      toast.error(`ÃƒÂ¢Ã‚ÂÃ…â€™ ${errMsg}`, { id: toastId });
+      console.error('Per-restaurant import error:', err.response?.data);
+    } finally {
+      setUploading(false);
+      setTargetRestaurant(null);
       if (e.target) e.target.value = '';
     }
   };
@@ -428,7 +481,7 @@ export default function PremiumAdmin() {
                 className="flex flex-col gap-10"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-                  <StatCard label="Live Revenue" value={`â‚¹${stats?.total_sales || 0}`} icon={DollarSign} trend="+12% Since yesterday" color="emerald" />
+                  <StatCard label="Live Revenue" value={`ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹${stats?.total_sales || 0}`} icon={DollarSign} trend="+12% Since yesterday" color="emerald" />
                   <StatCard label="Total Orders" value={stats?.total_orders || 0} icon={Package} trend="Global count" color="blue" />
                   <StatCard label="Active Items" value={stats?.total_items || 0} icon={Utensils} trend="Menu inventory" color="amber" />
                   <StatCard label="User Base" value={stats?.total_users || 0} icon={Users} trend="Registered accounts" color="purple" />
@@ -541,7 +594,7 @@ export default function PremiumAdmin() {
                        </div>
                        <h4 className="font-black text-lg mb-1 truncate uppercase">{item.name}</h4>
                        <div className="flex justify-between items-center mb-4 text-white">
-                            <span className="text-2xl font-black text-emerald-500 italic">â‚¹{item.price}</span>
+                            <span className="text-2xl font-black text-emerald-500 italic">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹{item.price}</span>
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">ID: {item.id}</span>
                        </div>
                        <div className="flex gap-2">
@@ -587,7 +640,7 @@ export default function PremiumAdmin() {
                        </div>
                        <h4 className="font-black text-lg mb-1 truncate uppercase">{item.name}</h4>
                        <div className="flex justify-between items-center mb-4 text-white">
-                            <span className="text-2xl font-black text-emerald-500 italic">â‚¹{item.price}</span>
+                            <span className="text-2xl font-black text-emerald-500 italic">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹{item.price}</span>
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">ID: {item.id}</span>
                        </div>
                        <div className="flex gap-2">
@@ -644,6 +697,14 @@ export default function PremiumAdmin() {
                                 ref={restaurantFileInputRef}
                                 onChange={(e) => handleBulkUpload(e, 'restaurants')}
                             />
+                            {/* Hidden file input for per-restaurant import */}
+                            <input
+                                type="file"
+                                accept=".csv"
+                                className="hidden"
+                                ref={perRestaurantFileInputRef}
+                                onChange={handlePerRestaurantImport}
+                            />
                             <button
                                 disabled={uploading}
                                 onClick={() => restaurantFileInputRef.current?.click()}
@@ -674,6 +735,15 @@ export default function PremiumAdmin() {
                                 <div className={`hidden xs:block px-4 py-1.5 rounded-full text-[9px] font-black uppercase border italic flex-grow sm:flex-grow-0 text-center ${res.is_featured ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-500/10 text-gray-500 border-gray-500/20'}`}>
                                     {res.is_featured ? 'Featured_Partner' : 'Standard'}
                                 </div>
+                                <button
+                                    onClick={() => {
+                                        setTargetRestaurant({id: res.id, name: res.name});
+                                        setTimeout(() => perRestaurantFileInputRef.current?.click(), 50);
+                                    }}
+                                    className="p-3 bg-emerald-500/10 rounded-xl hover:bg-emerald-500 hover:text-black text-emerald-500 transition-all border border-emerald-500/20 flex gap-2 items-center text-[10px] font-black uppercase"
+                                >
+                                    <FileUp size={16}/> Menu
+                                </button>
                                 <button onClick={() => openModal('restaurant', res)} className="p-3 bg-white/5 rounded-xl hover:bg-emerald-500 hover:text-black transition-all border border-white/10"><Edit2 size={18}/></button>
                                 <button onClick={() => deleteEntity('restaurant', res.id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-500/20"><Trash2 size={18}/></button>
                             </div>
@@ -738,7 +808,7 @@ export default function PremiumAdmin() {
                 <div className="flex justify-between items-center mb-6">
                   <div>
                     <h3 className="text-2xl font-black uppercase italic text-white">Auto-Categorization Report</h3>
-                    <p className="text-gray-500 text-sm mt-1">{importLog.length} items processed â€” categories assigned automatically</p>
+                    <p className="text-gray-500 text-sm mt-1">{importLog.length} items processed ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â categories assigned automatically</p>
                   </div>
                   <button onClick={() => setShowImportLog(false)} className="p-2 hover:bg-white/5 rounded-lg"><X size={20}/></button>
                 </div>
@@ -747,10 +817,10 @@ export default function PremiumAdmin() {
                     const isAuto = entry.category_assigned?.startsWith('auto:');
                     const isFallback = entry.category_assigned?.startsWith('fallback:');
                     const label = entry.category_assigned
-                      ?.replace('auto:', 'ðŸ¤– Auto â†’ ')
-                      ?.replace('csv_id', 'ðŸ“‹ From CSV ID')
-                      ?.replace('csv_name', 'ðŸ“ From CSV Name')
-                      ?.replace('fallback:', 'âš ï¸ Fallback â†’ ');
+                      ?.replace('auto:', 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚Â¤ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ Auto ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ ')
+                      ?.replace('csv_id', 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¹ From CSV ID')
+                      ?.replace('csv_name', 'ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€šÃ‚Â From CSV Name')
+                      ?.replace('fallback:', 'ÃƒÆ’Ã‚Â¢Ãƒâ€¦Ã‚Â¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¸Ãƒâ€šÃ‚Â Fallback ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ ');
                     return (
                       <div key={i} className={`flex items-center justify-between gap-4 p-3 rounded-xl border ${
                         isAuto ? 'bg-emerald-500/5 border-emerald-500/20' :
@@ -769,7 +839,7 @@ export default function PremiumAdmin() {
                   onClick={() => setShowImportLog(false)}
                   className="w-full mt-6 py-4 bg-emerald-500 text-black font-black rounded-2xl hover:bg-emerald-400 transition-all"
                 >
-                  GOT IT â€” CLOSE
+                  GOT IT ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â CLOSE
                 </button>
               </motion.div>
             </div>
@@ -877,7 +947,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                     {type === 'menu' && (
                         <>
                             <div className="grid grid-cols-2 gap-4">
-                                <FormInput label="Price (â‚¹)" placeholder="299" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
+                                <FormInput label="Price (ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹)" placeholder="299" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
                                 <FormInput label="Prep Time" placeholder="15" value={formData.prep_time} onChange={(v: any) => setFormData({ ...formData, prep_time: v })} type="number" />
                             </div>
                             <div className="space-y-2">
@@ -909,7 +979,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
 
                     {type === 'category' && (
                         <>
-                            <FormInput label="Emoji/Icon" placeholder="ðŸ”" value={formData.icon} onChange={(v: any) => setFormData({ ...formData, icon: v })} />
+                            <FormInput label="Emoji/Icon" placeholder="ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã‚Â" value={formData.icon} onChange={(v: any) => setFormData({ ...formData, icon: v })} />
                             <FormInput label="System Slug" placeholder="fast-food" value={formData.slug} onChange={(v: any) => setFormData({ ...formData, slug: v })} />
                         </>
                     )}
@@ -1000,9 +1070,9 @@ function OrderList({ items, onUpdate, compact = false }: any) {
                   </td>
               )}
               {!compact && (
-                  <td className="py-6 px-6 font-bold text-gray-400">â‚¹{order.subtotal}</td>
+                  <td className="py-6 px-6 font-bold text-gray-400">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹{order.subtotal}</td>
               )}
-              <td className="py-6 px-6 font-black text-xl text-emerald-500 italic">â‚¹{order.total}</td>
+              <td className="py-6 px-6 font-black text-xl text-emerald-500 italic">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹{order.total}</td>
               <td className="py-6 px-6">
                 <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic ${
                   order.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :

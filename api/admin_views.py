@@ -371,11 +371,17 @@ def admin_bulk_import(request):
                     description = row.get('description', '')
 
                     # ── Step 1: Resolve restaurant ──────────────────────────
-                    r_id = row.get('restaurant_id', '').strip()
-                    if not r_id and row.get('restaurant_name'):
-                        r_match = Restaurant.objects.filter(name__icontains=row['restaurant_name']).first()
-                        if r_match:
-                            r_id = r_match.id
+                    # If lock_restaurant_id is provided, enforce it over everything else
+                    lock_r_id = request.data.get('lock_restaurant_id')
+                    
+                    if lock_r_id:
+                        r_id = lock_r_id
+                    else:
+                        r_id = row.get('restaurant_id', '').strip()
+                        if not r_id and row.get('restaurant_name'):
+                            r_match = Restaurant.objects.filter(name__icontains=row['restaurant_name']).first()
+                            if r_match:
+                                r_id = r_match.id
 
                     # ── Step 2: Resolve category ────────────────────────────
                     # Priority: category_id (CSV) > category_name (CSV) > auto-categorize
