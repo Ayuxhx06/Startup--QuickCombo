@@ -119,7 +119,7 @@ export default function PremiumAdmin() {
       try {
           const vRes = await axios.get(`${base}/api/admin/version/`);
           setServerVersion(vRes.data.version);
-          if (vRes.data.version !== '1.2.1') setOutOfSync(true);
+          if (vRes.data.version !== '1.2.2') setOutOfSync(true);
       } catch (e) {
           // If version endpoint exists but fails preflight, it's definitely out of sync
           setOutOfSync(true);
