@@ -336,110 +336,114 @@ def admin_bulk_import(request):
         io_string = io.StringIO(decoded_file)
         reader = csv.DictReader(io_string)
 
+        from django.db import transaction
+
         created_count = 0
         updated_count = 0
         errors = []
         categorized_log = []  # Log which category was auto-assigned
 
-        for row in reader:
-            # Strip whitespace from all keys and values
-            row = {k.strip(): v.strip() for k, v in row.items() if k}
-            if not row.get('name'):
-                continue  # skip empty rows
+        # Wrap in a transaction for massive speedup on remote DBs
+        with transaction.atomic():
+            for row in reader:
+                # Strip whitespace from all keys and values
+                row = {k.strip(): v.strip() for k, v in row.items() if k}
+                if not row.get('name'):
+                    continue  # skip empty rows
 
-            try:
-                if target_type == 'restaurants':
-                    _, created = Restaurant.objects.update_or_create(
-                        name=row['name'],
-                        defaults={
-                            'rating': float(row.get('rating', 4.0) or 4.0),
-                            'delivery_time': int(row.get('delivery_time', 30) or 30),
-                            'cuisines': row.get('cuisines', 'Various') or 'Various',
-                            'image_url': row.get('image_url', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c') or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
-                            'is_featured': str(row.get('is_featured', 'false')).lower() == 'true',
-                        }
-                    )
-                    if created:
-                        created_count += 1
-                    else:
-                        updated_count += 1
-
-                elif target_type == 'menu':
-                    item_name = row['name']
-                    description = row.get('description', '')
-
-                    # ── Step 1: Resolve restaurant ──────────────────────────
-                    # If lock_restaurant_id is provided, enforce it over everything else
-                    lock_r_id = request.data.get('lock_restaurant_id')
-                    
-                    if lock_r_id:
-                        r_id = lock_r_id
-                    else:
-                        r_id = row.get('restaurant_id', '').strip()
-                        if not r_id and row.get('restaurant_name'):
-                            r_match = Restaurant.objects.filter(name__icontains=row['restaurant_name']).first()
-                            if r_match:
-                                r_id = r_match.id
-
-                    # ── Step 2: Resolve category ────────────────────────────
-                    # Priority: category_id (CSV) > category_name (CSV) > auto-categorize
-                    c_id = row.get('category_id', '').strip()
-                    csv_cat_name = row.get('category_name', '').strip()
-                    assigned_how = 'csv_id'
-
-                    if not c_id and csv_cat_name:
-                        # Try exact or fuzzy match for site categories
-                        c_match = Category.objects.filter(name__icontains=csv_cat_name).first()
-                        if c_match:
-                            c_id = c_match.id
-                            assigned_how = 'csv_name'
-                        elif csv_cat_name.lower() in ['others', 'other', 'chicken specials', 'chicken special']:
-                            # If it's a generic "Others" or "Specials" label, ignore and use auto-categorize
-                            pass
-
-                    if not c_id:
-                        # Auto-categorize by keyword analysis (passing both item name and original CSV category for context)
-                        auto_cat = auto_categorize(item_name, f"{description} {csv_cat_name}")
-                        if auto_cat:
-                            c_id = auto_cat.id
-                            assigned_how = f'auto:{auto_cat.name}'
+                try:
+                    if target_type == 'restaurants':
+                        _, created = Restaurant.objects.update_or_create(
+                            name=row['name'],
+                            defaults={
+                                'rating': float(row.get('rating', 4.0) or 4.0),
+                                'delivery_time': int(row.get('delivery_time', 30) or 30),
+                                'cuisines': row.get('cuisines', 'Various') or 'Various',
+                                'image_url': row.get('image_url', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c') or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
+                                'is_featured': str(row.get('is_featured', 'false')).lower() == 'true',
+                            }
+                        )
+                        if created:
+                            created_count += 1
                         else:
-                            # Fallback: find or create a generic "Other" category
-                            fallback_cat, _ = Category.objects.get_or_create(
-                                slug='other',
-                                defaults={'name': 'Other', 'icon': '🍽️'}
-                            )
-                            c_id = fallback_cat.id
-                            assigned_how = 'fallback:Other'
+                            updated_count += 1
 
-                    categorized_log.append({
-                        'item': item_name,
-                        'category_assigned': assigned_how
-                    })
+                    elif target_type == 'menu':
+                        item_name = row['name']
+                        description = row.get('description', '')
 
-                    _, created = MenuItem.objects.update_or_create(
-                        name=item_name,
-                        defaults={
-                            'description': description,
-                            'price': float(row.get('price', 0) or 0),
-                            'image_url': row.get('image_url', ''),
-                            'is_veg': str(row.get('is_veg', 'true')).lower() not in ['false', '0', 'no'],
-                            'rating': float(row.get('rating', 4.5) or 4.5),
-                            'prep_time': int(row.get('prep_time', 25) or 25),
-                            'category_id': int(c_id),
-                            'restaurant_id': int(r_id) if r_id else None,
-                            'is_featured': str(row.get('is_featured', 'false')).lower() == 'true',
-                            'is_available': str(row.get('is_available', 'true')).lower() not in ['false', '0', 'no'],
-                        }
-                    )
-                    if created:
-                        created_count += 1
-                    else:
-                        updated_count += 1
+                        # ── Step 1: Resolve restaurant ──────────────────────────
+                        # If lock_restaurant_id is provided, enforce it over everything else
+                        lock_r_id = request.data.get('lock_restaurant_id')
+                        
+                        if lock_r_id:
+                            r_id = lock_r_id
+                        else:
+                            r_id = row.get('restaurant_id', '').strip()
+                            if not r_id and row.get('restaurant_name'):
+                                r_match = Restaurant.objects.filter(name__icontains=row['restaurant_name']).first()
+                                if r_match:
+                                    r_id = r_match.id
 
-            except Exception as e:
-                import traceback
-                errors.append({'item': row.get('name', '?'), 'error': str(e)})
+                        # ── Step 2: Resolve category ────────────────────────────
+                        # Priority: category_id (CSV) > category_name (CSV) > auto-categorize
+                        c_id = row.get('category_id', '').strip()
+                        csv_cat_name = row.get('category_name', '').strip()
+                        assigned_how = 'csv_id'
+
+                        if not c_id and csv_cat_name:
+                            # Try exact or fuzzy match for site categories
+                            c_match = Category.objects.filter(name__icontains=csv_cat_name).first()
+                            if c_match:
+                                c_id = c_match.id
+                                assigned_how = 'csv_name'
+                            elif csv_cat_name.lower() in ['others', 'other', 'chicken specials', 'chicken special']:
+                                # If it's a generic "Others" or "Specials" label, ignore and use auto-categorize
+                                pass
+
+                        if not c_id:
+                            # Auto-categorize by keyword analysis (passing both item name and original CSV category for context)
+                            auto_cat = auto_categorize(item_name, f"{description} {csv_cat_name}")
+                            if auto_cat:
+                                c_id = auto_cat.id
+                                assigned_how = f'auto:{auto_cat.name}'
+                            else:
+                                # Fallback: find or create a generic "Other" category
+                                fallback_cat, _ = Category.objects.get_or_create(
+                                    slug='other',
+                                    defaults={'name': 'Other', 'icon': '🍽️'}
+                                )
+                                c_id = fallback_cat.id
+                                assigned_how = 'fallback:Other'
+
+                        categorized_log.append({
+                            'item': item_name,
+                            'category_assigned': assigned_how
+                        })
+
+                        _, created = MenuItem.objects.update_or_create(
+                            name=item_name,
+                            defaults={
+                                'description': description,
+                                'price': float(row.get('price', 0) or 0),
+                                'image_url': row.get('image_url', ''),
+                                'is_veg': str(row.get('is_veg', 'true')).lower() not in ['false', '0', 'no'],
+                                'rating': float(row.get('rating', 4.5) or 4.5),
+                                'prep_time': int(row.get('prep_time', 25) or 25),
+                                'category_id': int(c_id),
+                                'restaurant_id': int(r_id) if r_id else None,
+                                'is_featured': str(row.get('is_featured', 'false')).lower() == 'true',
+                                'is_available': str(row.get('is_available', 'true')).lower() not in ['false', '0', 'no'],
+                            }
+                        )
+                        if created:
+                            created_count += 1
+                        else:
+                            updated_count += 1
+
+                except Exception as e:
+                    import traceback
+                    errors.append({'item': row.get('name', '?'), 'error': str(e)})
 
         if created_count + updated_count > 0:
             clear_admin_caches()
