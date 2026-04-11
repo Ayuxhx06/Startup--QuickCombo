@@ -39,10 +39,13 @@ export default function PremiumAdmin() {
   const [modalType, setModalType] = useState<'restaurant' | 'menu' | 'category'>('restaurant');
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
   const [formLoading, setFormLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [serverVersion, setServerVersion] = useState<string | null>(null);
   const [outOfSync, setOutOfSync] = useState(false);
+  const [importLog, setImportLog] = useState<any[] | null>(null);
+  const [showImportLog, setShowImportLog] = useState(false);
+  const menuFileInputRef = useRef<HTMLInputElement>(null);
+  const restaurantFileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-login check
   useEffect(() => {
@@ -180,34 +183,51 @@ export default function PremiumAdmin() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file type
+    if (!file.name.toLowerCase().endsWith('.csv')) {
+      toast.error('Please select a valid CSV file');
+      if (e.target) e.target.value = '';
+      return;
+    }
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
 
     setUploading(true);
-    const toastId = toast.loading(`Importing ${type}...`);
-    
+    const toastId = toast.loading(`ðŸ”„ Importing ${type} from CSV... Auto-categorizing items...`);
+
     try {
+      // IMPORTANT: Pass only the raw header values, NOT the axios config wrapper
       const res = await axios.post(`${API}/api/admin/bulk-import/`, formData, {
         headers: {
-          ...getHeaders().headers,
-          'Content-Type': 'multipart/form-data'
+          'X-Admin-Password': adminPassword,
+          'Content-Type': 'multipart/form-data',
         }
       });
-      
+
       if (res.data.success) {
-        toast.success(`Imported ${res.data.created} items successfully!`, { id: toastId });
-        if (res.data.errors?.length > 0) {
-          console.warn('Import warnings:', res.data.errors);
-          toast('Some rows had errors (check console)', { icon: '⚠️' });
+        const { created, updated, total, categorization_log, errors } = res.data;
+        const summary = `âœ… Import complete! ${created} new, ${updated} updated (${total} total)`;
+        toast.success(summary, { id: toastId, duration: 5000 });
+
+        if (categorization_log?.length > 0) {
+          setImportLog(categorization_log);
+          setShowImportLog(true);
+        }
+
+        if (errors?.length > 0) {
+          console.warn('Import row errors:', errors);
+          toast(`âš ï¸ ${errors.length} row(s) had errors â€” check browser console`, { icon: 'âš ï¸' });
         }
         fetchData();
       }
     } catch (err: any) {
-      toast.error(err.response?.data?.error || 'Bulk import failed', { id: toastId });
+      const errMsg = err.response?.data?.error || err.message || 'Bulk import failed';
+      toast.error(`âŒ ${errMsg}`, { id: toastId });
+      console.error('Import error:', err.response?.data);
     } finally {
       setUploading(false);
-      // @ts-ignore
       if (e.target) e.target.value = '';
     }
   };
@@ -408,7 +428,7 @@ export default function PremiumAdmin() {
                 className="flex flex-col gap-10"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-                  <StatCard label="Live Revenue" value={`₹${stats?.total_sales || 0}`} icon={DollarSign} trend="+12% Since yesterday" color="emerald" />
+                  <StatCard label="Live Revenue" value={`â‚¹${stats?.total_sales || 0}`} icon={DollarSign} trend="+12% Since yesterday" color="emerald" />
                   <StatCard label="Total Orders" value={stats?.total_orders || 0} icon={Package} trend="Global count" color="blue" />
                   <StatCard label="Active Items" value={stats?.total_items || 0} icon={Utensils} trend="Menu inventory" color="amber" />
                   <StatCard label="User Base" value={stats?.total_users || 0} icon={Users} trend="Registered accounts" color="purple" />
@@ -469,27 +489,46 @@ export default function PremiumAdmin() {
                         <h3 className="text-2xl lg:text-3xl font-black">FOOD INVENTORY</h3>
                         <p className="text-gray-500">Manage Menu Items and pricing</p>
                     </div>
-                    <div className="flex gap-3">
-                        <input 
-                            type="file" 
-                            accept=".csv" 
-                            className="hidden" 
-                            ref={fileInputRef}
-                            onChange={(e) => handleBulkUpload(e, 'menu')}
-                        />
-                        <button 
-                            onClick={() => fileInputRef.current?.click()}
-                            className="bg-white/5 text-emerald-500 font-bold px-5 py-3 rounded-xl border border-emerald-500/20 hover:bg-emerald-500/10 transition-all flex items-center gap-2"
-                        >
-                            <FileUp size={18} /> BULK IMPORT
-                        </button>
-                        <button 
-                            onClick={() => openModal('menu')}
-                            className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto"
-                        >
-                            <Plus size={18} /> ADD NEW ITEM
-                        </button>
-                    </div>
+                     <div className="flex flex-wrap gap-3">
+                         {/* Hidden file input for menu CSV import */}
+                         <input
+                             type="file"
+                             accept=".csv"
+                             className="hidden"
+                             ref={menuFileInputRef}
+                             onChange={(e) => handleBulkUpload(e, 'menu')}
+                         />
+                         {/* CSV template download */}
+                         <button
+                             onClick={() => {
+                               const cols = 'name,price,description,is_veg,prep_time,rating,image_url,is_featured,restaurant_name,category_name\nButter Chicken,299,Rich creamy curry,false,25,4.5,,false,My Restaurant,';
+                               const blob = new Blob([cols], { type: 'text/csv' });
+                               const url = URL.createObjectURL(blob);
+                               const a = document.createElement('a');
+                               a.href = url; a.download = 'menu_template.csv'; a.click();
+                               URL.revokeObjectURL(url);
+                               toast.success('Template downloaded! Leave category_name blank to auto-categorize items');
+                             }}
+                             className="bg-white/5 text-gray-400 font-bold px-4 py-3 rounded-xl border border-white/10 hover:bg-white/10 transition-all flex items-center gap-2 text-xs"
+                         >
+                             <Download size={15} /> CSV TEMPLATE
+                         </button>
+                         <button
+                             disabled={uploading}
+                             onClick={() => menuFileInputRef.current?.click()}
+                             className={`font-bold px-5 py-3 rounded-xl border border-emerald-500/20 transition-all flex items-center gap-2 ${
+                               uploading ? 'bg-emerald-500/5 text-emerald-500/40 opacity-60 cursor-not-allowed' : 'bg-white/5 text-emerald-500 hover:bg-emerald-500/10'
+                             }`}
+                         >
+                             <FileUp size={18} /> {uploading ? 'IMPORTING...' : 'BULK IMPORT'}
+                         </button>
+                         <button
+                             onClick={() => openModal('menu')}
+                             className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto"
+                         >
+                             <Plus size={18} /> ADD NEW ITEM
+                         </button>
+                     </div>
                  </div>
                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
                    {menuItems.map(item => (
@@ -502,7 +541,7 @@ export default function PremiumAdmin() {
                        </div>
                        <h4 className="font-black text-lg mb-1 truncate uppercase">{item.name}</h4>
                        <div className="flex justify-between items-center mb-4 text-white">
-                            <span className="text-2xl font-black text-emerald-500 italic">₹{item.price}</span>
+                            <span className="text-2xl font-black text-emerald-500 italic">â‚¹{item.price}</span>
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">ID: {item.id}</span>
                        </div>
                        <div className="flex gap-2">
@@ -548,7 +587,7 @@ export default function PremiumAdmin() {
                        </div>
                        <h4 className="font-black text-lg mb-1 truncate uppercase">{item.name}</h4>
                        <div className="flex justify-between items-center mb-4 text-white">
-                            <span className="text-2xl font-black text-emerald-500 italic">₹{item.price}</span>
+                            <span className="text-2xl font-black text-emerald-500 italic">â‚¹{item.price}</span>
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">ID: {item.id}</span>
                        </div>
                        <div className="flex gap-2">
@@ -591,23 +630,28 @@ export default function PremiumAdmin() {
                 <motion.div key="restaurants" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-4 lg:gap-6">
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex gap-4">
-                            <button 
+                            <button
                                 onClick={() => openModal('restaurant')}
                                 className="bg-emerald-500 text-black font-black px-6 py-4 rounded-2xl hover:bg-emerald-400 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10"
                             >
                                 <Plus size={20} /> ADD PARTNER
                             </button>
-                            <button 
-                                onClick={() => {
-                                    const input = document.createElement('input');
-                                    input.type = 'file';
-                                    input.accept = '.csv';
-                                    input.onchange = (e: any) => handleBulkUpload(e, 'restaurants');
-                                    input.click();
-                                }}
-                                className="bg-white/5 text-gray-400 font-bold px-6 py-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-all flex items-center gap-2"
+                            {/* Hidden file input for restaurant CSV import */}
+                            <input
+                                type="file"
+                                accept=".csv"
+                                className="hidden"
+                                ref={restaurantFileInputRef}
+                                onChange={(e) => handleBulkUpload(e, 'restaurants')}
+                            />
+                            <button
+                                disabled={uploading}
+                                onClick={() => restaurantFileInputRef.current?.click()}
+                                className={`font-bold px-6 py-4 rounded-2xl border border-white/10 transition-all flex items-center gap-2 ${
+                                  uploading ? 'bg-white/5 text-gray-600 opacity-50 cursor-not-allowed' : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                }`}
                             >
-                                <FileUp size={20} /> BULK IMPORT (CSV)
+                                <FileUp size={20} /> {uploading ? 'IMPORTING...' : 'BULK IMPORT (CSV)'}
                             </button>
                         </div>
                         <div className="text-[10px] text-gray-600 font-black tracking-[0.2em] uppercase italic">
@@ -682,6 +726,56 @@ export default function PremiumAdmin() {
           </AnimatePresence>
         )}
         
+        {/* IMPORT LOG MODAL */}
+        <AnimatePresence>
+          {showImportLog && importLog && (
+            <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowImportLog(false)} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0 }}
+                className="w-full max-w-2xl bg-[#0a0a0a] border border-emerald-500/20 rounded-[2rem] p-8 shadow-2xl relative z-10 overflow-y-auto max-h-[85vh]"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 className="text-2xl font-black uppercase italic text-white">Auto-Categorization Report</h3>
+                    <p className="text-gray-500 text-sm mt-1">{importLog.length} items processed â€” categories assigned automatically</p>
+                  </div>
+                  <button onClick={() => setShowImportLog(false)} className="p-2 hover:bg-white/5 rounded-lg"><X size={20}/></button>
+                </div>
+                <div className="space-y-2 overflow-y-auto max-h-[55vh]">
+                  {importLog.map((entry: any, i: number) => {
+                    const isAuto = entry.category_assigned?.startsWith('auto:');
+                    const isFallback = entry.category_assigned?.startsWith('fallback:');
+                    const label = entry.category_assigned
+                      ?.replace('auto:', 'ðŸ¤– Auto â†’ ')
+                      ?.replace('csv_id', 'ðŸ“‹ From CSV ID')
+                      ?.replace('csv_name', 'ðŸ“ From CSV Name')
+                      ?.replace('fallback:', 'âš ï¸ Fallback â†’ ');
+                    return (
+                      <div key={i} className={`flex items-center justify-between gap-4 p-3 rounded-xl border ${
+                        isAuto ? 'bg-emerald-500/5 border-emerald-500/20' :
+                        isFallback ? 'bg-amber-500/5 border-amber-500/20' :
+                        'bg-white/5 border-white/5'
+                      }`}>
+                        <span className="text-white font-bold text-sm truncate flex-1">{entry.item}</span>
+                        <span className={`text-xs font-black uppercase tracking-wide shrink-0 ${
+                          isAuto ? 'text-emerald-400' : isFallback ? 'text-amber-400' : 'text-gray-400'
+                        }`}>{label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setShowImportLog(false)}
+                  className="w-full mt-6 py-4 bg-emerald-500 text-black font-black rounded-2xl hover:bg-emerald-400 transition-all"
+                >
+                  GOT IT â€” CLOSE
+                </button>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
         {/* MODAL OVERLAY */}
          <AnimatePresence>
             {isModalOpen && (
@@ -710,7 +804,10 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+        const sanitizedData = { ...formData };
+        if (sanitizedData.category === '') sanitizedData.category = null;
+        if (sanitizedData.restaurant === '') sanitizedData.restaurant = null;
+
         try {
             let endpoint = '';
             if (type === 'restaurant') endpoint = '/api/admin/restaurants/';
@@ -718,17 +815,25 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
             else if (type === 'category') endpoint = '/api/admin/categories/';
 
             if (entity?.id) {
-                await axios.patch(`${API}${endpoint}`, { ...formData, id: entity.id, category_slug: entity.category_slug }, headers);
+                await axios.patch(`${API}${endpoint}`, { ...sanitizedData, id: entity.id, category_slug: entity.category_slug }, headers);
                 toast.success('Updated successfully');
             } else {
-                await axios.post(`${API}${endpoint}`, { ...formData, category_slug: entity?.category_slug }, headers);
+                await axios.post(`${API}${endpoint}`, { ...sanitizedData, category_slug: entity?.category_slug }, headers);
                 toast.success('Created successfully');
             }
             onSave();
             onClose();
         } catch (err: any) {
-            console.error(err);
-            toast.error(err.response?.data?.detail || 'Operation failed');
+            console.error('Submit Error:', err.response?.data);
+            const data = err.response?.data;
+            if (data && typeof data === 'object') {
+                const errors = Object.entries(data)
+                    .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(', ') : val}`)
+                    .join(' | ');
+                toast.error(errors || 'Operation failed');
+            } else {
+                toast.error(err.response?.data?.detail || 'Operation failed. Check console.');
+            }
         } finally {
             setLoading(false);
         }
@@ -772,29 +877,30 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                     {type === 'menu' && (
                         <>
                             <div className="grid grid-cols-2 gap-4">
-                                <FormInput label="Price (₹)" placeholder="299" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
+                                <FormInput label="Price (â‚¹)" placeholder="299" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
                                 <FormInput label="Prep Time" placeholder="15" value={formData.prep_time} onChange={(v: any) => setFormData({ ...formData, prep_time: v })} type="number" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Category Node</label>
                                 <select 
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 appearance-none"
+                                    required
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 appearance-none text-white"
                                     value={formData.category || ''}
                                     onChange={e => setFormData({ ...formData, category: e.target.value })}
                                 >
-                                    <option value="">Select Category</option>
-                                    {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    <option value="" className="bg-black">Select Category</option>
+                                    {categories.map((c: any) => <option key={c.id} value={c.id} className="bg-black">{c.name}</option>)}
                                 </select>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Partner Node</label>
                                 <select 
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 appearance-none"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 appearance-none text-white"
                                     value={formData.restaurant || ''}
                                     onChange={e => setFormData({ ...formData, restaurant: e.target.value })}
                                 >
-                                    <option value="">No Partner (Internal/Essential)</option>
-                                    {restaurants.map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                                    <option value="" className="bg-black">No Partner (Internal / QuickCombo)</option>
+                                    {restaurants.map((r: any) => <option key={r.id} value={r.id} className="bg-black">{r.name}</option>)}
                                 </select>
                             </div>
                             <FormInput label="Asset URL" placeholder="https://..." value={formData.image_url} onChange={(v: any) => setFormData({ ...formData, image_url: v })} />
@@ -803,7 +909,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
 
                     {type === 'category' && (
                         <>
-                            <FormInput label="Emoji/Icon" placeholder="🍔" value={formData.icon} onChange={(v: any) => setFormData({ ...formData, icon: v })} />
+                            <FormInput label="Emoji/Icon" placeholder="ðŸ”" value={formData.icon} onChange={(v: any) => setFormData({ ...formData, icon: v })} />
                             <FormInput label="System Slug" placeholder="fast-food" value={formData.slug} onChange={(v: any) => setFormData({ ...formData, slug: v })} />
                         </>
                     )}
@@ -894,9 +1000,9 @@ function OrderList({ items, onUpdate, compact = false }: any) {
                   </td>
               )}
               {!compact && (
-                  <td className="py-6 px-6 font-bold text-gray-400">₹{order.subtotal}</td>
+                  <td className="py-6 px-6 font-bold text-gray-400">â‚¹{order.subtotal}</td>
               )}
-              <td className="py-6 px-6 font-black text-xl text-emerald-500 italic">₹{order.total}</td>
+              <td className="py-6 px-6 font-black text-xl text-emerald-500 italic">â‚¹{order.total}</td>
               <td className="py-6 px-6">
                 <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic ${
                   order.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :

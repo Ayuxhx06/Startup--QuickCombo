@@ -209,12 +209,120 @@ def admin_users(request):
     users = User.objects.all().order_by('-date_joined')
     return Response(UserSerializer(users, many=True).data)
 
+# ─── Smart Auto-Categorization Logic ─────────────────────────────────────────
+
+# Keyword rules: category_slug -> list of keywords to match against item name
+CATEGORY_KEYWORD_MAP = [
+    # Essentials / Grocery
+    ('essentials', [
+        'milk', 'bread', 'eggs', 'egg', 'butter', 'ghee', 'oil', 'rice', 'atta',
+        'flour', 'sugar', 'salt', 'soap', 'shampoo', 'detergent', 'washing',
+        'toothpaste', 'toothbrush', 'tissue', 'napkin', 'grocery', 'essential',
+        'daal', 'dal', 'pulses', 'lentil', 'maida', 'semolina', 'suji', 'rava',
+        'mustard', 'turmeric', 'haldi', 'masala', 'spice', 'pickle', 'ketchup',
+        'sauce', 'vinegar', 'tea', 'chai', 'coffee', 'biscuit', 'juice', 'water',
+        'mineral', 'cold drink', 'soft drink', 'aata', 'poha', 'oats', 'cereal',
+    ]),
+    # Beverages
+    ('beverages', [
+        'lassi', 'shake', 'milkshake', 'smoothie', 'lemonade', 'nimbu pani',
+        'mojito', 'frappe', 'cold coffee', 'iced tea', 'soda', 'sprite',
+        'cola', 'pepsi', 'coke', 'thanda', 'sharbat', 'thandai',
+    ]),
+    # Combos / Meals
+    ('combos', [
+        'combo', 'meal', 'thali', 'platter', 'set', 'deal', 'value pack',
+        'family pack', 'double', 'triple', 'mega', 'feast',
+    ]),
+    # Snacks / Street Food
+    ('snacks', [
+        'samosa', 'kachori', 'vada', 'pakora', 'bhajiya', 'pav', 'bhaji',
+        'pani puri', 'gol gappa', 'papdi', 'chaat', 'tikki', 'aloo tikki',
+        'sev', 'bhel', 'dahi', 'puri', 'cutlet', 'nugget', 'roll', 'wrap',
+        'sandwich', 'toast', 'nachos', 'fries', 'chips', 'popcorn', 'spring roll',
+        'momos', 'dim sum',
+    ]),
+    # Main Course / Rice / Roti
+    ('main-course', [
+        'biryani', 'pulao', 'rice', 'roti', 'naan', 'paratha', 'chapati',
+        'butter naan', 'laccha', 'kulcha', 'sabzi', 'curry', 'gravy',
+        'paneer', 'dal makhani', 'dal fry', 'rajma', 'chole', 'kadai',
+        'palak', 'shahi', 'korma', 'makhni', 'butter chicken', 'chicken tikka',
+        'mutton', 'keema', 'kofta', 'nihari', 'haleem', 'bhuna',
+    ]),
+    # Pizza / Pasta / International
+    ('pizza-pasta', [
+        'pizza', 'pasta', 'spaghetti', 'penne', 'lasagna', 'risotto',
+        'garlic bread', 'bruschetta', 'calzone', 'focaccia',
+    ]),
+    # Burgers / Fast Food
+    ('burgers', [
+        'burger', 'double patty', 'veggie burger', 'cheese burger',
+        'chicken burger', 'whopper', 'zinger', 'mcaloo', 'hotdog',
+    ]),
+    # Desserts / Sweets
+    ('desserts', [
+        'ice cream', 'kulfi', 'gulab jamun', 'rasgulla', 'kheer', 'halwa',
+        'ladoo', 'barfi', 'jalebi', 'rabri', 'basundi', 'phirni', 'payasam',
+        'brownie', 'cake', 'pastry', 'dessert', 'sweet', 'mithai', 'mousse',
+        'pudding', 'cheesecake', 'waffle', 'pancake',
+    ]),
+    # Breakfast
+    ('breakfast', [
+        'idli', 'dosa', 'uttapam', 'upma', 'poha', 'pongal', 'vada',
+        'medu vada', 'akki roti', 'pesarattu', 'appam', 'paratha', 'aloo paratha',
+        'chole bhature', 'puri bhaji', 'breakfast', 'morning',
+    ]),
+    # Salads / Healthy
+    ('salads', [
+        'salad', 'healthy', 'diet', 'low calorie', 'green', 'sprouts',
+        'quinoa', 'protein bowl', 'buddha bowl', 'fruit bowl',
+    ]),
+]
+
+
+def auto_categorize(name: str, description: str = '') -> 'Category | None':
+    """
+    Auto-assigns a Category based on item name + description keyword matching.
+    Returns the best-matched Category object, or None if no match found.
+    """
+    text = (name + ' ' + description).lower()
+
+    for slug, keywords in CATEGORY_KEYWORD_MAP:
+        for kw in keywords:
+            if kw in text:
+                # Try to find the existing category by slug
+                cat = Category.objects.filter(slug=slug).first()
+                if cat:
+                    return cat
+                # Create category if it doesn't exist yet
+                display_names = {
+                    'essentials': ('Essentials', '📦'),
+                    'beverages': ('Beverages', '🥤'),
+                    'combos': ('Combos', '🥗'),
+                    'snacks': ('Snacks & Street Food', '🍿'),
+                    'main-course': ('Main Course', '🍛'),
+                    'pizza-pasta': ('Pizza & Pasta', '🍕'),
+                    'burgers': ('Burgers', '🍔'),
+                    'desserts': ('Desserts & Sweets', '🍰'),
+                    'breakfast': ('Breakfast', '🌅'),
+                    'salads': ('Salads & Healthy', '🥗'),
+                }
+                cat_name, cat_icon = display_names.get(slug, (slug.title(), '🍽️'))
+                cat, _ = Category.objects.get_or_create(slug=slug, defaults={'name': cat_name, 'icon': cat_icon})
+                return cat
+    return None
+
+
 @api_view(['POST'])
 def admin_bulk_import(request):
     """
-    Bulk import from CSV. 
+    Bulk import from CSV.
     Payload: { 'type': 'restaurants'|'menu', 'file': CSV_FILE }
     Headers: X-Admin-Password
+
+    For menu items, categories are auto-assigned based on item name/description keywords.
+    You can also provide category_name or category_id to override the auto-assignment.
     """
     if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
         return Response({'error': 'Unauthorized'}, status=401)
@@ -226,68 +334,119 @@ def admin_bulk_import(request):
         return Response({'error': 'Missing type or file'}, status=400)
 
     try:
-        decoded_file = csv_file.read().decode('utf-8')
+        decoded_file = csv_file.read().decode('utf-8-sig')  # utf-8-sig strips BOM if present
         io_string = io.StringIO(decoded_file)
         reader = csv.DictReader(io_string)
-        
+
         created_count = 0
+        updated_count = 0
         errors = []
+        categorized_log = []  # Log which category was auto-assigned
 
         for row in reader:
+            # Strip whitespace from all keys and values
+            row = {k.strip(): v.strip() for k, v in row.items() if k}
+            if not row.get('name'):
+                continue  # skip empty rows
+
             try:
                 if target_type == 'restaurants':
-                    Restaurant.objects.update_or_create(
+                    _, created = Restaurant.objects.update_or_create(
                         name=row['name'],
                         defaults={
-                            'rating': float(row.get('rating', 4.0)),
-                            'delivery_time': int(row.get('delivery_time', 30)),
-                            'cuisines': row.get('cuisines', 'Various'),
-                            'image_url': row.get('image_url', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'),
-                            'is_featured': row.get('is_featured', 'false').lower() == 'true',
-                            'is_popular': row.get('is_popular', 'false').lower() == 'true'
+                            'rating': float(row.get('rating', 4.0) or 4.0),
+                            'delivery_time': int(row.get('delivery_time', 30) or 30),
+                            'cuisines': row.get('cuisines', 'Various') or 'Various',
+                            'image_url': row.get('image_url', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c') or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
+                            'is_featured': str(row.get('is_featured', 'false')).lower() == 'true',
                         }
                     )
-                    created_count += 1
+                    if created:
+                        created_count += 1
+                    else:
+                        updated_count += 1
+
                 elif target_type == 'menu':
-                    # Dynamic Lookup for related fields to make CSV import more robust
-                    r_id = row.get('restaurant_id')
+                    item_name = row['name']
+                    description = row.get('description', '')
+
+                    # ── Step 1: Resolve restaurant ──────────────────────────
+                    r_id = row.get('restaurant_id', '').strip()
                     if not r_id and row.get('restaurant_name'):
                         r_match = Restaurant.objects.filter(name__icontains=row['restaurant_name']).first()
-                        if r_match: r_id = r_match.id
-                    
-                    c_id = row.get('category_id')
-                    if not c_id and row.get('category_name'):
-                        c_match = Category.objects.filter(name__icontains=row['category_name']).first()
-                        if c_match: c_id = c_match.id
+                        if r_match:
+                            r_id = r_match.id
 
-                    MenuItem.objects.update_or_create(
-                        name=row['name'],
+                    # ── Step 2: Resolve category ────────────────────────────
+                    # Priority: category_id (CSV) > category_name (CSV) > auto-categorize
+                    c_id = row.get('category_id', '').strip()
+                    assigned_how = 'csv_id'
+
+                    if not c_id and row.get('category_name', '').strip():
+                        c_match = Category.objects.filter(name__icontains=row['category_name']).first()
+                        if c_match:
+                            c_id = c_match.id
+                            assigned_how = 'csv_name'
+
+                    if not c_id:
+                        # Auto-categorize by keyword analysis
+                        auto_cat = auto_categorize(item_name, description)
+                        if auto_cat:
+                            c_id = auto_cat.id
+                            assigned_how = f'auto:{auto_cat.name}'
+                        else:
+                            # Fallback: find or create a generic "Other" category
+                            fallback_cat, _ = Category.objects.get_or_create(
+                                slug='other',
+                                defaults={'name': 'Other', 'icon': '🍽️'}
+                            )
+                            c_id = fallback_cat.id
+                            assigned_how = 'fallback:Other'
+
+                    categorized_log.append({
+                        'item': item_name,
+                        'category_assigned': assigned_how
+                    })
+
+                    _, created = MenuItem.objects.update_or_create(
+                        name=item_name,
                         defaults={
-                            'description': row.get('description', ''),
-                            'price': float(row.get('price', 0)),
+                            'description': description,
+                            'price': float(row.get('price', 0) or 0),
                             'image_url': row.get('image_url', ''),
-                            'is_veg': row.get('is_veg', 'true').lower() == 'true',
-                            'rating': float(row.get('rating', 4.5)),
-                            'prep_time': int(row.get('prep_time', 25)),
-                            'category_id': int(c_id or 1),
-                            'restaurant_id': int(r_id or 1),
-                            'is_featured': row.get('is_featured', 'false').lower() == 'true'
+                            'is_veg': str(row.get('is_veg', 'true')).lower() not in ['false', '0', 'no'],
+                            'rating': float(row.get('rating', 4.5) or 4.5),
+                            'prep_time': int(row.get('prep_time', 25) or 25),
+                            'category_id': int(c_id),
+                            'restaurant_id': int(r_id) if r_id else None,
+                            'is_featured': str(row.get('is_featured', 'false')).lower() == 'true',
+                            'is_available': str(row.get('is_available', 'true')).lower() not in ['false', '0', 'no'],
                         }
                     )
-                    created_count += 1
-            except Exception as e:
-                errors.append(f"Row error: {str(e)}")
+                    if created:
+                        created_count += 1
+                    else:
+                        updated_count += 1
 
-        if created_count > 0:
+            except Exception as e:
+                import traceback
+                errors.append({'item': row.get('name', '?'), 'error': str(e)})
+
+        if created_count + updated_count > 0:
             clear_admin_caches()
 
         return Response({
             'success': True,
             'created': created_count,
-            'errors': errors
+            'updated': updated_count,
+            'total': created_count + updated_count,
+            'errors': errors,
+            'categorization_log': categorized_log,
         })
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return Response({'error': str(e)}, status=500)
 
 @api_view(['POST'])
