@@ -48,6 +48,8 @@ export default function PremiumAdmin() {
   const restaurantFileInputRef = useRef<HTMLInputElement>(null);
   const perRestaurantFileInputRef = useRef<HTMLInputElement>(null);
   const [targetRestaurant, setTargetRestaurant] = useState<{id: number, name: string} | null>(null);
+  const [selectedRestMenu, setSelectedRestMenu] = useState<any[]>([]);
+  const [isMenuDrilldown, setIsMenuDrilldown] = useState(false);
 
   // Auto-login check
   useEffect(() => {
@@ -119,7 +121,7 @@ export default function PremiumAdmin() {
       try {
           const vRes = await axios.get(`${base}/api/admin/version/`);
           setServerVersion(vRes.data.version);
-          if (vRes.data.version !== '1.2.2') setOutOfSync(true);
+          if (vRes.data.version !== '1.2.3') setOutOfSync(true);
       } catch (e) {
           // If version endpoint exists but fails preflight, it's definitely out of sync
           setOutOfSync(true);
@@ -136,6 +138,32 @@ export default function PremiumAdmin() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchRestaurantMenu = async (restaurantId: number) => {
+    setLoading(true);
+    try {
+      const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+      const res = await axios.get(`${base}/api/admin/menu/?restaurant_id=${restaurantId}`, getHeaders());
+      setSelectedRestMenu(res.data);
+      setIsMenuDrilldown(true);
+    } catch (e) {
+      toast.error('Failed to load restaurant menu');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateItemInline = async (itemId: number, patch: any) => {
+    try {
+      const res = await axios.patch(`${API}/api/admin/menu/`, { ...patch, id: itemId }, getHeaders());
+      if (isMenuDrilldown) {
+          setSelectedRestMenu(prev => prev.map(item => item.id === itemId ? { ...item, ...res.data } : item));
+      }
+      toast.success('Sync complete');
+    } catch (e) {
+      toast.error('Sync failed');
     }
   };
 
@@ -393,7 +421,7 @@ export default function PremiumAdmin() {
                 ].map(item => (
                   <button
                     key={item.id}
-                    onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); }}
+                    onClick={() => { setActiveTab(item.id); setIsSidebarOpen(false); setIsMenuDrilldown(false); setTargetRestaurant(null); }}
                     className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all relative group ${
                       activeTab === item.id 
                       ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]' 
@@ -678,7 +706,9 @@ export default function PremiumAdmin() {
             )}
 
             {activeTab === 'restaurants' && (
-                <motion.div key="restaurants" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-4 lg:gap-6">
+              <motion.div key="restaurants" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-6">
+                {!isMenuDrilldown ? (
+                  <>
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex gap-4">
                             <button
@@ -687,22 +717,9 @@ export default function PremiumAdmin() {
                             >
                                 <Plus size={20} /> ADD PARTNER
                             </button>
-                            {/* Hidden file input for restaurant CSV import */}
-                            <input
-                                type="file"
-                                accept=".csv"
-                                className="hidden"
-                                ref={restaurantFileInputRef}
-                                onChange={(e) => handleBulkUpload(e, 'restaurants')}
-                            />
-                            {/* Hidden file input for per-restaurant import */}
-                            <input
-                                type="file"
-                                accept=".csv"
-                                className="hidden"
-                                ref={perRestaurantFileInputRef}
-                                onChange={handlePerRestaurantImport}
-                            />
+                            <input type="file" accept=".csv" className="hidden" ref={restaurantFileInputRef} onChange={(e) => handleBulkUpload(e, 'restaurants')} />
+                            <input type="file" accept=".csv" className="hidden" ref={perRestaurantFileInputRef} onChange={handlePerRestaurantImport} />
+                            
                             <button
                                 disabled={uploading}
                                 onClick={() => restaurantFileInputRef.current?.click()}
@@ -713,41 +730,127 @@ export default function PremiumAdmin() {
                                 <FileUp size={20} /> {uploading ? 'IMPORTING...' : 'BULK IMPORT (CSV)'}
                             </button>
                         </div>
-                        <div className="text-[10px] text-gray-600 font-black tracking-[0.2em] uppercase italic">
-                            Required: name, rating, delivery_time, cuisines
-                        </div>
                     </div>
-                    {restaurants.map(res => (
-                        <div key={res.id} className="bg-[#080808] p-4 lg:p-6 rounded-2xl lg:rounded-3xl border border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group">
-                            <div className="flex items-center gap-4 lg:gap-6">
-                                <img src={res.image_url} alt={res.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-xl lg:rounded-2xl object-cover" />
+
+                    <div className="grid grid-cols-1 gap-4">
+                      {restaurants.map(res => (
+                        <div key={res.id} className="bg-[#080808] p-6 rounded-[2rem] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-6 hover:border-emerald-500/20 transition-all group">
+                            <div className="flex items-center gap-6">
+                                <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white/5 border border-white/10">
+                                    <img src={res.image_url || 'https://via.placeholder.com/100'} alt={res.name} className="w-full h-full object-cover" />
+                                </div>
                                 <div>
-                                    <h4 className="text-lg lg:text-xl font-black uppercase italic">{res.name}</h4>
-                                    <div className="flex flex-wrap items-center gap-3 mt-1">
-                                        <div className="flex items-center gap-1 text-emerald-500 text-xs font-black uppercase tracking-tighter"><ArrowUpRight size={12}/> {res.rating} Rating</div>
-                                        <div className="text-gray-500 text-xs font-medium uppercase">{res.cuisines}</div>
+                                    <h4 className="text-2xl font-black uppercase italic text-white flex items-center gap-2">
+                                        {res.name}
+                                        {res.is_featured && <ShieldCheck size={16} className="text-emerald-500" />}
+                                    </h4>
+                                    <div className="flex items-center gap-4 mt-2">
+                                        <div className="flex items-center gap-1.5 text-emerald-500 font-bold text-sm bg-emerald-500/10 px-3 py-1 rounded-lg">
+                                            <TrendingUp size={14}/> {res.rating}
+                                        </div>
+                                        <div className="text-gray-500 text-sm font-medium uppercase tracking-wider">{res.cuisines}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 self-end sm:self-auto w-full sm:w-auto">
-                                <div className={`hidden xs:block px-4 py-1.5 rounded-full text-[9px] font-black uppercase border italic flex-grow sm:flex-grow-0 text-center ${res.is_featured ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-500/10 text-gray-500 border-gray-500/20'}`}>
-                                    {res.is_featured ? 'Featured_Partner' : 'Standard'}
-                                </div>
+                            <div className="flex items-center gap-3">
                                 <button
-                                    onClick={() => {
-                                        setTargetRestaurant({id: res.id, name: res.name});
-                                        setTimeout(() => perRestaurantFileInputRef.current?.click(), 50);
-                                    }}
-                                    className="p-3 bg-emerald-500/10 rounded-xl hover:bg-emerald-500 hover:text-black text-emerald-500 transition-all border border-emerald-500/20 flex gap-2 items-center text-[10px] font-black uppercase"
+                                    onClick={() => { setTargetRestaurant({id: res.id, name: res.name}); fetchRestaurantMenu(res.id); }}
+                                    className="px-6 py-3 bg-emerald-500 text-black font-black rounded-xl hover:scale-105 transition-all flex items-center gap-2 uppercase italic text-xs shadow-lg shadow-emerald-500/20"
                                 >
-                                    <FileUp size={16}/> Menu
+                                    <Menu size={16}/> Manage Menu
                                 </button>
-                                <button onClick={() => openModal('restaurant', res)} className="p-3 bg-white/5 rounded-xl hover:bg-emerald-500 hover:text-black transition-all border border-white/10"><Edit2 size={18}/></button>
-                                <button onClick={() => deleteEntity('restaurant', res.id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-500/20"><Trash2 size={18}/></button>
+                                <button onClick={() => openModal('restaurant', res)} className="p-3 bg-white/5 rounded-xl hover:bg-white/10 border border-white/10"><Edit2 size={18}/></button>
+                                <button onClick={() => deleteEntity('restaurant', res.id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white border border-red-500/20"><Trash2 size={18}/></button>
                             </div>
                         </div>
-                    ))}
-                </motion.div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 border-b border-white/5 pb-8">
+                          <div className="flex items-center gap-6">
+                              <button onClick={() => setIsMenuDrilldown(false)} className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all border border-white/10">
+                                  <X className="rotate-90" size={20} />
+                              </button>
+                              <div>
+                                  <h3 className="text-4xl font-black italic uppercase text-emerald-500 leading-none mb-2">{targetRestaurant?.name} Menu</h3>
+                                  <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Direct Database Manipulation Mode</p>
+                              </div>
+                          </div>
+                          <div className="flex gap-3">
+                              <button
+                                  onClick={() => perRestaurantFileInputRef.current?.click()}
+                                  className="bg-white/5 text-emerald-500 font-bold px-6 py-4 rounded-2xl border border-emerald-500/20 hover:bg-emerald-500/10 transition-all flex items-center gap-2 uppercase italic text-xs"
+                              >
+                                  <FileUp size={18} /> Import CSV for this restaurant
+                              </button>
+                              <button onClick={() => openModal('menu', { restaurant: targetRestaurant?.id })} className="bg-emerald-500 text-black font-black px-6 py-4 rounded-2xl flex items-center gap-2 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/10">
+                                  <Plus size={20} /> ADD ITEM
+                              </button>
+                          </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4">
+                          {selectedRestMenu.map(item => (
+                              <div key={item.id} className="bg-white/[0.03] p-6 rounded-[2rem] border border-white/5 flex flex-col xl:flex-row items-center justify-between gap-8 group hover:bg-white/[0.05] transition-all">
+                                  <div className="flex items-center gap-6 flex-1 w-full">
+                                      <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+                                          <img src={item.image_url || 'https://via.placeholder.com/80'} className="w-full h-full object-cover" />
+                                      </div>
+                                      <div className="flex-1">
+                                          <div className="flex items-center gap-3">
+                                              <span className={`w-3 h-3 rounded-full ${item.is_veg ? 'bg-emerald-500' : 'bg-red-500'}`} title={item.is_veg ? 'Veg' : 'Non-Veg'} />
+                                              <h5 className="text-lg font-black uppercase italic text-white/90">{item.name}</h5>
+                                          </div>
+                                          <p className="text-gray-500 text-xs mt-1 truncate max-w-sm">{item.description}</p>
+                                      </div>
+                                      <div className="font-black text-2xl text-emerald-500 italic shrink-0">₹{item.price}</div>
+                                  </div>
+
+                                  <div className="flex flex-wrap items-center gap-8 w-full xl:w-auto">
+                                      {/* Manual Category Selection */}
+                                      <div className="flex flex-col gap-1.5">
+                                          <label className="text-[10px] font-black uppercase text-gray-600 tracking-widest">Manual Category</label>
+                                          <select 
+                                              value={item.category || ''}
+                                              onChange={(e) => updateItemInline(item.id, { category: e.target.value })}
+                                              className="bg-[#050505] border border-white/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white outline-none focus:border-emerald-500/50 appearance-none min-w-[180px]"
+                                          >
+                                              <option value="">Select Category</option>
+                                              {categories.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}
+                                          </select>
+                                      </div>
+
+                                      {/* Available Toggle */}
+                                      <div className="flex flex-col gap-1.5 items-center">
+                                          <label className="text-[10px] font-black uppercase text-gray-600 tracking-widest">Availability</label>
+                                          <button 
+                                              onClick={() => updateItemInline(item.id, { is_available: !item.is_available })}
+                                              className={`w-14 h-8 rounded-full p-1 transition-all flex relative ${item.is_available ? 'bg-emerald-500/20' : 'bg-red-500/20'}`}
+                                          >
+                                              <div className={`w-6 h-6 rounded-full transition-all shadow-md ${item.is_available ? 'translate-x-6 bg-emerald-500' : 'translate-x-0 bg-red-500'}`} />
+                                          </button>
+                                      </div>
+
+                                      <div className="flex gap-2 shrink-0">
+                                          <button onClick={() => openModal('menu', item)} className="p-3.5 bg-white/5 rounded-xl hover:bg-white/10 transition-all border border-white/5"><Edit2 size={16}/></button>
+                                          <button onClick={() => deleteEntity('menu', item.id)} className="p-3.5 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-500/20"><Trash2 size={16}/></button>
+                                      </div>
+                                  </div>
+                              </div>
+                          ))}
+                          {selectedRestMenu.length === 0 && (
+                              <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[2rem]">
+                                  <Utensils className="mx-auto text-gray-700 mb-6" size={48} />
+                                  <h4 className="text-xl font-black text-gray-600 uppercase italic">No items found for this restaurant</h4>
+                                  <p className="text-gray-700 text-sm mt-2">Use the bulk import or add a manual item to start.</p>
+                              </div>
+                          )}
+                      </div>
+                  </div>
+                )}
+              </motion.div>
             )}
 
             {activeTab === 'users' && (

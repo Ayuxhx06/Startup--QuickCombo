@@ -75,8 +75,11 @@ def admin_menu_items(request):
     if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
         return Response({'error': 'Unauthorized'}, status=401)
 
-    if request.method == 'GET':
+    if (request.method == 'GET'):
+        restaurant_id = request.query_params.get('restaurant_id')
         items = MenuItem.objects.all().select_related('category', 'restaurant').order_by('-id')
+        if restaurant_id:
+            items = items.filter(restaurant_id=restaurant_id)
         return Response(MenuItemSerializer(items, many=True).data)
     
     elif request.method == 'POST':
@@ -468,7 +471,7 @@ def admin_clear_cache(request):
 def admin_version(request):
     """Return the current infrastructure version for drift detection."""
     return Response({
-        'version': '1.2.2',
+        'version': '1.2.3',
         'status': 'operational',
-        'features': ['manual_sync', 'multi_case_auth', 'hardened_cors', 'v3_categorization']
+        'features': ['manual_sync', 'multi_case_auth', 'hardened_cors', 'v3_categorization', 'partner_menu_manager']
     })
