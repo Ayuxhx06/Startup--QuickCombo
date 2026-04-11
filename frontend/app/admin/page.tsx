@@ -121,7 +121,7 @@ export default function PremiumAdmin() {
       try {
           const vRes = await axios.get(`${base}/api/admin/version/`);
           setServerVersion(vRes.data.version);
-          if (vRes.data.version !== '1.2.3') setOutOfSync(true);
+          if (vRes.data.version !== '1.2.4') setOutOfSync(true);
       } catch (e) {
           // If version endpoint exists but fails preflight, it's definitely out of sync
           setOutOfSync(true);
@@ -567,6 +567,11 @@ export default function PremiumAdmin() {
                     <div>
                         <h3 className="text-2xl lg:text-3xl font-black">FOOD INVENTORY</h3>
                         <p className="text-gray-500">Manage Menu Items and pricing</p>
+                        {menuItems.filter(i => !i.restaurant).length > 0 && (
+                            <div className="mt-2 text-[10px] font-black uppercase text-amber-500 animate-pulse bg-amber-500/5 px-4 py-2 rounded-xl border border-amber-500/10 flex items-center gap-2">
+                                <AlertCircle size={14}/> {menuItems.filter(i => !i.restaurant).length} Unassigned Items Detected (Global Menu)
+                            </div>
+                        )}
                     </div>
                      <div className="flex flex-wrap gap-3">
                          {/* Hidden file input for menu CSV import */}
@@ -707,6 +712,10 @@ export default function PremiumAdmin() {
 
             {activeTab === 'restaurants' && (
               <motion.div key="restaurants" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-6">
+                {/* PERSISTENT HIDDEN INPUTS (Must stay mounted for refs to work) */}
+                <input type="file" accept=".csv" className="hidden" ref={restaurantFileInputRef} onChange={(e) => handleBulkUpload(e, 'restaurants')} />
+                <input type="file" accept=".csv" className="hidden" ref={perRestaurantFileInputRef} onChange={handlePerRestaurantImport} />
+
                 {!isMenuDrilldown ? (
                   <>
                     <div className="flex justify-between items-center mb-4">
@@ -717,8 +726,6 @@ export default function PremiumAdmin() {
                             >
                                 <Plus size={20} /> ADD PARTNER
                             </button>
-                            <input type="file" accept=".csv" className="hidden" ref={restaurantFileInputRef} onChange={(e) => handleBulkUpload(e, 'restaurants')} />
-                            <input type="file" accept=".csv" className="hidden" ref={perRestaurantFileInputRef} onChange={handlePerRestaurantImport} />
                             
                             <button
                                 disabled={uploading}

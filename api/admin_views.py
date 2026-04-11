@@ -471,7 +471,7 @@ def admin_clear_cache(request):
 def admin_version(request):
     """Return the current infrastructure version for drift detection."""
     return Response({
-        'version': '1.2.3',
+        'version': '1.2.4',
         'status': 'operational',
         'features': ['manual_sync', 'multi_case_auth', 'hardened_cors', 'v3_categorization', 'partner_menu_manager']
     })
