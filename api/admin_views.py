@@ -315,12 +315,8 @@ def auto_categorize(name: str, description: str = '') -> 'Category | None':
 @api_view(['POST'])
 def admin_bulk_import(request):
     """
-    Bulk import from CSV.
-    Payload: { 'type': 'restaurants'|'menu', 'file': CSV_FILE }
-    Headers: X-Admin-Password
-
-    For menu items, categories are auto-assigned based on item name/description keywords.
-    You can also provide category_name or category_id to override the auto-assignment.
+    Bulk import from CSV with robust field mapping and price cleaning.
+    Handles multiple encodings (UTF-8, CP1252) and common header aliases (Rate, Item, etc).
     """
     if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
         return Response({'error': 'Unauthorized'}, status=401)
@@ -332,8 +328,20 @@ def admin_bulk_import(request):
         return Response({'error': 'Missing type or file'}, status=400)
 
     try:
-        decoded_file = csv_file.read().decode('utf-8-sig')  # utf-8-sig strips BOM if present
-        io_string = io.StringIO(decoded_file)
+        # Step 0: Try multiple encodings for robust file reading
+        content = None
+        for enc in ['utf-8-sig', 'cp1252', 'latin-1']:
+            try:
+                csv_file.seek(0)
+                content = csv_file.read().decode(enc)
+                break
+            except UnicodeDecodeError:
+                continue
+        
+        if not content:
+            return Response({'error': 'Unsupported file encoding. Please use UTF-8 or CSV.'}, status=400)
+
+        io_string = io.StringIO(content)
         reader = csv.DictReader(io_string)
 
         from django.db import transaction
@@ -341,26 +349,48 @@ def admin_bulk_import(request):
         created_count = 0
         updated_count = 0
         errors = []
-        categorized_log = []  # Log which category was auto-assigned
+        categorized_log = [] 
 
-        # Wrap in a transaction for massive speedup on remote DBs
+        # ── Step 0.1: Header Normalization Map ──────────────────────
+        # Map common CSV headers to our internal field names
+        ALIAS_MAP = {
+            'name': ['item', 'title', 'product', 'item_name', 'name', 'items'],
+            'price': ['rate', 'mrp', 'cost', 'amt', 'amount', 'price'],
+            'description': ['desc', 'details', 'info', 'description'],
+            'is_veg': ['veg', 'type', 'veg_nonv', 'is_veg', 'isveg'],
+            'category_name': ['category', 'cat', 'group', 'section', 'category_name']
+        }
+
         with transaction.atomic():
             for row in reader:
-                # Strip whitespace from all keys and values
-                row = {k.strip(): v.strip() for k, v in row.items() if k}
-                if not row.get('name'):
-                    continue  # skip empty rows
+                # Normalize headers: lowcase everything and strip junk
+                raw_row = {str(k).lower().strip(): str(v).strip() for k, v in row.items() if k}
+                
+                # Apply Aliases: Create a clean_row with our canonical keys
+                clean_row = {}
+                for canonical, aliases in ALIAS_MAP.items():
+                    for alias in aliases:
+                        if alias in raw_row:
+                            clean_row[canonical] = raw_row[alias]
+                            break
+                
+                # Fallback for unmapped original columns
+                for k, v in raw_row.items():
+                    if k not in clean_row: clean_row[k] = v
+
+                if not clean_row.get('name'):
+                    continue 
 
                 try:
                     if target_type == 'restaurants':
                         _, created = Restaurant.objects.update_or_create(
-                            name=row['name'],
+                            name=clean_row['name'],
                             defaults={
-                                'rating': float(row.get('rating', 4.0) or 4.0),
-                                'delivery_time': int(row.get('delivery_time', 30) or 30),
-                                'cuisines': row.get('cuisines', 'Various') or 'Various',
-                                'image_url': row.get('image_url', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c') or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
-                                'is_featured': str(row.get('is_featured', 'false')).lower() == 'true',
+                                'rating': float(clean_row.get('rating', 4.0) or 4.0),
+                                'delivery_time': int(clean_row.get('delivery_time', 30) or 30),
+                                'cuisines': clean_row.get('cuisines', 'Various') or 'Various',
+                                'image_url': clean_row.get('image_url', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'),
+                                'is_featured': str(clean_row.get('is_featured', 'false')).lower() == 'true',
                             }
                         )
                         if created:
@@ -369,46 +399,37 @@ def admin_bulk_import(request):
                             updated_count += 1
 
                     elif target_type == 'menu':
-                        item_name = row['name']
-                        description = row.get('description', '')
+                        item_name = clean_row['name']
+                        description = clean_row.get('description', '')
 
                         # ── Step 1: Resolve restaurant ──────────────────────────
-                        # If lock_restaurant_id is provided, enforce it over everything else
                         lock_r_id = request.data.get('lock_restaurant_id')
-                        
                         if lock_r_id:
                             r_id = lock_r_id
                         else:
-                            r_id = row.get('restaurant_id', '').strip()
-                            if not r_id and row.get('restaurant_name'):
-                                r_match = Restaurant.objects.filter(name__icontains=row['restaurant_name']).first()
+                            r_id = clean_row.get('restaurant_id', '').strip()
+                            if not r_id and clean_row.get('restaurant_name'):
+                                r_match = Restaurant.objects.filter(name__icontains=clean_row['restaurant_name']).first()
                                 if r_match:
                                     r_id = r_match.id
 
                         # ── Step 2: Resolve category ────────────────────────────
-                        # Priority: category_id (CSV) > category_name (CSV) > auto-categorize
-                        c_id = row.get('category_id', '').strip()
-                        csv_cat_name = row.get('category_name', '').strip()
+                        c_id = clean_row.get('category_id', '').strip()
+                        csv_cat_name = clean_row.get('category_name', '').strip()
                         assigned_how = 'csv_id'
 
                         if not c_id and csv_cat_name:
-                            # Try exact or fuzzy match for site categories
                             c_match = Category.objects.filter(name__icontains=csv_cat_name).first()
                             if c_match:
                                 c_id = c_match.id
                                 assigned_how = 'csv_name'
-                            elif csv_cat_name.lower() in ['others', 'other', 'chicken specials', 'chicken special']:
-                                # If it's a generic "Others" or "Specials" label, ignore and use auto-categorize
-                                pass
 
                         if not c_id:
-                            # Auto-categorize by keyword analysis (passing both item name and original CSV category for context)
                             auto_cat = auto_categorize(item_name, f"{description} {csv_cat_name}")
                             if auto_cat:
                                 c_id = auto_cat.id
                                 assigned_how = f'auto:{auto_cat.name}'
                             else:
-                                # Fallback: find or create a generic "Other" category
                                 fallback_cat, _ = Category.objects.get_or_create(
                                     slug='other',
                                     defaults={'name': 'Other', 'icon': '🍽️'}
@@ -421,19 +442,27 @@ def admin_bulk_import(request):
                             'category_assigned': assigned_how
                         })
 
+                        # Clean Price: Handle float conversion with fallback
+                        try:
+                            raw_p = str(clean_row.get('price', 0))
+                            clean_p = "".join(c for c in raw_p if c.isdigit() or c == '.')
+                            price_val = float(clean_p) if clean_p else 0.0
+                        except:
+                            price_val = 0.0
+
                         _, created = MenuItem.objects.update_or_create(
                             name=item_name,
                             defaults={
                                 'description': description,
-                                'price': float(row.get('price', 0) or 0),
-                                'image_url': row.get('image_url', ''),
-                                'is_veg': str(row.get('is_veg', 'true')).lower() not in ['false', '0', 'no'],
-                                'rating': float(row.get('rating', 4.5) or 4.5),
-                                'prep_time': int(row.get('prep_time', 25) or 25),
+                                'price': price_val,
+                                'image_url': clean_row.get('image_url', ''),
+                                'is_veg': str(clean_row.get('is_veg', 'true')).lower() not in ['false', '0', 'no', 'non-veg', 'nv'],
+                                'rating': float(clean_row.get('rating', 4.5) or 4.5),
+                                'prep_time': int(clean_row.get('prep_time', 25) or 25),
                                 'category_id': int(c_id),
                                 'restaurant_id': int(r_id) if r_id else None,
-                                'is_featured': str(row.get('is_featured', 'false')).lower() == 'true',
-                                'is_available': str(row.get('is_available', 'true')).lower() not in ['false', '0', 'no'],
+                                'is_featured': str(clean_row.get('is_featured', 'false')).lower() == 'true',
+                                'is_available': str(clean_row.get('is_available', 'true')).lower() not in ['false', '0', 'no'],
                             }
                         )
                         if created:
@@ -443,7 +472,7 @@ def admin_bulk_import(request):
 
                 except Exception as e:
                     import traceback
-                    errors.append({'item': row.get('name', '?'), 'error': str(e)})
+                    errors.append({'item': clean_row.get('name', '?'), 'error': str(e)})
 
         if created_count + updated_count > 0:
             clear_admin_caches()
@@ -475,7 +504,7 @@ def admin_clear_cache(request):
 def admin_version(request):
     """Return the current infrastructure version for drift detection."""
     return Response({
-        'version': '1.2.4',
+        'version': '1.2.5',
         'status': 'operational',
-        'features': ['manual_sync', 'multi_case_auth', 'hardened_cors', 'v3_categorization', 'partner_menu_manager']
+        'features': ['robust_importer', 'multi_encoding', 'smart_alias_mapping', 'v3_categorization', 'partner_menu_manager']
     })
