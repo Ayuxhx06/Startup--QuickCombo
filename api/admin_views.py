@@ -315,8 +315,12 @@ def auto_categorize(name: str, description: str = '') -> 'Category | None':
 @api_view(['POST'])
 def admin_bulk_import(request):
     """
-    Bulk import from CSV with robust field mapping and price cleaning.
-    Handles multiple encodings (UTF-8, CP1252) and common header aliases (Rate, Item, etc).
+    Advanced CSV Importer (v1.2.6)
+    Supports:
+    - Auto-delimiter detection (, ; | \t)
+    - Fuzzy header matching (aliases & partial matches)
+    - Multi-encoding support (UTF-8, CP1252)
+    - Transactional atomic writes for speed
     """
     if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
         return Response({'error': 'Unauthorized'}, status=401)
@@ -328,7 +332,7 @@ def admin_bulk_import(request):
         return Response({'error': 'Missing type or file'}, status=400)
 
     try:
-        # Step 0: Try multiple encodings for robust file reading
+        # Step 0: Try multiple encodings
         content = None
         for enc in ['utf-8-sig', 'cp1252', 'latin-1']:
             try:
@@ -341,8 +345,18 @@ def admin_bulk_import(request):
         if not content:
             return Response({'error': 'Unsupported file encoding. Please use UTF-8 or CSV.'}, status=400)
 
+        # Step 0.1: Smart Delimiter Detection
+        snippet = content[:2048]
+        try:
+            dialect = csv.Sniffer().sniff(snippet)
+            # Sanity check: if sniffer found something weird like 'a', fallback to comma
+            if dialect.delimiter not in [',', ';', '\t', '|']:
+                dialect.delimiter = ','
+        except:
+            dialect = 'excel' # Use default comma
+
         io_string = io.StringIO(content)
-        reader = csv.DictReader(io_string)
+        reader = csv.DictReader(io_string, dialect=dialect)
 
         from django.db import transaction
 
@@ -351,11 +365,10 @@ def admin_bulk_import(request):
         errors = []
         categorized_log = [] 
 
-        # ── Step 0.1: Header Normalization Map ──────────────────────
-        # Map common CSV headers to our internal field names
+        # Header Normalize Map
         ALIAS_MAP = {
-            'name': ['item', 'title', 'product', 'item_name', 'name', 'items'],
-            'price': ['rate', 'mrp', 'cost', 'amt', 'amount', 'price'],
+            'name': ['item', 'title', 'product', 'item_name', 'name', 'items', 'menu item'],
+            'price': ['rate', 'mrp', 'cost', 'amt', 'amount', 'price', 'unit price'],
             'description': ['desc', 'details', 'info', 'description'],
             'is_veg': ['veg', 'type', 'veg_nonv', 'is_veg', 'isveg'],
             'category_name': ['category', 'cat', 'group', 'section', 'category_name']
@@ -366,14 +379,27 @@ def admin_bulk_import(request):
                 # Normalize headers: lowcase everything and strip junk
                 raw_row = {str(k).lower().strip(): str(v).strip() for k, v in row.items() if k}
                 
-                # Apply Aliases: Create a clean_row with our canonical keys
+                # Apply Aliases & Fuzzy Matching
                 clean_row = {}
                 for canonical, aliases in ALIAS_MAP.items():
+                    # 1. Try exact/alias match
+                    match_found = False
                     for alias in aliases:
                         if alias in raw_row:
                             clean_row[canonical] = raw_row[alias]
+                            match_found = True
                             break
-                
+                    
+                    # 2. Try partial/contains match if still not found
+                    if not match_found:
+                        for actual_key in raw_row.keys():
+                            for alias in aliases:
+                                if alias in actual_key: # e.g. "Item Name (Mandatory)" contains "item_name"
+                                    clean_row[canonical] = raw_row[actual_key]
+                                    match_found = True
+                                    break
+                            if match_found: break
+
                 # Fallback for unmapped original columns
                 for k, v in raw_row.items():
                     if k not in clean_row: clean_row[k] = v
@@ -482,6 +508,7 @@ def admin_bulk_import(request):
             'created': created_count,
             'updated': updated_count,
             'total': created_count + updated_count,
+            'detected_headers': list(reader.fieldnames) if reader.fieldnames else [],
             'errors': errors,
             'categorization_log': categorized_log,
         })
@@ -504,7 +531,7 @@ def admin_clear_cache(request):
 def admin_version(request):
     """Return the current infrastructure version for drift detection."""
     return Response({
-        'version': '1.2.5',
+        'version': '1.2.6',
         'status': 'operational',
-        'features': ['robust_importer', 'multi_encoding', 'smart_alias_mapping', 'v3_categorization', 'partner_menu_manager']
+        'features': ['zero_failure_importer', 'sniffer', 'fuzzy_map', 'diagnostic_headers']
     })
