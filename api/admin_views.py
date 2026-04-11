@@ -213,20 +213,22 @@ def admin_users(request):
 
 # Keyword rules: category_slug -> list of keywords to match against item name
 CATEGORY_KEYWORD_MAP = [
-    # Biryani (Highly specific)
+    # Biryani (Priority: capture specific rice variants first)
     ('biryani', [
-        'biryani', 'hyderabadi', 'luknowi', 'pulao', 'pilau', 'tahari',
+        'biryani', 'hyderabadi', 'luknowi', 'pulao', 'pilau', 'tahari', 'kuska',
+        'basmati', 'biriyani',
     ]),
     # South Indian
     ('south-indian', [
-        'dosa', 'idli', 'vada', 'pongal', 'uttapam', 'chettinad', 'sambar',
+        'dosa', 'idli', 'idly', 'vada', 'pongal', 'uttapam', 'chettinad', 'sambar',
         'rasam', 'appam', 'akki roti', 'pesarattu', 'upma', 'curry leaf',
-        'coconut chutney', 'malabar',
+        'coconut chutney', 'malabar', 'kerala', 'chennai', 'madras',
     ]),
-    # Chinese
+    # Chinese (Fried Rice/Noodles/Starters)
     ('chinese', [
         'momo', 'chowmein', 'manchurian', 'noodles', 'schezwan', 'fried rice',
-        'soup', 'chinese', 'spring roll', 'dim sum', 'hakka', 'manchow',
+        'soup', 'chinese', 'spring roll', 'dim sum', 'hakka', 'manchow', 
+        'lollipop', '65', 'chilli', 'dragon', 'ginger chicken', 'sezwan',
     ]),
     # Italian
     ('italian', [
@@ -237,25 +239,29 @@ CATEGORY_KEYWORD_MAP = [
     ('beverages', [
         'tea', 'coffee', 'chai', 'juice', 'shake', 'milkshake', 'lassi',
         'smoothie', 'soda', 'coke', 'pepsi', 'sprite', 'water', 'mineral water',
-        'cold drink', 'thanda', 'mojito', 'frappe',
+        'cold drink', 'thanda', 'mojito', 'frappe', 'lime', 'mocktail', 'cooler',
+        'abooda', 'noora', 'yoyo', 'iced tea', 'horlicks', 'boost', 'badam milk',
     ]),
-    # Desserts
+    # Desserts & Malba
     ('desserts', [
         'cake', 'ice cream', 'dessert', 'sweet', 'mithai', 'gulab jamun',
         'rasgulla', 'halwa', 'kheer', 'brownie', 'pastry', 'waffle', 'pudding',
-        'kulfi', 'jalebi',
+        'kulfi', 'jalebi', 'falodaa', 'faluda', 'malba', 'fruit salad',
     ]),
-    # Fast Food / Snacks
+    # Fast Food / Snacks / Shawarma / Rolls
     ('fast-food', [
         'burger', 'sandwich', 'wrap', 'fries', 'nugget', 'hotdog', 'chaat',
         'pav bhaji', 'samosa', 'kachori', 'pakora', 'tikki', 'roll', 'nachos',
+        'maggi', 'shawarma', 'popcorn', 'finger', 'omelet', 'omelette', 
+        'half fried', 'kathi',
     ]),
-    # North Indian / Main Course
+    # North Indian / Main Course / Tandoori
     ('north-indian', [
         'paneer', 'chicken', 'mutton', 'dal', 'roti', 'naan', 'paratha',
         'kulcha', 'curry', 'gravy', 'thali', 'main course', 'sabzi',
         'butter chicken', 'tikka', 'korma', 'kofta', 'rajma', 'chole',
-        'kadai', 'makhani', 'shahi', 'nihari',
+        'kadai', 'makhani', 'shahi', 'nihari', 'tandoor', 'kabab', 'kebab',
+        'alfam', 'alfaham', 'chapati', 'platter', 'plate',
     ]),
     # Healthy / Salads
     ('healthy', [
@@ -375,17 +381,22 @@ def admin_bulk_import(request):
                     # ── Step 2: Resolve category ────────────────────────────
                     # Priority: category_id (CSV) > category_name (CSV) > auto-categorize
                     c_id = row.get('category_id', '').strip()
+                    csv_cat_name = row.get('category_name', '').strip()
                     assigned_how = 'csv_id'
 
-                    if not c_id and row.get('category_name', '').strip():
-                        c_match = Category.objects.filter(name__icontains=row['category_name']).first()
+                    if not c_id and csv_cat_name:
+                        # Try exact or fuzzy match for site categories
+                        c_match = Category.objects.filter(name__icontains=csv_cat_name).first()
                         if c_match:
                             c_id = c_match.id
                             assigned_how = 'csv_name'
+                        elif csv_cat_name.lower() in ['others', 'other', 'chicken specials', 'chicken special']:
+                            # If it's a generic "Others" or "Specials" label, ignore and use auto-categorize
+                            pass
 
                     if not c_id:
-                        # Auto-categorize by keyword analysis
-                        auto_cat = auto_categorize(item_name, description)
+                        # Auto-categorize by keyword analysis (passing both item name and original CSV category for context)
+                        auto_cat = auto_categorize(item_name, f"{description} {csv_cat_name}")
                         if auto_cat:
                             c_id = auto_cat.id
                             assigned_how = f'auto:{auto_cat.name}'
