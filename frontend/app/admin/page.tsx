@@ -204,7 +204,6 @@ export default function PremiumAdmin() {
       const res = await axios.post(`${API}/api/admin/bulk-import/`, formData, {
         headers: {
           'X-Admin-Password': adminPassword,
-          'Content-Type': 'multipart/form-data',
         }
       });
 
@@ -257,7 +256,6 @@ export default function PremiumAdmin() {
       const res = await axios.post(`${API}/api/admin/bulk-import/`, formData, {
         headers: {
           'X-Admin-Password': adminPassword,
-          'Content-Type': 'multipart/form-data',
         }
       });
 
