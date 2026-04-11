@@ -481,7 +481,7 @@ export default function PremiumAdmin() {
                 className="flex flex-col gap-10"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
-                  <StatCard label="Live Revenue" value={`ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹${stats?.total_sales || 0}`} icon={DollarSign} trend="+12% Since yesterday" color="emerald" />
+                  <StatCard label="Live Revenue" value={`₹${stats?.total_sales || 0}`} icon={DollarSign} trend="+12% Since yesterday" color="emerald" />
                   <StatCard label="Total Orders" value={stats?.total_orders || 0} icon={Package} trend="Global count" color="blue" />
                   <StatCard label="Active Items" value={stats?.total_items || 0} icon={Utensils} trend="Menu inventory" color="amber" />
                   <StatCard label="User Base" value={stats?.total_users || 0} icon={Users} trend="Registered accounts" color="purple" />
@@ -594,7 +594,7 @@ export default function PremiumAdmin() {
                        </div>
                        <h4 className="font-black text-lg mb-1 truncate uppercase">{item.name}</h4>
                        <div className="flex justify-between items-center mb-4 text-white">
-                            <span className="text-2xl font-black text-emerald-500 italic">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹{item.price}</span>
+                            <span className="text-2xl font-black text-emerald-500 italic">₹{item.price}</span>
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">ID: {item.id}</span>
                        </div>
                        <div className="flex gap-2">
@@ -1070,9 +1070,9 @@ function OrderList({ items, onUpdate, compact = false }: any) {
                   </td>
               )}
               {!compact && (
-                  <td className="py-6 px-6 font-bold text-gray-400">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹{order.subtotal}</td>
+                  <td className="py-6 px-6 font-bold text-gray-400">₹{order.subtotal}</td>
               )}
-              <td className="py-6 px-6 font-black text-xl text-emerald-500 italic">ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¹{order.total}</td>
+              <td className="py-6 px-6 font-black text-xl text-emerald-500 italic">₹{order.total}</td>
               <td className="py-6 px-6">
                 <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic ${
                   order.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
