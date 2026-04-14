@@ -131,9 +131,36 @@ export default function CheckoutPage() {
       });
       
       if (res.data.valid) {
-        setAppliedCoupon(res.data.details);
+        setAppliedCoupon({
+          code: couponInput.toUpperCase(),
+          discount_amount: res.data.discount_amount,
+          discount_type: res.data.discount_type,
+          discount_value: res.data.discount_value,
+          is_free_delivery: res.data.is_free_delivery
+        });
         setDiscountAmount(res.data.discount_amount);
-        toast.success(res.data.message || 'Coupon applied!', { icon: '🎟️' });
+        
+        if (res.data.is_free_delivery) {
+          setDeliveryFee(0);
+        }
+        
+        toast.custom((t) => (
+          <div className={`${t.visible ? 'animate-enter' : 'animate-leave'} max-w-md w-full bg-white shadow-2xl rounded-[24px] pointer-events-auto flex ring-1 ring-black ring-opacity-5 overflow-hidden border-2 border-green-500`}>
+            <div className="flex-1 w-0 p-5">
+              <div className="flex items-start">
+                <div className="shrink-0 pt-0.5">
+                  <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-2xl">🎉</div>
+                </div>
+                <div className="ml-4 flex-1">
+                  <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic">Coupon Applied!</p>
+                  <p className="mt-1 text-xs font-bold text-gray-500">
+                    You saved ₹{res.data.discount_amount} {res.data.is_free_delivery ? 'and got Free Delivery!' : ''}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ));
       }
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Invalid coupon code';
@@ -170,14 +197,20 @@ export default function CheckoutPage() {
     if (specialRequests.length > 0) hasEssentials = true;
 
     const restCount = uniqueRestaurants.size;
+    let fee = 30;
     if (restCount === 1 && !hasEssentials) {
-      setDeliveryFee(15);
+      fee = 15;
     } else if (restCount >= 2 || hasEssentials || (restCount === 0 && hasEssentials)) {
-      setDeliveryFee(30);
-    } else {
-      setDeliveryFee(30);
+      fee = 30;
     }
-  }, [items, total, specialRequests]);
+    
+    // Override if free delivery coupon is applied
+    if (appliedCoupon?.is_free_delivery) {
+      fee = 0;
+    }
+    
+    setDeliveryFee(fee);
+  }, [items, total, specialRequests, appliedCoupon]);
 
   const currentCalculatedTotal = items.length > 0 ? (total - discountAmount + deliveryFee) : 0;
 

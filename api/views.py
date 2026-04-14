@@ -544,6 +544,10 @@ def place_order(request):
             except Coupon.DoesNotExist:
                 pass # Silently ignore invalid coupon on final place_order if it was somehow bypassed
 
+        # Override delivery fee if coupon has is_free_delivery
+        if applied_coupon_obj and applied_coupon_obj.is_free_delivery:
+            delivery_fee = 0
+
         total = (subtotal - float(discount_amount)) + delivery_fee
 
         # 3. Create Order
@@ -976,6 +980,7 @@ def validate_coupon(request):
             'discount_amount': discount_amount,
             'discount_type': coupon.discount_type,
             'discount_value': float(coupon.discount_value),
+            'is_free_delivery': coupon.is_free_delivery,
             'message': 'Coupon applied successfully!'
         })
     except Coupon.DoesNotExist:

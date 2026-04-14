@@ -1160,17 +1160,36 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                             <FormInput label="Cuisines" placeholder="North Indian, Chinese" value={formData.cuisines} onChange={(v: any) => setFormData({ ...formData, cuisines: v })} />
                              <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Restaurant Logo / Photo</label>
-                                <div className="flex gap-2">
-                                    <input 
-                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 text-xs"
-                                        placeholder="https://..." 
-                                        value={formData.image_url} 
-                                        onChange={e => setFormData({ ...formData, image_url: e.target.value })} 
-                                    />
-                                    <label className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-3 rounded-xl text-[10px] font-black cursor-pointer flex items-center justify-center min-w-[80px]">
-                                        IMPORT
-                                        <input type="file" className="hidden" accept="image/*" onChange={handleUpload} />
-                                    </label>
+                                <div 
+                                    onClick={() => document.getElementById('file-upload-rest')?.click()}
+                                    className="group relative w-full h-40 bg-white/5 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500/50 hover:bg-white/[0.07] transition-all overflow-hidden"
+                                >
+                                    {formData.image_url ? (
+                                        <>
+                                            <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                <span className="bg-black/60 px-4 py-2 rounded-xl text-[10px] font-black uppercase italic text-white backdrop-blur-md border border-white/10">Change Photo</span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors">📸</div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Click to Upload</span>
+                                        </>
+                                    )}
+                                    <input id="file-upload-rest" type="file" className="hidden" accept="image/*" onChange={handleUpload} />
+                                </div>
+                                <div className="pt-1 flex justify-end">
+                                    <button 
+                                        type="button" 
+                                        onClick={() => {
+                                            const newUrl = prompt('Enter Image URL manually:', formData.image_url);
+                                            if (newUrl !== null) setFormData({ ...formData, image_url: newUrl });
+                                        }}
+                                        className="text-[9px] font-black text-gray-600 hover:text-emerald-500 uppercase tracking-widest transition-colors"
+                                    >
+                                        Edit URL Manually
+                                    </button>
                                 </div>
                              </div>
                         </>
@@ -1207,17 +1226,36 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                             </div>
                              <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Dish Photo</label>
-                                <div className="flex gap-2">
-                                    <input 
-                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 text-xs"
-                                        placeholder="https://..." 
-                                        value={formData.image_url} 
-                                        onChange={e => setFormData({ ...formData, image_url: e.target.value })} 
-                                    />
-                                    <label className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-3 rounded-xl text-[10px] font-black cursor-pointer flex items-center justify-center min-w-[80px]">
-                                        IMPORT
-                                        <input type="file" className="hidden" accept="image/*" onChange={handleUpload} />
-                                    </label>
+                                <div 
+                                    onClick={() => document.getElementById('file-upload-dish')?.click()}
+                                    className="group relative w-full h-40 bg-white/5 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500/50 hover:bg-white/[0.07] transition-all overflow-hidden"
+                                >
+                                    {formData.image_url ? (
+                                        <>
+                                            <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                <span className="bg-black/60 px-4 py-2 rounded-xl text-[10px] font-black uppercase italic text-white backdrop-blur-md border border-white/10">Change Photo</span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors">🍔</div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Click to Upload</span>
+                                        </>
+                                    )}
+                                    <input id="file-upload-dish" type="file" className="hidden" accept="image/*" onChange={handleUpload} />
+                                </div>
+                                <div className="pt-1 flex justify-end">
+                                    <button 
+                                        type="button" 
+                                        onClick={() => {
+                                            const newUrl = prompt('Enter Image URL manually:', formData.image_url);
+                                            if (newUrl !== null) setFormData({ ...formData, image_url: newUrl });
+                                        }}
+                                        className="text-[9px] font-black text-gray-600 hover:text-emerald-500 uppercase tracking-widest transition-colors"
+                                    >
+                                        Edit URL Manually
+                                    </button>
                                 </div>
                              </div>
                         </>
@@ -1283,6 +1321,18 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                         {formData.is_public ? 'SHOWN_ON_CHECKOUT' : 'HIDDEN_FROM_PUBLIC'}
                                     </button>
                                 </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Free Delivery</label>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, is_free_delivery: !formData.is_free_delivery })}
+                                        className={`w-full py-3 rounded-xl font-black text-[10px] uppercase italic transition-all border ${formData.is_free_delivery ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_15px_#f59e0b11]' : 'bg-gray-500/10 text-gray-500 border-gray-500/20'}`}
+                                    >
+                                        {formData.is_free_delivery ? 'FREE_DELIVERY_ON' : 'STANDARD_FEES'}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Status Toggle</label>
                                     <button 

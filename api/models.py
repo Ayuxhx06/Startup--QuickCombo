@@ -122,6 +122,7 @@ class Coupon(models.Model):
     times_used = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=True)
+    is_free_delivery = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
