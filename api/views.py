@@ -10,9 +10,9 @@ from django.core.cache import cache as django_cache
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from .models import User, Category, MenuItem, Order, OrderItem, Address, Restaurant
+from .models import User, Category, MenuItem, Order, OrderItem, Address, Restaurant, Coupon, CouponUsage
 from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer,
-                          OrderSerializer, AddressSerializer, RestaurantSerializer)
+                          OrderSerializer, AddressSerializer, RestaurantSerializer, CouponSerializer)
 
 
 # ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -304,12 +304,16 @@ def menu_list(request):
 
     # Build a cache key that includes all query params so restaurant/category
     # filters get their own separate cache entries.
-    cache_key = f"menu_list|cat={category_slug}|search={search}|feat={featured}|combo={combo_eligible}|rest={restaurant_id}"
+    cache_key = f"menu_list|cat={category_slug}|search={search}|feat={featured}|combo={combo_eligible}|rest={restaurant_id}_v2"
     cached = django_cache.get(cache_key)
     if cached is not None:
         return Response(cached)
 
-    items = MenuItem.objects.filter(is_available=True).select_related('category', 'restaurant')
+    # Filter is_available AND linked restaurant is_active
+    items = MenuItem.objects.filter(
+        is_available=True, 
+        restaurant__is_active=True
+    ).select_related('category', 'restaurant')
 
     if category_slug:
         items = items.filter(category__slug=category_slug)
@@ -372,13 +376,67 @@ def debug_db(request):
 @api_view(['GET'])
 def restaurant_list(request):
     from .models import Restaurant
-    cached = django_cache.get('restaurant_list')
+    cached = django_cache.get('restaurant_list_v2')
     if cached is not None:
         return Response(cached)
-    restaurants = Restaurant.objects.all().order_by('-rating')
+    
+    # Only show active restaurants
+    restaurants = Restaurant.objects.filter(is_active=True).order_by('-rating')
     data = RestaurantSerializer(restaurants, many=True).data
-    django_cache.set('restaurant_list', data, 60 * 15)  # 15 min cache
+    django_cache.set('restaurant_list_v2', data, 60 * 15)
     return Response(data)
+
+
+# ─── Coupons ─────────────────────────────────────────────────────────────────
+
+@api_view(['POST'])
+def validate_coupon(request):
+    """Checks if a coupon is valid for a specific user and cart value."""
+    code = request.data.get('code', '').strip().upper()
+    email = request.data.get('email', '').strip().lower()
+    cart_value = float(request.data.get('cart_value', 0))
+
+    if not code:
+        return Response({'valid': False, 'message': 'Coupon code is required'}, status=400)
+
+    try:
+        coupon = Coupon.objects.get(code=code, is_active=True)
+    except Coupon.DoesNotExist:
+        return Response({'valid': False, 'message': 'Invalid coupon code'}, status=404)
+
+    # 1. Check Expiry
+    if coupon.expiry_date < timezone.now():
+        return Response({'valid': False, 'message': 'Coupon has expired'}, status=400)
+
+    # 2. Check Min Order Value
+    if cart_value < float(coupon.min_order_value):
+        return Response({'valid': False, 'message': f'Minimum order value of ₹{coupon.min_order_value} required'}, status=400)
+
+    # 3. Check Total Max Uses
+    if coupon.total_max_uses and coupon.times_used >= coupon.total_max_uses:
+        return Response({'valid': False, 'message': 'Coupon limit reached'}, status=400)
+
+    # 4. Check Per User Uses
+    if email:
+        user_usages = CouponUsage.objects.filter(user_email=email, coupon=coupon).count()
+        if user_usages >= coupon.max_uses_per_user:
+            return Response({'valid': False, 'message': f'You have already used this coupon {user_usages} time(s)'}, status=400)
+
+    # Calculate preview discount
+    discount = 0
+    if coupon.discount_type == 'percentage':
+        discount = (cart_value * float(coupon.discount_value)) / 100
+        if coupon.max_discount_amount:
+            discount = min(discount, float(coupon.max_discount_amount))
+    else:
+        discount = float(coupon.discount_value)
+
+    return Response({
+        'valid': True,
+        'discount_amount': round(discount, 2),
+        'message': f'Coupon "{code}" applied successfully!',
+        'details': CouponSerializer(coupon).data
+    })
 
 
 # ─── Orders ───────────────────────────────────────────────────────────────────
@@ -388,21 +446,50 @@ def place_order(request):
     try:
         data = request.data
         items_data = data.get('items', [])
+        email = data.get('email', '').strip().lower()
+        coupon_code = data.get('coupon_code', '').strip().upper()
+
         if not items_data:
             return Response({'error': 'No items in order'}, status=400)
         
         if not data.get('name') or not data.get('phone'):
             return Response({'error': 'Name and Phone Number are required to place an order'}, status=400)
 
-        # 1. Calculate Total
+        # 1. Calculate Subtotal
         subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
         delivery_fee = 40
-        discount = int(subtotal * 0.1)
-        total = (subtotal - discount) + delivery_fee
+        discount_amount = 0
+        applied_coupon_obj = None
 
-        # 2. Create Order
+        # 2. Handle Coupon
+        if coupon_code:
+            try:
+                coupon = Coupon.objects.get(code=coupon_code, is_active=True)
+                # Re-validate on server side to be safe
+                if (coupon.expiry_date >= timezone.now() and 
+                    subtotal >= float(coupon.min_order_value) and 
+                    (not coupon.total_max_uses or coupon.times_used < coupon.total_max_uses)):
+                    
+                    # User usage check
+                    user_usage_count = CouponUsage.objects.filter(user_email=email, coupon=coupon).count()
+                    if user_usage_count < coupon.max_uses_per_user:
+                        # Calculate actual discount
+                        if coupon.discount_type == 'percentage':
+                            discount_amount = (subtotal * float(coupon.discount_value)) / 100
+                            if coupon.max_discount_amount:
+                                discount_amount = min(discount_amount, float(coupon.max_discount_amount))
+                        else:
+                            discount_amount = float(coupon.discount_value)
+                        
+                        applied_coupon_obj = coupon
+            except Coupon.DoesNotExist:
+                pass # Silently ignore invalid coupon on final place_order if it was somehow bypassed
+
+        total = (subtotal - float(discount_amount)) + delivery_fee
+
+        # 3. Create Order
         order = Order.objects.create(
-            user_email=data.get('email', '').strip().lower(),
+            user_email=email,
             user_name=data.get('name', ''),
             user_phone=data.get('phone', ''),
             delivery_address=data.get('address', ''),
@@ -411,17 +498,27 @@ def place_order(request):
             payment_method=data.get('payment_method', 'cod'),
             subtotal=subtotal,
             delivery_fee=delivery_fee,
+            discount_amount=discount_amount,
+            applied_coupon=coupon_code if applied_coupon_obj else "",
             total=total,
             notes=data.get('notes', ''),
             status='out_for_delivery',
         )
 
-        # 3. Create Items
+        # 4. Record Coupon Usage
+        if applied_coupon_obj:
+            CouponUsage.objects.create(
+                user_email=email,
+                coupon=applied_coupon_obj,
+                order=order
+            )
+            applied_coupon_obj.times_used += 1
+            applied_coupon_obj.save()
+
+        # 5. Create Items
         for item_data in items_data:
             item_id = item_data.get('id')
             menu_item = None
-            
-            # Safe numeric check for database lookup
             try:
                 numeric_val = float(str(item_id))
                 menu_item = MenuItem.objects.get(pk=int(numeric_val))
@@ -437,7 +534,7 @@ def place_order(request):
                 unit=item_data.get('unit') or 'piece'
             )
 
-        # 4. Send Confirmation
+        # 6. Send Confirmation
         send_order_confirmation_email(order)
 
         return Response({'order_id': order.id, 'total': float(total), 'status': 'out_for_delivery'}, status=201)

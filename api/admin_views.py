@@ -7,8 +7,8 @@ from django.conf import settings
 from django.core.cache import cache
 
 # Use absolute imports for reliability on AlwaysData
-from api.models import User, Order, MenuItem, Restaurant, Category
-from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer
+from api.models import User, Order, MenuItem, Restaurant, Category, Coupon
+from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer, CouponSerializer
 import csv
 import io
 
@@ -202,6 +202,43 @@ def admin_restaurants(request):
             clear_admin_caches()
             return Response(status=204)
         except Restaurant.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+@api_view(['GET', 'POST', 'PATCH', 'DELETE'])
+def admin_coupons(request):
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    if request.method == 'GET':
+        coupons = Coupon.objects.all().order_by('-created_at')
+        return Response(CouponSerializer(coupons, many=True).data)
+
+    elif request.method == 'POST':
+        serializer = CouponSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    elif request.method == 'PATCH':
+        cpn_id = request.data.get('id')
+        try:
+            coupon = Coupon.objects.get(pk=cpn_id)
+            serializer = CouponSerializer(coupon, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=400)
+        except Coupon.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+    elif request.method == 'DELETE':
+        cpn_id = request.data.get('id')
+        try:
+            coupon = Coupon.objects.get(pk=cpn_id)
+            coupon.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Coupon.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
 
 @api_view(['GET'])
@@ -531,7 +568,7 @@ def admin_clear_cache(request):
 def admin_version(request):
     """Return the current infrastructure version for drift detection."""
     return Response({
-        'version': '1.2.6',
+        'version': '1.2.7',
         'status': 'operational',
-        'features': ['zero_failure_importer', 'sniffer', 'fuzzy_map', 'diagnostic_headers']
+        'features': ['promo_code_management', 'restaurant_operational_toggle', 'zero_failure_importer', 'sniffer']
     })

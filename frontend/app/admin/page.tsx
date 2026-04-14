@@ -7,7 +7,7 @@ import {
   Plus, Edit2, Trash2, ChevronRight, LogOut, Loader2, 
   Lock, Users, BarChart3, Layers, Store, ShieldCheck,
   AlertCircle, ArrowUpRight, DollarSign, PieChart, Menu, X,
-  FileUp, Download
+  FileUp, Download, Ticket, Power
 } from 'lucide-react';
 import { useRef } from 'react';
 import axios from 'axios';
@@ -33,10 +33,11 @@ export default function PremiumAdmin() {
   const [categories, setCategories] = useState<any[]>([]);
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [coupons, setCoupons] = useState<any[]>([]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<'restaurant' | 'menu' | 'category'>('restaurant');
+  const [modalType, setModalType] = useState<'restaurant' | 'menu' | 'category' | 'coupon'>('restaurant');
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
   const [formLoading, setFormLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -111,6 +112,8 @@ export default function PremiumAdmin() {
         await safeFetch(`${base}/api/admin/restaurants/`, setRestaurants);
       } else if (activeTab === 'users') {
         await safeFetch(`${base}/api/admin/users/`, setUsers);
+      } else if (activeTab === 'promos') {
+        await safeFetch(`${base}/api/admin/coupons/`, setCoupons);
       }
 
       // GLOBAL REFRESH (Individual safe fetches)
@@ -121,7 +124,7 @@ export default function PremiumAdmin() {
       try {
           const vRes = await axios.get(`${base}/api/admin/version/`);
           setServerVersion(vRes.data.version);
-          if (vRes.data.version !== '1.2.4') setOutOfSync(true);
+          if (vRes.data.version !== '1.2.7') setOutOfSync(true);
       } catch (e) {
           // If version endpoint exists but fails preflight, it's definitely out of sync
           setOutOfSync(true);
@@ -196,6 +199,7 @@ export default function PremiumAdmin() {
       if (type === 'restaurant') endpoint = '/api/admin/restaurants/';
       else if (type === 'menu') endpoint = '/api/admin/menu/';
       else if (type === 'category') endpoint = '/api/admin/categories/';
+      else if (type === 'coupon') endpoint = '/api/admin/coupons/';
 
       await axios.delete(`${API}${endpoint}`, {
         ...getHeaders(),
@@ -223,6 +227,9 @@ export default function PremiumAdmin() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
+    if (targetRestaurant?.id && type === 'menu') {
+      formData.append('lock_restaurant_id', targetRestaurant.id.toString());
+    }
 
     setUploading(true);
     const toastId = toast.loading(`ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾ Importing ${type} from CSV... Auto-categorizing items...`);
@@ -311,7 +318,7 @@ export default function PremiumAdmin() {
     }
   };
 
-  const openModal = (type: 'restaurant' | 'menu' | 'category', entity: any = null) => {
+  const openModal = (type: 'restaurant' | 'menu' | 'category' | 'coupon', entity: any = null) => {
     setModalType(type);
     setSelectedEntity(entity);
     setIsModalOpen(true);
@@ -417,6 +424,7 @@ export default function PremiumAdmin() {
                   { id: 'essentials', label: 'Essentials', icon: Package },
                   { id: 'categories', label: 'Categories', icon: Layers },
                   { id: 'restaurants', label: 'Partners', icon: Store },
+                  { id: 'promos', label: 'Promos', icon: Ticket },
                   { id: 'users', label: 'Customers', icon: Users },
                 ].map(item => (
                   <button
@@ -759,15 +767,32 @@ export default function PremiumAdmin() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={() => { setTargetRestaurant({id: res.id, name: res.name}); fetchRestaurantMenu(res.id); }}
-                                    className="px-6 py-3 bg-emerald-500 text-black font-black rounded-xl hover:scale-105 transition-all flex items-center gap-2 uppercase italic text-xs shadow-lg shadow-emerald-500/20"
-                                >
-                                    <Menu size={16}/> Manage Menu
-                                </button>
-                                <button onClick={() => openModal('restaurant', res)} className="p-3 bg-white/5 rounded-xl hover:bg-white/10 border border-white/10"><Edit2 size={18}/></button>
-                                <button onClick={() => deleteEntity('restaurant', res.id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white border border-red-500/20"><Trash2 size={18}/></button>
+                            <div className="flex items-center gap-8">
+                                <div className="flex flex-col items-center gap-1.5">
+                                    <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest">Portal Status</label>
+                                    <button 
+                                        onClick={async () => {
+                                            try {
+                                                await axios.patch(`${API}/api/admin/restaurants/`, { id: res.id, is_active: !res.is_active }, getHeaders());
+                                                toast.success(`${res.name} ${!res.is_active ? 'ONLINE' : 'OFFLINE'}`);
+                                                fetchData();
+                                            } catch (e) { toast.error('Toggle failed'); }
+                                        }}
+                                        className={`w-14 h-8 rounded-full p-1 transition-all relative ${res.is_active ? 'bg-emerald-500/20' : 'bg-red-500/20'}`}
+                                    >
+                                        <div className={`w-6 h-6 rounded-full transition-all shadow-md ${res.is_active ? 'translate-x-6 bg-emerald-500' : 'translate-x-0 bg-red-500'}`} />
+                                    </button>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => { setTargetRestaurant({id: res.id, name: res.name}); fetchRestaurantMenu(res.id); }}
+                                        className="px-6 py-3 bg-emerald-500 text-black font-black rounded-xl hover:scale-105 transition-all flex items-center gap-2 uppercase italic text-xs shadow-lg shadow-emerald-500/20"
+                                    >
+                                        <Menu size={16}/> Manage Menu
+                                    </button>
+                                    <button onClick={() => openModal('restaurant', res)} className="p-3 bg-white/5 rounded-xl hover:bg-white/10 border border-white/10"><Edit2 size={18}/></button>
+                                    <button onClick={() => deleteEntity('restaurant', res.id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white border border-red-500/20"><Trash2 size={18}/></button>
+                                </div>
                             </div>
                         </div>
                       ))}
@@ -854,9 +879,70 @@ export default function PremiumAdmin() {
                                   <p className="text-gray-700 text-sm mt-2">Use the bulk import or add a manual item to start.</p>
                               </div>
                           )}
-                      </div>
                   </div>
-                )}
+              </div>
+            )}
+          </motion.div>
+        )}
+            {activeTab === 'promos' && (
+              <motion.div key="promos" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="bg-[#080808] rounded-[2.5rem] p-6 lg:p-10 border border-white/5 flex flex-col gap-10">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h3 className="text-3xl font-black italic uppercase text-white">Promo Hub</h3>
+                        <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Discount Campaign Orchestration</p>
+                    </div>
+                    <button 
+                        onClick={() => openModal('coupon')}
+                        className="bg-emerald-500 text-black font-black px-8 py-4 rounded-2xl flex items-center gap-2 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/10"
+                    >
+                        <Plus size={20} /> CREATE CAMPAIGN
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {coupons.map(cpn => (
+                        <div key={cpn.id} className="bg-white/[0.03] border border-white/5 p-8 rounded-[2rem] hover:border-emerald-500/20 transition-all relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12 group-hover:rotate-0 transition-transform">
+                                <Ticket size={80} className="text-emerald-500" />
+                            </div>
+                            <div className="relative z-10">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div>
+                                        <h4 className="text-3xl font-black text-emerald-500 tracking-tighter italic">{cpn.code}</h4>
+                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
+                                            {cpn.discount_type === 'percentage' ? `${cpn.discount_value}% OFF` : `₹${cpn.discount_value} FLAT`}
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-2">
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase italic ${cpn.is_active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                                            {cpn.is_active ? 'ACTIVE' : 'PAUSED'}
+                                        </span>
+                                        <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest italic">Exp: {new Date(cpn.expiry_date).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 mb-8">
+                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Uses</p>
+                                        <p className="text-lg font-black text-white italic">{cpn.times_used} / {cpn.total_max_uses || '∞'}</p>
+                                    </div>
+                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1">Min Val</p>
+                                        <p className="text-lg font-black text-white italic">₹{cpn.min_order_value}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <button onClick={() => openModal('coupon', cpn)} className="flex-grow py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black uppercase italic border border-white/5 transition-all">CONFIGURE</button>
+                                    <button onClick={() => deleteEntity('coupon', cpn.id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all border border-red-500/20"><Trash2 size={16}/></button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    {coupons.length === 0 && (
+                        <div className="col-span-full py-20 text-center border-2 border-dashed border-white/5 rounded-[2rem] text-gray-600 font-black uppercase italic tracking-widest">No Promo Campaigns Detected</div>
+                    )}
+                </div>
               </motion.div>
             )}
 
@@ -991,6 +1077,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
             if (type === 'restaurant') endpoint = '/api/admin/restaurants/';
             else if (type === 'menu') endpoint = '/api/admin/menu/';
             else if (type === 'category') endpoint = '/api/admin/categories/';
+            else if (type === 'coupon') endpoint = '/api/admin/coupons/';
 
             if (entity?.id) {
                 await axios.patch(`${API}${endpoint}`, { ...sanitizedData, id: entity.id, category_slug: entity.category_slug }, headers);
@@ -1035,9 +1122,9 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                         <input 
                             required 
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50"
-                            placeholder={`Enter ${type} name`}
-                            value={formData.name || ''}
-                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                            placeholder={`Enter ${type === 'coupon' ? 'Promo Code (e.g. MEGA50)' : type + ' name'}`}
+                            value={formData.code || formData.name || ''}
+                            onChange={e => setFormData({ ...formData, [type === 'coupon' ? 'code' : 'name']: e.target.value.toUpperCase().replace(/\s/g, '') })}
                         />
                     </div>
 
@@ -1089,6 +1176,51 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                         <>
                             <FormInput label="Emoji/Icon" placeholder="ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã‚Â" value={formData.icon} onChange={(v: any) => setFormData({ ...formData, icon: v })} />
                             <FormInput label="System Slug" placeholder="fast-food" value={formData.slug} onChange={(v: any) => setFormData({ ...formData, slug: v })} />
+                        </>
+                    )}
+
+                    {type === 'coupon' && (
+                        <>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Discount Logic</label>
+                                    <select 
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 appearance-none text-white"
+                                        value={formData.discount_type || 'percentage'}
+                                        onChange={e => setFormData({ ...formData, discount_type: e.target.value })}
+                                    >
+                                        <option value="percentage" className="bg-black">Percentage (%)</option>
+                                        <option value="fixed" className="bg-black">Fixed Amount (₹)</option>
+                                    </select>
+                                </div>
+                                <FormInput label="Discount Value" placeholder="10" value={formData.discount_value} onChange={(v: any) => setFormData({ ...formData, discount_value: v })} type="number" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormInput label="Min Order (₹)" placeholder="200" value={formData.min_order_value} onChange={(v: any) => setFormData({ ...formData, min_order_value: v })} type="number" />
+                                <FormInput label="Max Discount (₹)" placeholder="100" value={formData.max_discount_amount} onChange={(v: any) => setFormData({ ...formData, max_discount_amount: v })} type="number" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormInput 
+                                    label="Expiry Date" 
+                                    type="date"
+                                    value={formData.expiry_date ? new Date(formData.expiry_date).toISOString().split('T')[0] : ''} 
+                                    onChange={(v: any) => setFormData({ ...formData, expiry_date: v })} 
+                                />
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Manual Toggle</label>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}
+                                        className={`w-full py-3 rounded-xl font-black text-[10px] uppercase italic transition-all border ${formData.is_active ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}
+                                    >
+                                        {formData.is_active ? 'ACTIVE_ON' : 'DEACTIVATED'}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormInput label="Uses per User" placeholder="1" value={formData.max_uses_per_user} onChange={(v: any) => setFormData({ ...formData, max_uses_per_user: v })} type="number" />
+                                <FormInput label="Total Uses (Cap)" placeholder="Unset" value={formData.total_max_uses} onChange={(v: any) => setFormData({ ...formData, total_max_uses: v })} type="number" />
+                            </div>
                         </>
                     )}
                 </div>

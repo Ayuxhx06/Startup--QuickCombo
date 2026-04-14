@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Category, MenuItem, Restaurant, Order, OrderItem, Address
+from .models import User, Category, MenuItem, Restaurant, Order, OrderItem, Address, Coupon
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = ['id', 'name', 'rating', 'delivery_time', 'cuisines', 'image_url', 'is_featured']
+        fields = ['id', 'name', 'rating', 'delivery_time', 'cuisines', 'image_url', 'is_featured', 'is_active']
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
@@ -43,8 +43,9 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'user_email', 'user_name', 'user_phone', 'delivery_address',
                   'delivery_lat', 'delivery_lng', 'status', 'payment_method',
-                  'payment_status', 'subtotal', 'delivery_fee', 'total',
-                  'notes', 'created_at', 'updated_at', 'rider_lat', 'rider_lng', 'items']
+                  'payment_status', 'subtotal', 'delivery_fee', 'discount_amount', 
+                  'applied_coupon', 'total', 'notes', 'created_at', 'updated_at', 
+                  'rider_lat', 'rider_lng', 'items']
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -52,3 +53,8 @@ class AddressSerializer(serializers.ModelSerializer):
         model = Address
         fields = ['id', 'label', 'line1', 'line2', 'city', 'pincode',
                   'lat', 'lng', 'is_default']
+
+class CouponSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coupon
+        fields = '__all__'

@@ -67,6 +67,7 @@ class Restaurant(models.Model):
     cuisines = models.CharField(max_length=200, help_text="e.g. North Indian, Chinese")
     image_url = models.URLField(blank=True)
     is_featured = models.BooleanField(default=False, db_index=True)
+    is_active = models.BooleanField(default=True, db_index=True)
 
     def __str__(self):
         return self.name
@@ -105,6 +106,27 @@ class Address(models.Model):
         return f"{self.label} - {self.user.email}"
 
 
+class Coupon(models.Model):
+    DISCOUNT_TYPES = [
+        ('percentage', 'Percentage'),
+        ('fixed', 'Fixed Amount'),
+    ]
+    code = models.CharField(max_length=50, unique=True)
+    discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPES, default='percentage')
+    discount_value = models.DecimalField(max_digits=10, decimal_places=2)
+    min_order_value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    max_discount_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="Max ₹ off for percentage coupons")
+    expiry_date = models.DateTimeField()
+    max_uses_per_user = models.IntegerField(default=1)
+    total_max_uses = models.IntegerField(null=True, blank=True)
+    times_used = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.code} ({self.discount_value})"
+
+
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -130,9 +152,13 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default='cod')
     payment_status = models.CharField(max_length=20, default='pending')
+    
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     delivery_fee = models.DecimalField(max_digits=8, decimal_places=2, default=40)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    applied_coupon = models.CharField(max_length=50, blank=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -163,4 +189,14 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity}x {self.name}"
+
+
+class CouponUsage(models.Model):
+    user_email = models.EmailField()
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, related_name='usages')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    used_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user_email', 'coupon', 'order')
 

@@ -10,6 +10,7 @@ urlpatterns = [
     path('admin/menu/', admin_views.admin_menu_items),
     path('admin/categories/', admin_views.admin_categories),
     path('admin/restaurants/', admin_views.admin_restaurants),
+    path('admin/coupons/', admin_views.admin_coupons),
     path('admin/users/', admin_views.admin_users),
     path('admin/bulk-import/', admin_views.admin_bulk_import),
     path('admin/clear-cache/', admin_views.admin_clear_cache),
@@ -28,6 +29,9 @@ urlpatterns = [
     path('menu/<int:pk>/', views.menu_item_detail),
     path('categories/', views.categories_list),
     path('restaurants/', views.restaurant_list),
+
+    # Coupons
+    path('coupons/validate/', views.validate_coupon),
 
     # Orders
     path('orders/', views.order_list),
