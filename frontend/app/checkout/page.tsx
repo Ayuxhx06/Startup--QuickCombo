@@ -49,6 +49,8 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [availableCoupons, setAvailableCoupons] = useState<any[]>([]);
+  const [deliveryFee, setDeliveryFee] = useState(40);
 
   useEffect(() => {
     if (items.length === 0 && !success) router.replace('/menu');
@@ -66,6 +68,11 @@ export default function CheckoutPage() {
           }
         }).catch(err => console.error(err));
     }
+    
+    // Fetch available coupons
+    axios.get(`${API}/api/coupons/`)
+      .then(res => setAvailableCoupons(res.data))
+      .catch(err => console.error('Error fetching coupons:', err));
     
     // Auto populate macro location from global context
     if (typeof window !== 'undefined') {
@@ -137,7 +144,41 @@ export default function CheckoutPage() {
     }
   };
 
-  const currentCalculatedTotal = items.length > 0 ? (total - discountAmount + 40) : 0;
+  // -- Delivery Fee Logic --
+  useEffect(() => {
+    if (items.length === 0) {
+      setDeliveryFee(40);
+      return;
+    }
+    
+    if (total > 210) {
+      setDeliveryFee(0);
+      return;
+    }
+
+    const uniqueRestaurants = new Set();
+    let hasEssentials = false;
+    
+    items.forEach(item => {
+      if (item.restaurant_id) uniqueRestaurants.add(item.restaurant_id);
+      const cat = item.category_name?.toLowerCase() || '';
+      if (cat.includes('essential') || cat.includes('grocery')) hasEssentials = true;
+    });
+
+    // Special items count as essentials
+    if (specialRequests.length > 0) hasEssentials = true;
+
+    const restCount = uniqueRestaurants.size;
+    if (restCount === 1 && !hasEssentials) {
+      setDeliveryFee(15);
+    } else if (restCount >= 2 || hasEssentials || (restCount === 0 && hasEssentials)) {
+      setDeliveryFee(30);
+    } else {
+      setDeliveryFee(30);
+    }
+  }, [items, total, specialRequests]);
+
+  const currentCalculatedTotal = items.length > 0 ? (total - discountAmount + deliveryFee) : 0;
 
   const hasFood = items.some(i => !['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
   const hasEssentials = items.some(i => ['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
@@ -156,7 +197,7 @@ export default function CheckoutPage() {
     if (!finalAddress) { toast.error('Delivery address is required (House/Flat No.)'); return; }
     
     const currentCalculatedTotal = items.length > 0 
-      ? (parseFloat(total as any) - discountAmount + 40) 
+      ? (parseFloat(total as any) - discountAmount + deliveryFee) 
       : 0;
 
     setLoading(true);
@@ -283,16 +324,28 @@ export default function CheckoutPage() {
         </div>
 
         {/* 0. Promo Code Section */}
-        <section className="bg-[#1c1c1c] rounded-[20px] p-4 border border-white/5">
-          <div className="flex items-center gap-2 mb-3">
-             <span className="text-lg">🎟️</span>
-             <h2 className="font-bold text-white">Promo Code</h2>
+        <section className="bg-gradient-to-br from-[#1c1c1c] to-[#121212] rounded-[24px] p-5 border border-white/5 shadow-2xl overflow-hidden relative group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/5 blur-3xl rounded-full -mr-10 -mt-10" />
+          
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                <span className="text-base text-green-500">🎟️</span>
+              </div>
+              <h2 className="font-extrabold text-white text-base tracking-tight">Apply Coupon</h2>
+            </div>
+            {!appliedCoupon && total < 210 && (
+              <div className="text-[10px] font-black text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full border border-green-500/20 animate-pulse">
+                ADD ₹{Math.max(0, 211 - Math.floor(total))} FOR FREE DELIVERY
+              </div>
+            )}
           </div>
-          <div className="flex gap-2">
+
+          <div className="flex gap-2.5 mb-5 relative">
             <input
               type="text"
-              placeholder={appliedCoupon ? appliedCoupon.code : "Enter Code (e.g. SAVE50)"}
-              className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-green-500"
+              placeholder={appliedCoupon ? appliedCoupon.code : "Enter Promo Code"}
+              className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-5 py-3.5 text-sm text-white outline-none focus:border-green-500 transition-all placeholder:text-gray-500 font-bold"
               value={couponInput}
               onChange={(e) => setCouponInput(e.target.value)}
               disabled={!!appliedCoupon}
@@ -300,7 +353,7 @@ export default function CheckoutPage() {
             {appliedCoupon ? (
                <button 
                 onClick={() => { setAppliedCoupon(null); setDiscountAmount(0); setCouponInput(''); }}
-                className="bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-2 rounded-xl text-xs font-bold"
+                className="bg-red-500/10 text-red-500 border border-red-500/20 px-6 py-3.5 rounded-2xl text-xs font-black tracking-widest active:scale-95 transition-all"
                >
                  REMOVE
                </button>
@@ -308,11 +361,68 @@ export default function CheckoutPage() {
                <button 
                 onClick={handleApplyCoupon}
                 disabled={validatingCoupon || !couponInput}
-                className="bg-green-500 hover:bg-green-400 disabled:opacity-50 text-black px-6 py-2 rounded-xl text-xs font-black transition-all"
+                className="bg-green-500 hover:bg-green-400 disabled:opacity-50 text-black px-8 py-3.5 rounded-2xl text-xs font-black tracking-widest transition-all active:scale-95 shadow-lg shadow-green-500/20"
                >
                  {validatingCoupon ? '...' : 'APPLY'}
                </button>
             )}
+          </div>
+
+          <div className="space-y-3">
+             <div className="flex items-center justify-between text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1 px-1">
+               <span>Available Coupons</span>
+               <span className="text-green-500">View All</span>
+             </div>
+             
+             {availableCoupons.length === 0 ? (
+               <div className="bg-white/5 rounded-2xl p-4 text-center border border-dashed border-white/10">
+                 <p className="text-xs text-gray-500 font-medium">No coupons available right now.</p>
+               </div>
+             ) : (
+               <div className="space-y-3">
+                 {availableCoupons.slice(0, 2).map((cpn, idx) => {
+                   const isUnlocked = total >= parseFloat(cpn.min_order_value);
+                   const needed = Math.max(0, Math.floor(parseFloat(cpn.min_order_value) - total));
+                   
+                   return (
+                     <div key={idx} className={`relative bg-white/5 border ${isUnlocked ? 'border-green-500/30' : 'border-white/10'} rounded-2xl p-4 overflow-hidden transition-all hover:bg-white/[0.07]`}>
+                       {isUnlocked && (
+                         <div className="absolute top-0 right-0 bg-green-500 text-black text-[9px] font-black px-2 py-0.5 rounded-bl-lg">
+                           UNLOCKED
+                         </div>
+                       )}
+                       
+                       <div className="flex justify-between items-start mb-2">
+                         <div className="flex items-center gap-3">
+                           <div className={`w-10 h-10 rounded-xl ${isUnlocked ? 'bg-green-500/10 text-green-500' : 'bg-white/5 text-gray-500'} flex items-center justify-center border border-white/5`}>
+                              <span className="text-lg">✨</span>
+                           </div>
+                           <div>
+                             <h3 className="text-sm font-black text-white italic">
+                               Save ₹{Math.floor(cpn.discount_value)}{cpn.discount_type === 'percentage' ? '%' : ''} with '{cpn.code}'
+                             </h3>
+                             <p className={`text-[11px] font-bold ${isUnlocked ? 'text-green-400' : 'text-blue-400'} mt-0.5`}>
+                               {isUnlocked 
+                                ? 'Coupon ready to apply!' 
+                                : `Add items worth ₹${needed} more to unlock`
+                               }
+                             </p>
+                           </div>
+                         </div>
+                         {!appliedCoupon && isUnlocked && (
+                           <button 
+                            onClick={() => { setCouponInput(cpn.code); setTimeout(() => handleApplyCoupon(), 100); }}
+                            className="text-[10px] font-black bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg border border-white/10 transition-all uppercase"
+                           >
+                             APPLY
+                           </button>
+                         )}
+                       </div>
+                     </div>
+                   );
+                 })}
+               </div>
+             )}
           </div>
         </section>
 
@@ -466,13 +576,13 @@ export default function CheckoutPage() {
             )}
             <div className="flex justify-between text-gray-400 border-b border-white/5 pb-3">
               <span>Delivery Partner Fee</span>
-              <span>₹40</span>
+              <span className={deliveryFee === 0 ? 'text-green-500 font-black' : ''}>{deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}</span>
             </div>
             <div className="flex justify-between font-bold text-lg text-white pt-1">
               <span>Total Bill</span>
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 text-sm line-through">₹{(parseFloat(total as any) || 0) + 40}</span>
-                <span>₹{(parseFloat(total as any) || 0) - Math.floor(parseFloat(total as any) * 0.1) + 40}</span>
+                <span className="text-gray-500 text-sm line-through">₹{(parseFloat(total as any) || 0) + deliveryFee}</span>
+                <span>₹{(parseFloat(total as any) || 0) - discountAmount + deliveryFee}</span>
               </div>
             </div>
           </div>
@@ -531,7 +641,7 @@ export default function CheckoutPage() {
           className="bg-green-500 hover:bg-green-400 text-black rounded-[14px] px-6 py-3.5 flex items-center gap-3 min-w-[160px] shadow-[0_4px_16px_rgba(34,197,94,0.3)] disabled:opacity-50"
         >
           <div className="flex flex-col items-start border-r border-black/20 pr-3">
-            <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + 40) ? 0 : (parseFloat(total as any) - discountAmount + 40)}</span>
+            <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + deliveryFee) ? 0 : (parseFloat(total as any) - discountAmount + deliveryFee)}</span>
             <span className="text-[10px] font-bold text-black/70">TOTAL</span>
           </div>
           <div className="flex items-center font-black text-[15px]">

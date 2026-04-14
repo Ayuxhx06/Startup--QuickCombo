@@ -88,12 +88,27 @@ def send_order_confirmation_email(order):
     regular_items = [i for i in all_items if not (i.menu_item is None and float(i.price) == 0)]
     special_items = [i for i in all_items if i.menu_item is None and float(i.price) == 0]
 
-    items_html = "".join([
-        f"<tr><td style='padding:8px;color:#d1d5db'>{item.quantity} {item.unit if item.unit != 'piece' else 'pc'} {item.name}</td>"
-        f"<td style='padding:8px;color:#6b7280;text-align:center'>x{item.quantity}</td>"
-        f"<td style='padding:8px;color:#22c55e;text-align:right'>₹{item.price * item.quantity}</td></tr>"
-        for item in regular_items
-    ])
+    items_html = ""
+    # Group items by restaurant
+    items_by_restaurant = {}
+    for item in regular_items:
+        r_name = "QuickCombo Store"
+        if item.menu_item and item.menu_item.restaurant:
+            r_name = item.menu_item.restaurant.name
+        
+        if r_name not in items_by_restaurant:
+            items_by_restaurant[r_name] = []
+        items_by_restaurant[r_name].append(item)
+
+    for r_name, r_items in items_by_restaurant.items():
+        items_html += f"<tr><td colspan='3' style='padding:12px 8px 4px;color:#22c55e;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px'>📍 {r_name}</td></tr>"
+        for item in r_items:
+            # Get specific variation/info if any
+            items_html += (
+                f"<tr><td style='padding:8px;color:#d1d5db'>{item.quantity} {item.unit if item.unit != 'piece' else 'pc'} {item.name}</td>"
+                f"<td style='padding:8px;color:#6b7280;text-align:center'>x{item.quantity}</td>"
+                f"<td style='padding:8px;color:#22c55e;text-align:right'>₹{item.price * item.quantity}</td></tr>"
+            )
 
     special_requests_html = ""
     if special_items:
@@ -438,6 +453,51 @@ def validate_coupon(request):
         'details': CouponSerializer(coupon).data
     })
 
+@api_view(['GET'])
+def public_coupons(request):
+    """List active coupons for the checkout page."""
+    coupons = Coupon.objects.filter(is_active=True, expiry_date__gt=timezone.now()).order_by('min_order_value')
+    return Response(CouponSerializer(coupons, many=True).data)
+
+def calculate_delivery_fee(items_data):
+    """
+    New Rules:
+    - 1 Restaurant (No Essentials): ₹15
+    - 2+ Restaurants OR (1 Restaurant + Essentials): ₹30
+    - Subtotal > ₹210: FREE (₹0)
+    - Max: ₹30
+    """
+    subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
+    if subtotal > 210:
+        return 0, subtotal
+    
+    unique_restaurants = set()
+    has_essentials = False
+    
+    for item in items_data:
+        try:
+            item_id = str(item['id'])
+            if item_id.startswith('req-'):
+                has_essentials = True
+                continue
+                
+            menu_item = MenuItem.objects.get(pk=int(float(item_id)))
+            if menu_item.restaurant_id:
+                unique_restaurants.add(menu_item.restaurant_id)
+            
+            cat_name = menu_item.category.name.lower() if menu_item.category else ""
+            if 'essential' in cat_name or 'grocery' in cat_name:
+                has_essentials = True
+        except:
+            continue
+            
+    rest_count = len(unique_restaurants)
+    if rest_count == 1 and not has_essentials:
+        return 15, subtotal
+    if rest_count >= 2 or has_essentials or (rest_count == 0 and has_essentials):
+        return 30, subtotal
+        
+    return 30, subtotal
 
 # ─── Orders ───────────────────────────────────────────────────────────────────
 
@@ -455,9 +515,8 @@ def place_order(request):
         if not data.get('name') or not data.get('phone'):
             return Response({'error': 'Name and Phone Number are required to place an order'}, status=400)
 
-        # 1. Calculate Subtotal
-        subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
-        delivery_fee = 40
+        # 1. Calculate Delivery Fee & Subtotal
+        delivery_fee, subtotal = calculate_delivery_fee(items_data)
         discount_amount = 0
         applied_coupon_obj = None
 

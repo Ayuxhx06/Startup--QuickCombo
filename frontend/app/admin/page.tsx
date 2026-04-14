@@ -1102,6 +1102,27 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
         } finally {
             setLoading(false);
         }
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
+
+        const uploadLoading = toast.loading('Uploading photo...');
+        try {
+            const res = await axios.post(`${API}/api/admin/upload-image/`, formDataUpload, {
+                headers: { 
+                    'X-Admin-Password': ADMIN_PASSWORD,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            setFormData({ ...formData, image_url: res.data.url });
+            toast.success('Photo uploaded!', { id: uploadLoading });
+        } catch (err) {
+            toast.error('Upload failed. Try again.', { id: uploadLoading });
+        }
     };
 
     return (
@@ -1135,7 +1156,21 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                 <FormInput label="Delivery (min)" placeholder="30" value={formData.delivery_time} onChange={(v: any) => setFormData({ ...formData, delivery_time: v })} type="number" />
                             </div>
                             <FormInput label="Cuisines" placeholder="North Indian, Chinese" value={formData.cuisines} onChange={(v: any) => setFormData({ ...formData, cuisines: v })} />
-                            <FormInput label="Image Stream URL" placeholder="https://..." value={formData.image_url} onChange={(v: any) => setFormData({ ...formData, image_url: v })} />
+                             <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Restaurant Logo / Photo</label>
+                                <div className="flex gap-2">
+                                    <input 
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 text-xs"
+                                        placeholder="https://..." 
+                                        value={formData.image_url} 
+                                        onChange={e => setFormData({ ...formData, image_url: e.target.value })} 
+                                    />
+                                    <label className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-3 rounded-xl text-[10px] font-black cursor-pointer flex items-center justify-center min-w-[80px]">
+                                        IMPORT
+                                        <input type="file" className="hidden" accept="image/*" onChange={handleUpload} />
+                                    </label>
+                                </div>
+                             </div>
                         </>
                     )}
 
@@ -1168,13 +1203,27 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                     {restaurants.map((r: any) => <option key={r.id} value={r.id} className="bg-black">{r.name}</option>)}
                                 </select>
                             </div>
-                            <FormInput label="Asset URL" placeholder="https://..." value={formData.image_url} onChange={(v: any) => setFormData({ ...formData, image_url: v })} />
+                             <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Dish Photo</label>
+                                <div className="flex gap-2">
+                                    <input 
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 text-xs"
+                                        placeholder="https://..." 
+                                        value={formData.image_url} 
+                                        onChange={e => setFormData({ ...formData, image_url: e.target.value })} 
+                                    />
+                                    <label className="bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-3 rounded-xl text-[10px] font-black cursor-pointer flex items-center justify-center min-w-[80px]">
+                                        IMPORT
+                                        <input type="file" className="hidden" accept="image/*" onChange={handleUpload} />
+                                    </label>
+                                </div>
+                             </div>
                         </>
                     )}
 
                     {type === 'category' && (
                         <>
-                            <FormInput label="Emoji/Icon" placeholder="ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒÂ¢Ã¢â€šÂ¬Ã‚Â" value={formData.icon} onChange={(v: any) => setFormData({ ...formData, icon: v })} />
+                            <FormInput label="Emoji/Icon" placeholder="ðŸ”" value={formData.icon} onChange={(v: any) => setFormData({ ...formData, icon: v })} />
                             <FormInput label="System Slug" placeholder="fast-food" value={formData.slug} onChange={(v: any) => setFormData({ ...formData, slug: v })} />
                         </>
                     )}

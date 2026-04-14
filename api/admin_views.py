@@ -11,6 +11,29 @@ from api.models import User, Order, MenuItem, Restaurant, Category, Coupon
 from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer, CouponSerializer
 import csv
 import io
+import os
+from django.core.files.storage import FileSystemStorage
+
+@api_view(['POST'])
+def admin_upload_image(request):
+    """Handles image uploads for restaurants/menu items."""
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    image_file = request.FILES.get('file')
+    if not image_file:
+        return Response({'error': 'No file uploaded'}, status=400)
+
+    # Validate file type
+    ext = os.path.splitext(image_file.name)[1].lower()
+    if ext not in ['.jpg', '.jpeg', '.png', '.webp']:
+        return Response({'error': 'Invalid file type. Supported: .jpg, .jpeg, .png, .webp'}, status=400)
+
+    fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'uploads'))
+    filename = fs.save(image_file.name, image_file)
+    file_url = f"{settings.MEDIA_URL}uploads/{filename}"
+
+    return Response({'url': file_url}, status=201)
 
 def clear_admin_caches():
     """Invalidate public listing caches after admin mutations."""
