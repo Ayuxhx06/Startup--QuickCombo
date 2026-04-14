@@ -10,6 +10,7 @@ export interface CartItem {
   is_veg: boolean;
   category_name?: string;
   unit?: string; // piece, kg, litre
+  restaurant?: number | string;
 }
 
 export interface SpecialRequest {

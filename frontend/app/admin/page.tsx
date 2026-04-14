@@ -1053,6 +1053,7 @@ export default function PremiumAdmin() {
                         headers={getHeaders()}
                         categories={categories}
                         restaurants={restaurants}
+                        adminPassword={adminPassword}
                     />
                 </div>
             )}
@@ -1062,7 +1063,7 @@ export default function PremiumAdmin() {
   );
 }
 
-function EntityModal({ type, entity, onClose, onSave, headers, categories, restaurants }: any) {
+function EntityModal({ type, entity, onClose, onSave, headers, categories, restaurants, adminPassword }: any) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<any>(entity || {});
 
@@ -1102,6 +1103,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
         } finally {
             setLoading(false);
         }
+    };
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -1114,7 +1116,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
         try {
             const res = await axios.post(`${API}/api/admin/upload-image/`, formDataUpload, {
                 headers: { 
-                    'X-Admin-Password': ADMIN_PASSWORD,
+                    'X-Admin-Password': adminPassword,
                     'Content-Type': 'multipart/form-data'
                 }
             });

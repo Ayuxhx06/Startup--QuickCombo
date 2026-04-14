@@ -15,6 +15,7 @@ interface MenuItem {
   prep_time: number;
   category_name: string;
   is_featured: boolean;
+  restaurant?: number | string;
   restaurant_name?: string;
 }
 
@@ -26,7 +27,7 @@ export default function FoodCard({ item }: { item: MenuItem }) {
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addItem({ ...item, quantity: 1, category_name: item.category_name });
+    addItem({ ...item, quantity: 1, category_name: item.category_name, restaurant: item.restaurant });
     if (qty === 0) toast.success(`${item.name} added!`, { icon: '🛒', duration: 1500 });
   };
 

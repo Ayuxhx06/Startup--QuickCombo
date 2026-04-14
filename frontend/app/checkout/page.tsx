@@ -160,7 +160,7 @@ export default function CheckoutPage() {
     let hasEssentials = false;
     
     items.forEach(item => {
-      if (item.restaurant_id) uniqueRestaurants.add(item.restaurant_id);
+      if (item.restaurant) uniqueRestaurants.add(item.restaurant);
       const cat = item.category_name?.toLowerCase() || '';
       if (cat.includes('essential') || cat.includes('grocery')) hasEssentials = true;
     });

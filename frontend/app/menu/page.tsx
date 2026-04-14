@@ -21,7 +21,9 @@ interface Category {
 interface MenuItem {
   id: number; name: string; description: string; price: number;
   image_url: string; is_veg: boolean; rating: number; prep_time: number;
-  category_name: string; is_featured: boolean; restaurant_name?: string;
+  category_name: string; is_featured: boolean; 
+  restaurant?: number | string;
+  restaurant_name?: string;
 }
 
 function MenuContent() {
