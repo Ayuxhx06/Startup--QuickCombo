@@ -11,6 +11,7 @@ export interface CartItem {
   category_name?: string;
   unit?: string; // piece, kg, litre
   restaurant?: number | string;
+  restaurant_name?: string;
 }
 
 export interface SpecialRequest {

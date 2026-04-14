@@ -51,6 +51,7 @@ export default function CheckoutPage() {
   const [validatingCoupon, setValidatingCoupon] = useState(false);
   const [availableCoupons, setAvailableCoupons] = useState<any[]>([]);
   const [deliveryFee, setDeliveryFee] = useState(40);
+  const [showAllCoupons, setShowAllCoupons] = useState(false);
 
   useEffect(() => {
     if (items.length === 0 && !success) router.replace('/menu');
@@ -369,18 +370,23 @@ export default function CheckoutPage() {
           </div>
 
           <div className="space-y-3">
-             <div className="flex items-center justify-between text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1 px-1">
-               <span>Available Coupons</span>
-               <span className="text-green-500">View All</span>
-             </div>
+              <div className="flex items-center justify-between text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1 px-1">
+                <span>Available Coupons</span>
+                <button 
+                  onClick={() => setShowAllCoupons(!showAllCoupons)}
+                  className="text-green-500 hover:text-green-400 font-black"
+                >
+                  {showAllCoupons ? 'SHOW LESS' : 'VIEW ALL'}
+                </button>
+              </div>
              
              {availableCoupons.length === 0 ? (
                <div className="bg-white/5 rounded-2xl p-4 text-center border border-dashed border-white/10">
                  <p className="text-xs text-gray-500 font-medium">No coupons available right now.</p>
                </div>
-             ) : (
-               <div className="space-y-3">
-                 {availableCoupons.slice(0, 2).map((cpn, idx) => {
+              ) : (
+                <div className="space-y-3">
+                  {(showAllCoupons ? availableCoupons : availableCoupons.slice(0, 2)).map((cpn, idx) => {
                    const isUnlocked = total >= parseFloat(cpn.min_order_value);
                    const needed = Math.max(0, Math.floor(parseFloat(cpn.min_order_value) - total));
                    
@@ -442,6 +448,9 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white leading-tight max-w-[140px] truncate">{item.name}</h3>
+                    {item.restaurant_name && (
+                      <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest italic">{item.restaurant_name}</p>
+                    )}
                     <div className="flex items-center gap-2 mt-0.5">
                       <p className="text-[11px] text-green-400 font-bold">₹{(item.price || 0)}</p>
                       <div className="flex items-center gap-2 bg-white/5 rounded-lg px-2 py-1 ml-1 scale-90 origin-left border border-white/10">

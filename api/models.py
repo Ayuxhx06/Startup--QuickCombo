@@ -65,7 +65,7 @@ class Restaurant(models.Model):
     rating = models.FloatField(default=4.5)
     delivery_time = models.IntegerField(default=30)
     cuisines = models.CharField(max_length=200, help_text="e.g. North Indian, Chinese")
-    image_url = models.URLField(blank=True)
+    image_url = models.CharField(max_length=500, blank=True, null=True)
     is_featured = models.BooleanField(default=False, db_index=True)
     is_active = models.BooleanField(default=True, db_index=True)
 
@@ -79,7 +79,7 @@ class MenuItem(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    image_url = models.URLField(blank=True)
+    image_url = models.CharField(max_length=500, blank=True, null=True)
     is_veg = models.BooleanField(default=True)
     is_available = models.BooleanField(default=True, db_index=True)
     is_featured = models.BooleanField(default=False, db_index=True)
