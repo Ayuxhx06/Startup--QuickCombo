@@ -1124,7 +1124,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50"
                             placeholder={`Enter ${type === 'coupon' ? 'Promo Code (e.g. MEGA50)' : type + ' name'}`}
                             value={formData.code || formData.name || ''}
-                            onChange={e => setFormData({ ...formData, [type === 'coupon' ? 'code' : 'name']: e.target.value.toUpperCase().replace(/\s/g, '') })}
+                            onChange={e => setFormData({ ...formData, [type === 'coupon' ? 'code' : 'name']: type === 'coupon' ? e.target.value.toUpperCase().replace(/\s/g, '') : e.target.value })}
                         />
                     </div>
 
