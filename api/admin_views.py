@@ -31,8 +31,7 @@ def admin_upload_image(request):
 
     fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'uploads'))
     filename = fs.save(image_file.name, image_file)
-    file_url = f"{settings.MEDIA_URL}uploads/{filename}"
-
+    file_url = request.build_absolute_uri(f"{settings.MEDIA_URL}uploads/{filename}")
     return Response({'url': file_url}, status=201)
 
 def clear_admin_caches():

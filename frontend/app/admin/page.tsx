@@ -1272,6 +1272,28 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                 <FormInput label="Uses per User" placeholder="1" value={formData.max_uses_per_user} onChange={(v: any) => setFormData({ ...formData, max_uses_per_user: v })} type="number" />
                                 <FormInput label="Total Uses (Cap)" placeholder="Unset" value={formData.total_max_uses} onChange={(v: any) => setFormData({ ...formData, total_max_uses: v })} type="number" />
                             </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Public Visibility</label>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, is_public: !formData.is_public })}
+                                        className={`w-full py-3 rounded-xl font-black text-[10px] uppercase italic transition-all border ${formData.is_public ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' : 'bg-gray-500/10 text-gray-500 border-gray-500/20'}`}
+                                    >
+                                        {formData.is_public ? 'SHOWN_ON_CHECKOUT' : 'HIDDEN_FROM_PUBLIC'}
+                                    </button>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Status Toggle</label>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}
+                                        className={`w-full py-3 rounded-xl font-black text-[10px] uppercase italic transition-all border ${formData.is_active ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}
+                                    >
+                                        {formData.is_active ? 'ENABLED' : 'DISABLED'}
+                                    </button>
+                                </div>
+                            </div>
                         </>
                     )}
                 </div>

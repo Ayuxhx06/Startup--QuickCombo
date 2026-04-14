@@ -929,3 +929,54 @@ def check_config(request):
             "CASHFREE_MODE": getattr(settings, 'CASHFREE_MODE', 'NOT_SET')
         }
     })
+
+@api_view(['GET'])
+def public_coupons(request):
+    """List active, public coupons for the checkout page."""
+    from django.utils.timezone import now
+    coupons = Coupon.objects.filter(is_active=True, is_public=True, expiry_date__gt=now())
+    serializer = CouponSerializer(coupons, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def validate_coupon(request):
+    """Validate a coupon code and return its discount info."""
+    from django.utils.timezone import now
+    code = request.data.get('code', '').strip().upper()
+    subtotal = float(request.data.get('subtotal', 0))
+    email = request.data.get('email', '')
+
+    try:
+        coupon = Coupon.objects.get(code=code, is_active=True, expiry_date__gt=now())
+        
+        # Check usage cap
+        if coupon.total_max_uses and coupon.times_used >= coupon.total_max_uses:
+            return Response({'valid': False, 'message': 'Coupon limit reached'}, status=400)
+            
+        # Check min order
+        if subtotal < float(coupon.min_order_value):
+            return Response({'valid': False, 'message': f'Min order ₹{coupon.min_order_value} required'}, status=400)
+            
+        # Check user usage (simplified)
+        usage_count = CouponUsage.objects.filter(user_email=email, coupon=coupon).count()
+        if usage_count >= coupon.max_uses_per_user:
+            return Response({'valid': False, 'message': 'You have already used this coupon'}, status=400)
+
+        # Calculate discount
+        discount_amount = 0
+        if coupon.discount_type == 'percentage':
+            discount_amount = (subtotal * float(coupon.discount_value)) / 100
+            if coupon.max_discount_amount:
+                discount_amount = min(discount_amount, float(coupon.max_discount_amount))
+        else:
+            discount_amount = float(coupon.discount_value)
+
+        return Response({
+            'valid': True,
+            'discount_amount': discount_amount,
+            'discount_type': coupon.discount_type,
+            'discount_value': float(coupon.discount_value),
+            'message': 'Coupon applied successfully!'
+        })
+    except Coupon.DoesNotExist:
+        return Response({'valid': False, 'message': 'Invalid or expired coupon'}, status=400)

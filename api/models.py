@@ -121,6 +121,7 @@ class Coupon(models.Model):
     total_max_uses = models.IntegerField(null=True, blank=True)
     times_used = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
+    is_public = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
