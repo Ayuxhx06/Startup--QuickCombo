@@ -43,6 +43,12 @@ export default function CheckoutPage() {
   const [success, setSuccess] = useState(false);
   const [orderId, setOrderId] = useState<number | null>(null);
   const [finalTotal, setFinalTotal] = useState(0);
+  
+  // -- Promo / Coupon States --
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
 
   useEffect(() => {
     if (items.length === 0 && !success) router.replace('/menu');
@@ -100,7 +106,38 @@ export default function CheckoutPage() {
     );
   };
 
-  const currentCalculatedTotal = items.length > 0 ? (total - Math.floor(total * 0.1) + 40) : 0;
+  // -- Coupon Validation --
+  const handleApplyCoupon = async () => {
+    if (!user) {
+      toast.error('Please login to apply coupons', { icon: '🙋' });
+      return;
+    }
+    if (!couponInput) return;
+    
+    setValidatingCoupon(true);
+    try {
+      const res = await axios.post(`${API}/api/coupons/validate/`, {
+        code: couponInput.trim().toUpperCase(),
+        email: user.email,
+        cart_value: total
+      });
+      
+      if (res.data.valid) {
+        setAppliedCoupon(res.data.details);
+        setDiscountAmount(res.data.discount_amount);
+        toast.success(res.data.message || 'Coupon applied!', { icon: '🎟️' });
+      }
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Invalid coupon code';
+      toast.error(msg);
+      setAppliedCoupon(null);
+      setDiscountAmount(0);
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const currentCalculatedTotal = items.length > 0 ? (total - discountAmount + 40) : 0;
 
   const hasFood = items.some(i => !['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
   const hasEssentials = items.some(i => ['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
@@ -119,7 +156,7 @@ export default function CheckoutPage() {
     if (!finalAddress) { toast.error('Delivery address is required (House/Flat No.)'); return; }
     
     const currentCalculatedTotal = items.length > 0 
-      ? (parseFloat(total as any) - Math.floor(parseFloat(total as any) * 0.1) + 40) 
+      ? (parseFloat(total as any) - discountAmount + 40) 
       : 0;
 
     setLoading(true);
@@ -132,6 +169,7 @@ export default function CheckoutPage() {
         lat,
         lng,
         payment_method: payment,
+        coupon_code: appliedCoupon ? appliedCoupon.code : "",
         notes: scheduledTime ? `[SCHEDULED: ${scheduledTime}] ${notes}` : notes,
         items: [
           ...items.map(i => ({ 
@@ -235,9 +273,48 @@ export default function CheckoutPage() {
         
         {/* Top Floating Savings Strip */}
         <div className="bg-gradient-to-r from-green-500/20 to-green-600/10 border-l-4 border-green-500 rounded-lg p-3 flex items-center justify-center gap-2">
-          <span>🎉</span> 
-          <span className="text-green-400 font-bold text-sm">You saved ₹{Math.floor(parseFloat(total as any) * 0.1) || 0} with PRO</span>
+          <span>{appliedCoupon ? '🎟️' : '✨'}</span> 
+          <span className="text-green-400 font-bold text-sm">
+            {appliedCoupon 
+              ? `Code ${appliedCoupon.code} applied! Saving ₹${discountAmount}`
+              : `Order fresh & save on every combo!`
+            }
+          </span>
         </div>
+
+        {/* 0. Promo Code Section */}
+        <section className="bg-[#1c1c1c] rounded-[20px] p-4 border border-white/5">
+          <div className="flex items-center gap-2 mb-3">
+             <span className="text-lg">🎟️</span>
+             <h2 className="font-bold text-white">Promo Code</h2>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder={appliedCoupon ? appliedCoupon.code : "Enter Code (e.g. SAVE50)"}
+              className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-green-500"
+              value={couponInput}
+              onChange={(e) => setCouponInput(e.target.value)}
+              disabled={!!appliedCoupon}
+            />
+            {appliedCoupon ? (
+               <button 
+                onClick={() => { setAppliedCoupon(null); setDiscountAmount(0); setCouponInput(''); }}
+                className="bg-red-500/10 text-red-400 border border-red-500/20 px-4 py-2 rounded-xl text-xs font-bold"
+               >
+                 REMOVE
+               </button>
+            ) : (
+               <button 
+                onClick={handleApplyCoupon}
+                disabled={validatingCoupon || !couponInput}
+                className="bg-green-500 hover:bg-green-400 disabled:opacity-50 text-black px-6 py-2 rounded-xl text-xs font-black transition-all"
+               >
+                 {validatingCoupon ? '...' : 'APPLY'}
+               </button>
+            )}
+          </div>
+        </section>
 
         {/* 1. Added Items Card */}
         <section className="bg-[#1c1c1c] rounded-[20px] p-4">
@@ -381,10 +458,12 @@ export default function CheckoutPage() {
               <span>Item Total</span>
               <span>₹{parseFloat(total as any) || 0}</span>
             </div>
-            <div className="flex justify-between text-green-400">
-              <span>Platform Discount</span>
-              <span>-₹{Math.floor(parseFloat(total as any) * 0.1) || 0}</span>
-            </div>
+            {discountAmount > 0 && (
+              <div className="flex justify-between text-green-400">
+                <span>Coupon Discount ({appliedCoupon?.code})</span>
+                <span>-₹{discountAmount}</span>
+              </div>
+            )}
             <div className="flex justify-between text-gray-400 border-b border-white/5 pb-3">
               <span>Delivery Partner Fee</span>
               <span>₹40</span>
@@ -452,7 +531,7 @@ export default function CheckoutPage() {
           className="bg-green-500 hover:bg-green-400 text-black rounded-[14px] px-6 py-3.5 flex items-center gap-3 min-w-[160px] shadow-[0_4px_16px_rgba(34,197,94,0.3)] disabled:opacity-50"
         >
           <div className="flex flex-col items-start border-r border-black/20 pr-3">
-            <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - Math.floor(parseFloat(total as any) * 0.1) + 40) ? 0 : (parseFloat(total as any) - Math.floor(parseFloat(total as any) * 0.1) + 40)}</span>
+            <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + 40) ? 0 : (parseFloat(total as any) - discountAmount + 40)}</span>
             <span className="text-[10px] font-bold text-black/70">TOTAL</span>
           </div>
           <div className="flex items-center font-black text-[15px]">
