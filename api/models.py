@@ -68,6 +68,7 @@ class Restaurant(models.Model):
     image_url = models.CharField(max_length=500, blank=True, null=True)
     is_featured = models.BooleanField(default=False, db_index=True)
     is_active = models.BooleanField(default=True, db_index=True)
+    categories = models.ManyToManyField(Category, blank=True, related_name='restaurants')
 
     def __str__(self):
         return self.name

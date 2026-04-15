@@ -46,10 +46,11 @@ function MenuContent() {
   }, [search]);
 
   useEffect(() => {
-    axios.get(`${API}/api/categories/`).then(r => {
+    const url = restaurantId ? `${API}/api/categories/?restaurant=${restaurantId}` : `${API}/api/categories/`;
+    axios.get(url).then(r => {
       setCategories([{ slug: '', icon: '🍽️', name: 'All' }, ...r.data]);
     });
-  }, []);
+  }, [restaurantId]);
 
   useEffect(() => {
     setLoading(true);

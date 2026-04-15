@@ -13,10 +13,14 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'status', 'total', 'payment_method', 'created_at')
     list_filter = ('status', 'payment_method', 'created_at')
     
+class RestaurantAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'rating', 'is_active')
+    filter_horizontal = ('categories',)
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Category)
 admin.site.register(MenuItem, MenuItemAdmin)
-admin.site.register(Restaurant)
+admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(Address)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem)

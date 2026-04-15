@@ -348,12 +348,19 @@ def menu_list(request):
 
 @api_view(['GET'])
 def categories_list(request):
-    cached = django_cache.get('categories_list')
+    restaurant_id = request.GET.get('restaurant', '')
+    cache_key = f'categories_list_rest_{restaurant_id}'
+    cached = django_cache.get(cache_key)
     if cached is not None:
         return Response(cached)
-    categories = Category.objects.all()
+        
+    if restaurant_id:
+        categories = Category.objects.filter(restaurants__id=restaurant_id).distinct()
+    else:
+        categories = Category.objects.all()
+        
     data = CategorySerializer(categories, many=True).data
-    django_cache.set('categories_list', data, 60 * 10)  # 10 min cache
+    django_cache.set(cache_key, data, 60 * 10)  # 10 min cache
     return Response(data)
 
 
