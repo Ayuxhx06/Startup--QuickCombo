@@ -127,7 +127,8 @@ export default function CheckoutPage() {
       const res = await axios.post(`${API}/api/coupons/validate/`, {
         code: couponInput.trim().toUpperCase(),
         email: user.email,
-        cart_value: total
+        cart_value: total,
+        subtotal: total
       });
       
       if (res.data.valid) {
