@@ -7,7 +7,7 @@ import BottomNav from "@/components/BottomNav";
 import StickyCart from "@/components/StickyCart";
 import FloatingTracker from "@/components/FloatingTracker";
 import { CartProvider } from "@/context/CartContext";
-import { AuthProvider } from "@/context/AuthProvider";
+import { AuthProvider } from "@/context/AuthContext";
 import MaintenanceGuard from "@/components/MaintenanceGuard";
 
 const jakarta = Plus_Jakarta_Sans({

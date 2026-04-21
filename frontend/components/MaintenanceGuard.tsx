@@ -30,8 +30,10 @@ export default function MaintenanceGuard({ children }: { children: React.ReactNo
         return () => clearInterval(interval);
     }, []);
 
-    // Admins bypass the guard to fix things
-    if (isAdmin || isOnline === true || isOnline === null) {
+    // Admins bypass the guard to fix things.
+    // If isOnline is explicitly false, show maintenance. 
+    // If it's true, null (loading), or there's an error, show children.
+    if (isAdmin || isOnline !== false) {
         return <>{children}</>;
     }
 
