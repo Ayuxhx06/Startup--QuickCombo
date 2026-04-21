@@ -18,7 +18,7 @@ export default function MaintenanceGuard({ children }: { children: React.ReactNo
         const checkStatus = async () => {
             try {
                 const res = await axios.get(`${API}/api/config/`);
-                setIsOnline(res.data.site_online === 'true');
+                setIsOnline(res.data.site_online === true);
             } catch (err) {
                 console.error('Config fetch failed:', err);
                 setIsOnline(true); // Fallback to online if API is down but we can't tell
