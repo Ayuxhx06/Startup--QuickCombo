@@ -16,6 +16,7 @@ urlpatterns = [
     path('admin/upload-image/', admin_views.admin_upload_image),
     path('admin/clear-cache/', admin_views.admin_clear_cache),
     path('admin/version/', admin_views.admin_version),
+    path('admin/toggle-site/', admin_views.admin_toggle_site),
 
     # Auth
     path('auth/send-otp/', views.send_otp),
@@ -43,6 +44,7 @@ urlpatterns = [
     path('orders/<int:order_id>/tracking/', views.order_tracking),
     path('debug-db/', views.debug_db),
     path('check-config/', views.check_config),
+    path('config/', views.get_site_config),
 
     # Location
     path('location/autocomplete/', views.location_autocomplete),

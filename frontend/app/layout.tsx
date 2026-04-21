@@ -7,7 +7,8 @@ import BottomNav from "@/components/BottomNav";
 import StickyCart from "@/components/StickyCart";
 import FloatingTracker from "@/components/FloatingTracker";
 import { CartProvider } from "@/context/CartContext";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider } from "@/context/AuthProvider";
+import MaintenanceGuard from "@/components/MaintenanceGuard";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -49,7 +50,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <CartProvider>
             <Navbar />
-            <main className="pb-20 min-h-screen">{children}</main>
+            <MaintenanceGuard>
+              <main className="pb-20 min-h-screen">{children}</main>
+            </MaintenanceGuard>
             <BottomNav />
             <StickyCart />
             <FloatingTracker />

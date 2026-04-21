@@ -51,6 +51,8 @@ export default function PremiumAdmin() {
   const [targetRestaurant, setTargetRestaurant] = useState<{id: number, name: string} | null>(null);
   const [selectedRestMenu, setSelectedRestMenu] = useState<any[]>([]);
   const [isMenuDrilldown, setIsMenuDrilldown] = useState(false);
+  const [siteOnline, setSiteOnline] = useState(true);
+  const [isTogglingSite, setIsTogglingSite] = useState(false);
 
   // Auto-login check
   useEffect(() => {
@@ -130,6 +132,12 @@ export default function PremiumAdmin() {
           setOutOfSync(true);
       }
       
+      // Fetch site status
+      try {
+          const configRes = await axios.get(`${base}/api/config/`);
+          setSiteOnline(configRes.data.site_online);
+      } catch (e) {}
+      
     } catch (e: any) {
       if (e.response?.status === 401) {
         toast.error('Invalid Master Password');
@@ -141,6 +149,21 @@ export default function PremiumAdmin() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleSite = async () => {
+    const newStatus = !siteOnline;
+    setIsTogglingSite(true);
+    try {
+        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+        await axios.post(`${base}/api/admin/toggle-site/`, { online: newStatus }, getHeaders());
+        setSiteOnline(newStatus);
+        toast.success(`Platform ${newStatus ? 'ONLINE' : 'OFFLINE'}`);
+    } catch (e) {
+        toast.error('Failed to change site status');
+    } finally {
+        setIsTogglingSite(false);
     }
   };
 
@@ -446,6 +469,24 @@ export default function PremiumAdmin() {
               </nav>
 
               <div className="flex flex-col gap-4">
+                  <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
+                      <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Store Operation</p>
+                      <div className="flex justify-between items-center mb-3">
+                          <span className={`text-xs font-black uppercase italic ${siteOnline ? 'text-emerald-500' : 'text-red-500'}`}>
+                              {siteOnline ? 'Online' : 'Offline'}
+                          </span>
+                          <button 
+                            onClick={toggleSite}
+                            disabled={isTogglingSite}
+                            className={`w-12 h-6 rounded-full transition-all relative ${siteOnline ? 'bg-emerald-500/20' : 'bg-red-500/20'}`}
+                          >
+                            <div className={`absolute top-1 w-4 h-4 rounded-full transition-all ${siteOnline ? 'right-1 bg-emerald-500' : 'left-1 bg-red-500'}`} />
+                          </button>
+                      </div>
+                      <p className="text-[10px] text-gray-600 font-medium leading-tight">
+                          {siteOnline ? 'Site is active and accepting orders.' : 'Maintenance screen is active. Orders blocked.'}
+                      </p>
+                  </div>
                    <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
                       <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Master Environment</p>
                       <div className="flex justify-between items-center mb-3">

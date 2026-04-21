@@ -594,3 +594,16 @@ def admin_version(request):
         'status': 'operational',
         'features': ['promo_code_management', 'restaurant_operational_toggle', 'zero_failure_importer', 'sniffer']
     })
+
+@api_view(['POST'])
+def admin_toggle_site(request):
+    """Update global site operational status."""
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+    
+    status_val = request.data.get('online', True)
+    config, _ = GlobalConfig.objects.get_or_create(key='site_online', defaults={'value': 'true'})
+    config.value = 'true' if status_val else 'false'
+    config.save()
+    
+    return Response({'online': config.value == 'true'})

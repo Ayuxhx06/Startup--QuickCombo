@@ -10,9 +10,9 @@ from django.core.cache import cache as django_cache
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from .models import User, Category, MenuItem, Order, OrderItem, Address, Restaurant, Coupon, CouponUsage
+from .models import User, Category, MenuItem, Order, OrderItem, Address, Restaurant, Coupon, CouponUsage, GlobalConfig
 from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer,
-                          OrderSerializer, AddressSerializer, RestaurantSerializer, CouponSerializer)
+                          OrderSerializer, AddressSerializer, RestaurantSerializer, CouponSerializer, GlobalConfigSerializer)
 
 
 # ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -941,4 +941,10 @@ def check_config(request):
         }
     })
 
-
+@api_view(['GET'])
+def get_site_config(request):
+    """Expose site operational status and other public config."""
+    site_online = GlobalConfig.objects.filter(key='site_online').first()
+    return Response({
+        'site_online': site_online.value == 'true' if site_online else True
+    })

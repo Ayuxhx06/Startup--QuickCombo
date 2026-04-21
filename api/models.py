@@ -203,3 +203,14 @@ class CouponUsage(models.Model):
     class Meta:
         unique_together = ('user_email', 'coupon', 'order')
 
+class GlobalConfig(models.Model):
+    key = models.CharField(max_length=50, unique=True)
+    value = models.TextField()
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.key}: {self.value}"
+
+    class Meta:
+        verbose_name = "Global Configuration"
+        verbose_name_plural = "Global Configurations"

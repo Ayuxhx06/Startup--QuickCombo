@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Category, MenuItem, Restaurant, Order, OrderItem, Address, Coupon
+from .models import User, Category, MenuItem, Restaurant, Order, OrderItem, Address, Coupon, GlobalConfig
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,3 +58,7 @@ class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
         fields = '__all__'
+class GlobalConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GlobalConfig
+        fields = ['key', 'value', 'updated_at']
