@@ -49,7 +49,7 @@ def clear_admin_caches():
     # Clear all caches (blanket clear is safest since menu_list now uses
     # dynamic keys like  menu_list|cat=...|rest=5  for each filter combo).
     cache.clear()
-    print("✨ Admin mutation: Cache cleared for instance reflection.")
+    print("Admin mutation: Cache cleared for instance reflection.")
 
 @api_view(['GET'])
 def admin_stats(request):
@@ -117,24 +117,28 @@ def admin_menu_items(request):
     elif request.method == 'POST':
         data = request.data.copy()
         
-        # Self-healing: If category is missing but slug is provided (e.g. 'essentials'), find or create it.
-        if not data.get('category') and data.get('category_slug'):
-            slug = data.get('category_slug').lower().strip()
-            cat_name = slug.replace('-', ' ').replace('_', ' ').capitalize()
-            # Special case for essentials
-            icon = '📦' if 'essential' in slug else '🍽️'
-            category, _ = Category.objects.get_or_create(slug=slug, defaults={'name': cat_name, 'icon': icon})
-            data['category'] = category.id
+        try:
+            # Self-healing: If category is missing but slug is provided (e.g. 'essentials'), find or create it.
+            if not data.get('category') and data.get('category_slug'):
+                slug = data.get('category_slug').lower().strip()
+                cat_name = slug.replace('-', ' ').replace('_', ' ').capitalize()
+                # Special case for essentials: fallback icons as text to avoid encoding mishaps
+                icon = 'ESS' if 'essential' in slug else 'MENU'
+                category, _ = Category.objects.get_or_create(slug=slug, defaults={'name': cat_name, 'icon': icon})
+                data['category'] = category.id
 
-        # Robustness: Remove redundant keys that might confuse the serializer
-        data.pop('category_slug', None) 
+            # Robustness: Remove redundant keys that might confuse the serializer
+            data.pop('category_slug', None) 
 
-        serializer = MenuItemSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            clear_admin_caches()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            serializer = MenuItemSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                clear_admin_caches()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            # Explicitly return the error to the frontend for debugging
+            return Response({'error': str(e)}, status=500)
 
     elif request.method == 'PATCH':
         item_id = request.data.get('id')
