@@ -44,3 +44,7 @@ Thumbs.db
 !quickcombo/**/*.py
 !frontend/**/*.py
 !__init__.py
+
+node_modules/
+dist/
+.next/
