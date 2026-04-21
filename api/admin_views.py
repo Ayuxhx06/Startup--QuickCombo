@@ -12,6 +12,7 @@ from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSeria
 import csv
 import io
 import os
+import uuid
 from django.core.files.storage import FileSystemStorage
 
 @api_view(['POST'])
@@ -24,15 +25,24 @@ def admin_upload_image(request):
     if not image_file:
         return Response({'error': 'No file uploaded'}, status=400)
 
+    # Validate file size (5MB limit)
+    if image_file.size > 5 * 1024 * 1024:
+        return Response({'error': 'File too large. Max 5MB allowed.'}, status=400)
+
     # Validate file type
     ext = os.path.splitext(image_file.name)[1].lower()
     if ext not in ['.jpg', '.jpeg', '.png', '.webp']:
         return Response({'error': 'Invalid file type. Supported: .jpg, .jpeg, .png, .webp'}, status=400)
 
+    # Generate rare filename
+    unique_name = f"{uuid.uuid4().hex}{ext}"
+    
     fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'uploads'))
-    filename = fs.save(image_file.name, image_file)
-    file_url = request.build_absolute_uri(f"{settings.MEDIA_URL}uploads/{filename}")
-    return Response({'url': file_url}, status=201)
+    filename = fs.save(unique_name, image_file)
+    
+    # Return relative URL for maximum portability
+    relative_url = f"{settings.MEDIA_URL}uploads/{filename}"
+    return Response({'url': relative_url}, status=201)
 
 def clear_admin_caches():
     """Invalidate public listing caches after admin mutations."""
@@ -109,12 +119,15 @@ def admin_menu_items(request):
         
         # Self-healing: If category is missing but slug is provided (e.g. 'essentials'), find or create it.
         if not data.get('category') and data.get('category_slug'):
-            slug = data.get('category_slug')
-            cat_name = slug.capitalize()
+            slug = data.get('category_slug').lower().strip()
+            cat_name = slug.replace('-', ' ').replace('_', ' ').capitalize()
             # Special case for essentials
             icon = '📦' if 'essential' in slug else '🍽️'
             category, _ = Category.objects.get_or_create(slug=slug, defaults={'name': cat_name, 'icon': icon})
             data['category'] = category.id
+
+        # Robustness: Remove redundant keys that might confuse the serializer
+        data.pop('category_slug', None) 
 
         serializer = MenuItemSerializer(data=data)
         if serializer.is_valid():

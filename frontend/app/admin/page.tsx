@@ -667,7 +667,7 @@ export default function PremiumAdmin() {
                    {menuItems.map(item => (
                      <div key={item.id} className="bg-white/5 rounded-3xl p-5 group hover:bg-white/10 transition-all border border-white/5 hover:border-emerald-500/20 relative">
                        <div className="aspect-video sm:aspect-square rounded-2xl overflow-hidden mb-5 relative">
-                          <img src={item.image_url || 'https://via.placeholder.com/200'} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                          <img src={!item.image_url ? 'https://via.placeholder.com/200' : (item.image_url.startsWith('http') ? item.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${item.image_url}`)} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                           <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black text-emerald-400 uppercase border border-white/10 italic">
                             {item.category_name}
                           </div>
@@ -713,7 +713,7 @@ export default function PremiumAdmin() {
                    {menuItems.filter(item => item.category_name?.toLowerCase().includes('essential') || item.category_name?.toLowerCase().includes('grocery')).map(item => (
                      <div key={item.id} className="bg-white/5 rounded-3xl p-5 group hover:bg-white/10 transition-all border border-white/5 hover:border-emerald-500/20 relative">
                        <div className="aspect-video sm:aspect-square rounded-2xl overflow-hidden mb-5 relative">
-                          <img src={item.image_url || 'https://via.placeholder.com/200'} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                          <img src={!item.image_url ? 'https://via.placeholder.com/200' : (item.image_url.startsWith('http') ? item.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${item.image_url}`)} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                           <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black text-emerald-400 uppercase border border-white/10 italic">
                             {item.category_name}
                           </div>
@@ -793,7 +793,7 @@ export default function PremiumAdmin() {
                         <div key={res.id} className="bg-[#080808] p-6 rounded-[2rem] border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-6 hover:border-emerald-500/20 transition-all group">
                             <div className="flex items-center gap-6">
                                 <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white/5 border border-white/10">
-                                    <img src={res.image_url || 'https://via.placeholder.com/100'} alt={res.name} className="w-full h-full object-cover" />
+                                    <img src={!res.image_url ? 'https://via.placeholder.com/100' : (res.image_url.startsWith('http') ? res.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${res.image_url}`)} alt={res.name} className="w-full h-full object-cover" />
                                 </div>
                                 <div>
                                     <h4 className="text-2xl font-black uppercase italic text-white flex items-center gap-2">
@@ -869,7 +869,7 @@ export default function PremiumAdmin() {
                               <div key={item.id} className="bg-white/[0.03] p-6 rounded-[2rem] border border-white/5 flex flex-col xl:flex-row items-center justify-between gap-8 group hover:bg-white/[0.05] transition-all">
                                   <div className="flex items-center gap-6 flex-1 w-full">
                                       <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
-                                          <img src={item.image_url || 'https://via.placeholder.com/80'} className="w-full h-full object-cover" />
+                                          <img src={!item.image_url ? 'https://via.placeholder.com/80' : (item.image_url.startsWith('http') ? item.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${item.image_url}`)} className="w-full h-full object-cover" />
                                       </div>
                                       <div className="flex-1">
                                           <div className="flex items-center gap-3">
@@ -1150,21 +1150,31 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Size check on frontend too (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error('File too large. Max 5MB allowed.');
+            return;
+        }
+
         const formDataUpload = new FormData();
         formDataUpload.append('file', file);
 
-        const uploadLoading = toast.loading('Uploading photo...');
+        const uploadLoading = toast.loading('Syncing high-res media...');
         try {
-            const res = await axios.post(`${API}/api/admin/upload-image/`, formDataUpload, {
+            const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+            const res = await axios.post(`${base}/api/admin/upload-image/`, formDataUpload, {
                 headers: { 
                     'X-Admin-Password': adminPassword,
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            
+            // Set the relative URL returned by the backend
             setFormData({ ...formData, image_url: res.data.url });
-            toast.success('Photo uploaded!', { id: uploadLoading });
-        } catch (err) {
-            toast.error('Upload failed. Try again.', { id: uploadLoading });
+            toast.success('Media synced to server!', { id: uploadLoading });
+        } catch (err: any) {
+            const errorMsg = err.response?.data?.error || 'Upload failed. Try again.';
+            toast.error(errorMsg, { id: uploadLoading });
         }
     };
 
@@ -1207,7 +1217,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                 >
                                     {formData.image_url ? (
                                         <>
-                                            <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                            <img src={formData.image_url.startsWith('http') ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                 <span className="bg-black/60 px-4 py-2 rounded-xl text-[10px] font-black uppercase italic text-white backdrop-blur-md border border-white/10">Change Photo</span>
                                             </div>
@@ -1273,7 +1283,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                 >
                                     {formData.image_url ? (
                                         <>
-                                            <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                            <img src={formData.image_url.startsWith('http') ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                 <span className="bg-black/60 px-4 py-2 rounded-xl text-[10px] font-black uppercase italic text-white backdrop-blur-md border border-white/10">Change Photo</span>
                                             </div>
