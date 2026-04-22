@@ -81,17 +81,31 @@ export default function HomePage() {
             <p className="text-gray-400 text-base mb-6">
               Combos, snacks, drinks & daily essentials — all in one order.
             </p>
-            <div className="flex gap-3">
-              <Link href="/menu">
-                <motion.button whileTap={{ scale: 0.96 }} className="btn-primary px-6 py-3 flex items-center gap-2 font-bold">
-                  Order Now <ArrowRight size={18} />
-                </motion.button>
-              </Link>
-              <Link href="/combo">
-                <motion.button whileTap={{ scale: 0.96 }} className="btn-ghost px-6 py-3 flex items-center gap-2 font-bold">
-                  <Zap size={18} />Build Combo
-                </motion.button>
-              </Link>
+            <div className="flex flex-col gap-5">
+              <div className="flex gap-3">
+                <Link href="/menu">
+                  <motion.button whileTap={{ scale: 0.96 }} className="btn-primary px-6 py-3 flex items-center gap-2 font-bold">
+                    Order Now <ArrowRight size={18} />
+                  </motion.button>
+                </Link>
+                <Link href="/combo">
+                  <motion.button whileTap={{ scale: 0.96 }} className="btn-ghost px-6 py-3 flex items-center gap-2 font-bold">
+                    <Zap size={18} />Build Combo
+                  </motion.button>
+                </Link>
+              </div>
+
+              {/* Home Page Search Bar */}
+              <div className="relative max-w-md group">
+                <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
+                <input 
+                  type="text"
+                  placeholder="Search for 'Pizza', 'Cigarettes', 'Milk'..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/5 transition-all font-medium placeholder:text-gray-600 shadow-xl"
+                />
+              </div>
             </div>
           </motion.div>
         </div>
@@ -165,7 +179,11 @@ export default function HomePage() {
               <div key={i} className="min-w-[260px] h-[200px] rounded-2xl shimmer snap-center" />
             ))
           ) : filteredRestaurants.length === 0 ? (
-            <div className="w-full py-10 text-center text-gray-500">No restaurants found</div>
+            <div className="w-full py-10 text-center flex flex-col items-center gap-3">
+               <div className="text-4xl opacity-40">🍽️</div>
+               <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">No partners match your search</p>
+               <button onClick={() => setSearch('')} className="text-green-500 text-xs font-black uppercase">Clear Search</button>
+            </div>
           ) : (
             filteredRestaurants.map((rest, i) => (
               <Link key={rest.id} href={`/menu?restaurant=${rest.id}`}>

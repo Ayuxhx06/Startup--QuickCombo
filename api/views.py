@@ -334,7 +334,12 @@ def menu_list(request):
     if category_slug:
         items = items.filter(category__slug=category_slug)
     if search:
-        items = items.filter(name__icontains=search)
+        items = items.filter(
+            Q(name__icontains=search) | 
+            Q(description__icontains=search) | 
+            Q(category__name__icontains=search) | 
+            Q(restaurant__name__icontains=search)
+        )
     if featured:
         items = items.filter(is_featured=True)
     if combo_eligible:
