@@ -324,10 +324,11 @@ def menu_list(request):
     if cached is not None:
         return Response(cached)
 
-    # Filter is_available AND linked restaurant is_active
+    from django.db.models import Q
+    # Filter is_available AND (linked restaurant is_active OR no restaurant linked)
     items = MenuItem.objects.filter(
-        is_available=True, 
-        restaurant__is_active=True
+        Q(is_available=True),
+        Q(restaurant__is_active=True) | Q(restaurant__isnull=True)
     ).select_related('category', 'restaurant')
 
     if category_slug:

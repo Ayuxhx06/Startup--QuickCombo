@@ -19,6 +19,8 @@ interface MenuItem {
   restaurant_name?: string;
 }
 
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
+
 export default function FoodCard({ item }: { item: MenuItem }) {
   const { items, addItem, removeItem } = useCart();
   
@@ -56,22 +58,33 @@ export default function FoodCard({ item }: { item: MenuItem }) {
         </p>
       </div>
 
-      {/* Action Right */}
-      <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
-        {qty > 0 ? (
-          <div className="flex items-center justify-between bg-green-500/10 border border-green-500/40 rounded-xl px-2 py-1.5 w-[90px] shadow-lg backdrop-blur-md">
-            <button onClick={handleRemove} className="text-green-500 font-black px-1.5 hover:scale-125 transition-transform"><Minus size={14} strokeWidth={3} /></button>
-            <span className="text-white text-sm font-bold">{qty}</span>
-            <button onClick={handleAdd} className="text-green-500 font-black px-1.5 hover:scale-125 transition-transform"><Plus size={14} strokeWidth={3} /></button>
-          </div>
-        ) : (
-          <button
-            onClick={handleAdd}
-            className="bg-white/5 hover:bg-green-500/10 border border-white/10 hover:border-green-500/50 text-white hover:text-green-500 font-black text-xs px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 min-w-[80px]"
-          >
-            ADD <Plus size={14} strokeWidth={3} />
-          </button>
+      {/* Image & Action Right */}
+      <div className="flex flex-col items-center gap-3 shrink-0">
+        {item.image_url && (
+            <div className="w-[100px] h-[100px] relative rounded-2xl overflow-hidden border border-white/5 shadow-inner">
+                <img 
+                    src={item.image_url.startsWith('http') ? item.image_url : `${API}${item.image_url}`} 
+                    alt={item.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+            </div>
         )}
+        <div className="flex flex-col items-center gap-1 pt-0.5">
+          {qty > 0 ? (
+            <div className="flex items-center justify-between bg-green-500/10 border border-green-500/40 rounded-xl px-2 py-1.5 w-[90px] shadow-lg backdrop-blur-md">
+              <button onClick={handleRemove} className="text-green-500 font-black px-1.5 hover:scale-125 transition-transform"><Minus size={14} strokeWidth={3} /></button>
+              <span className="text-white text-sm font-bold">{qty}</span>
+              <button onClick={handleAdd} className="text-green-500 font-black px-1.5 hover:scale-125 transition-transform"><Plus size={14} strokeWidth={3} /></button>
+            </div>
+          ) : (
+            <button
+              onClick={handleAdd}
+              className="bg-white/5 hover:bg-green-500/10 border border-white/10 hover:border-green-500/50 text-white hover:text-green-500 font-black text-xs px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 min-w-[80px]"
+            >
+              ADD <Plus size={14} strokeWidth={3} />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

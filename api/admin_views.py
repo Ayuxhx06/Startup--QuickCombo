@@ -21,23 +21,28 @@ def admin_upload_image(request):
     if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
         return Response({'error': 'Unauthorized'}, status=401)
 
-    image_file = request.FILES.get('file')
+    image_file = request.FILES.get('image') or request.FILES.get('file')
     if not image_file:
         return Response({'error': 'No file uploaded'}, status=400)
 
-    # Validate file size (5MB limit)
-    if image_file.size > 5 * 1024 * 1024:
-        return Response({'error': 'File too large. Max 5MB allowed.'}, status=400)
+    # Validate file size (20MB limit)
+    if image_file.size > 20 * 1024 * 1024:
+        return Response({'error': 'File too large. Max 20MB allowed.'}, status=400)
 
     # Validate file type
     ext = os.path.splitext(image_file.name)[1].lower()
     if ext not in ['.jpg', '.jpeg', '.png', '.webp']:
         return Response({'error': 'Invalid file type. Supported: .jpg, .jpeg, .png, .webp'}, status=400)
 
-    # Generate rare filename
+    # Ensure directory exists
+    upload_path = os.path.join(settings.MEDIA_ROOT, 'uploads')
+    if not os.path.exists(upload_path):
+        os.makedirs(upload_path, exist_ok=True)
+
+    # Generate unique filename
     unique_name = f"{uuid.uuid4().hex}{ext}"
     
-    fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'uploads'))
+    fs = FileSystemStorage(location=upload_path)
     filename = fs.save(unique_name, image_file)
     
     # Return relative URL for maximum portability

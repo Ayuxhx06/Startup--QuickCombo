@@ -177,7 +177,7 @@ export default function HomePage() {
                 >
                   <div className="h-[140px] relative overflow-hidden">
                     <Image 
-                      src={rest.image_url} 
+                      src={rest.image_url.startsWith('http') ? rest.image_url : `${API}${rest.image_url}`} 
                       alt={rest.name} 
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110" 
