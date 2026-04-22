@@ -53,9 +53,11 @@ export default function FoodCard({ item }: { item: MenuItem }) {
           <span className="font-black text-sm text-white/90 tracking-tight">₹{item.price}</span>
         </div>
         
-        <p className="text-[#808080] text-[12.5px] leading-relaxed line-clamp-1 group-hover:line-clamp-none transition-all">
-          {item.description || 'Deliciously prepared with fresh ingredients.'}
-        </p>
+        {(item.description || !item.category_name?.toLowerCase().includes('essential')) && (
+          <p className="text-[#808080] text-[12.5px] leading-relaxed line-clamp-1 group-hover:line-clamp-none transition-all">
+            {item.description || 'Deliciously prepared with fresh ingredients.'}
+          </p>
+        )}
       </div>
 
       {/* Image & Action Right */}
