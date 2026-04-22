@@ -74,8 +74,6 @@ export default function RestaurantsPage() {
                     <span className="flex items-center gap-1.5 bg-green-500/10 text-green-400 px-3 py-1 rounded-lg">
                       <Clock size={14} /> {rest.delivery_time} min
                     </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-600" />
-                    <span>Free Delivery</span>
                   </div>
                 </div>
               </motion.div>

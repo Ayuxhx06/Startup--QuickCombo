@@ -212,8 +212,6 @@ export default function HomePage() {
                     <p className="text-gray-400 text-xs truncate mb-2">{rest.cuisines}</p>
                     <div className="flex items-center gap-3 text-xs font-semibold text-gray-300">
                       <span className="flex items-center gap-1"><Clock size={12} className="text-green-400" /> {rest.delivery_time} min</span>
-                      <span className="w-1 h-1 rounded-full bg-gray-600" />
-                      <span>Free Delivery</span>
                     </div>
                   </div>
                 </motion.div>
