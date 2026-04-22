@@ -219,6 +219,13 @@ export default function HomePage() {
             ))
           )}
         </div>
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+          className="mt-4 px-2 flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest italic"
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          Expanding our kitchen! More partner restaurants arriving soon based on your cravings.
+        </motion.div>
       </section>
 
       {/* Featured Items */}
