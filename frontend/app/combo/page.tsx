@@ -23,6 +23,13 @@ interface PredefinedCombo {
   restaurant_name: string;
 }
 
+const resolveImage = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  // Always point to AlwaysData for media if it's a relative path
+  return `https://quickcombo.alwaysdata.net${url}`;
+};
+
 export default function ComboBuilder() {
   const { addItem, setIsOpen } = useCart();
   const [combos, setCombos] = useState<PredefinedCombo[]>([]);
@@ -37,24 +44,35 @@ export default function ComboBuilder() {
   }, []);
 
   const handleAddPredefined = (combo: PredefinedCombo) => {
+    console.log("Adding combo:", combo);
+    if (!combo.items || combo.items.length === 0) {
+      toast.error("This bundle is currently empty!");
+      return;
+    }
+
     const itemPrice = Math.floor(combo.price / combo.items.length);
     const remainder = combo.price - (itemPrice * combo.items.length);
 
-    combo.items.forEach((item, idx) => {
-      addItem({
-        id: `combo-${combo.id}-${item.id}`,
-        name: `${item.name} (${combo.name})`,
-        price: idx === 0 ? itemPrice + remainder : itemPrice,
-        quantity: 1,
-        image_url: item.image_url,
-        is_veg: item.is_veg,
-        category_name: item.category_name,
-        restaurant_name: combo.restaurant_name
+    try {
+      combo.items.forEach((item, idx) => {
+        addItem({
+          id: `combo-${combo.id}-${item.id}`,
+          name: `${item.name} (${combo.name})`,
+          price: idx === 0 ? itemPrice + remainder : itemPrice,
+          quantity: 1,
+          image_url: resolveImage(item.image_url),
+          is_veg: item.is_veg,
+          category_name: item.category_name,
+          restaurant_name: combo.restaurant_name
+        });
       });
-    });
 
-    toast.success(`${combo.name} added! 🥳`, { icon: '🎁' });
-    setIsOpen(true);
+      toast.success(`${combo.name} added! 🥳`, { icon: '🎁' });
+      setIsOpen(true);
+    } catch (err) {
+      console.error("Add Combo Error:", err);
+      toast.error("Failed to add bundle to cart");
+    }
   };
 
   return (
@@ -91,7 +109,7 @@ export default function ComboBuilder() {
                 >
                   <div className="h-56 relative overflow-hidden">
                     <img 
-                      src={combo.image_url || combo.items[0]?.image_url} 
+                      src={resolveImage(combo.image_url) || resolveImage(combo.items[0]?.image_url)} 
                       alt={combo.name} 
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" 
                     />
