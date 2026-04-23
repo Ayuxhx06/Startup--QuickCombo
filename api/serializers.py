@@ -65,8 +65,13 @@ class GlobalConfigSerializer(serializers.ModelSerializer):
 
 class PredefinedComboSerializer(serializers.ModelSerializer):
     items = MenuItemSerializer(many=True, read_only=True)
-    restaurant_name = serializers.ReadOnlyField(source='restaurant.name')
+    restaurant_name = serializers.SerializerMethodField()
     
     class Meta:
         model = PredefinedCombo
-        fields = ['id', 'name', 'description', 'items', 'price', 'image_url', 'restaurant', 'restaurant_name', 'is_active', 'created_at']
+        fields = ['id', 'name', 'description', 'items', 'price', 'image_url', 'restaurant', 'source_restaurant_name', 'restaurant_name', 'is_active', 'created_at']
+
+    def get_restaurant_name(self, obj):
+        if obj.restaurant:
+            return obj.restaurant.name
+        return obj.source_restaurant_name or "QuickCombo Partner"

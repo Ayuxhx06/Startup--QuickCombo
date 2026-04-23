@@ -1475,11 +1475,10 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                     {type === 'combo' && (
                         <>
                             <FormInput 
-                                label="Source Restaurant (Items filter)" 
-                                value={formData.restaurant} 
-                                onChange={(v: any) => setFormData({ ...formData, restaurant: v })} 
-                                type="select" 
-                                options={restaurants} 
+                                label="Restaurant Name (Display)" 
+                                placeholder="e.g. Coffee House or QuickCombo Store"
+                                value={formData.source_restaurant_name} 
+                                onChange={(v: any) => setFormData({ ...formData, source_restaurant_name: v })} 
                             />
                             <FormInput label="Bundle Price (₹)" placeholder="499" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
                             <div className="space-y-2">
@@ -1539,37 +1538,6 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                     {restaurants.map((r: any) => <option key={r.id} value={r.id} className="bg-black">{r.name}</option>)}
                                 </select>
                             </div>
-                            {formData.restaurant && (
-                                <div className="space-y-4">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Select Bundle Items</label>
-                                    <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                                        {menuItems.filter((item: any) => Number(item.restaurant) === Number(formData.restaurant)).map((item: any) => (
-                                            <label key={item.id} className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-all">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={formData.item_ids?.includes(item.id)}
-                                                    onChange={e => {
-                                                        const ids = formData.item_ids || [];
-                                                        if (e.target.checked) setFormData({ ...formData, item_ids: [...ids, item.id] });
-                                                        else setFormData({ ...formData, item_ids: ids.filter((id: number) => id !== item.id) });
-                                                    }}
-                                                    className="w-4 h-4 accent-emerald-500 rounded border-white/10 bg-black"
-                                                />
-                                                <div className="flex flex-col">
-                                                    <span className="text-xs font-black uppercase italic">{item.name}</span>
-                                                    <span className="text-[9px] text-gray-500 font-bold">₹{item.price}</span>
-                                                </div>
-                                            </label>
-                                        ))}
-                                        {menuItems.filter((item: any) => Number(item.restaurant) === Number(formData.restaurant)).length === 0 && (
-                                            <div className="text-center py-6 text-[10px] text-gray-600 font-bold uppercase italic border-2 border-dashed border-white/5 rounded-2xl">
-                                                No items found for this restaurant<br/>
-                                                <span className="text-[8px] opacity-40">Try selecting a different restaurant or check if menu items exist</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
                         </>
                     )}
                 </div>

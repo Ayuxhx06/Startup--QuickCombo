@@ -222,6 +222,7 @@ class PredefinedCombo(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Total price for the combo")
     image_url = models.CharField(max_length=500, blank=True, null=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='predefined_combos', null=True, blank=True)
+    source_restaurant_name = models.CharField(max_length=200, blank=True, null=True, help_text="Manual restaurant name for display")
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

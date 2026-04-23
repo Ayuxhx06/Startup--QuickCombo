@@ -45,26 +45,17 @@ export default function ComboBuilder() {
 
   const handleAddPredefined = (combo: PredefinedCombo) => {
     console.log("Adding combo:", combo);
-    if (!combo.items || combo.items.length === 0) {
-      toast.error("This bundle is currently empty!");
-      return;
-    }
-
-    const itemPrice = Math.floor(combo.price / combo.items.length);
-    const remainder = combo.price - (itemPrice * combo.items.length);
-
+    
     try {
-      combo.items.forEach((item, idx) => {
-        addItem({
-          id: `combo-${combo.id}-${item.id}`,
-          name: `${item.name} (${combo.name})`,
-          price: idx === 0 ? itemPrice + remainder : itemPrice,
-          quantity: 1,
-          image_url: resolveImage(item.image_url),
-          is_veg: item.is_veg,
-          category_name: item.category_name,
-          restaurant_name: combo.restaurant_name
-        });
+      addItem({
+        id: `bundle-${combo.id}`,
+        name: combo.name,
+        price: combo.price,
+        quantity: 1,
+        image_url: resolveImage(combo.image_url) || (combo.items?.[0] ? resolveImage(combo.items[0].image_url) : ''),
+        is_veg: true, 
+        category_name: 'Curated Bundle',
+        restaurant_name: combo.restaurant_name
       });
 
       toast.success(`${combo.name} added! 🥳`, { icon: '🎁' });
