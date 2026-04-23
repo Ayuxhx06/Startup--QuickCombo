@@ -780,6 +780,12 @@ export default function PremiumAdmin() {
                       </div>
                       <div className="p-6 pt-0 flex justify-end gap-3">
                          <button 
+                            onClick={() => openModal('combo', combo)}
+                            className="p-3 bg-white/5 text-gray-400 rounded-2xl hover:bg-white/10 transition-all border border-white/5"
+                          >
+                            <Edit2 size={20} />
+                          </button>
+                         <button 
                             onClick={() => deleteEntity('combo', combo.id)}
                             className="p-3 bg-red-500/10 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all border border-red-500/20"
                           >
@@ -1466,7 +1472,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Bundle Hero Photo (Swiggy Style)</label>
                                 <div 
-                                    onClick={() => document.getElementById('file-upload-combo')?.click()}
+                                    onClick={() => document.getElementById('file-upload-combo-photo')?.click()}
                                     className="group relative w-full h-44 bg-white/5 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500/50 hover:bg-white/[0.07] transition-all overflow-hidden"
                                 >
                                     {formData.image_url ? (
@@ -1482,7 +1488,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                             <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 text-center px-6">Upload Composite Photo<br/><span className="text-[8px] opacity-50">(Burger + Fries + Drink)</span></span>
                                         </>
                                     )}
-                                    <input id="file-upload-combo" type="file" className="hidden" accept="image/*" onChange={handleUpload} />
+                                    <input id="file-upload-combo-photo" type="file" className="hidden" accept="image/*" onChange={handleUpload} />
                                 </div>
                                 <div className="pt-1 flex justify-end">
                                     <button 

@@ -42,13 +42,14 @@ export default function ComboBuilder() {
 
     combo.items.forEach((item, idx) => {
       addItem({
-        id: item.id,
+        id: `combo-${combo.id}-${item.id}`,
         name: `${item.name} (${combo.name})`,
         price: idx === 0 ? itemPrice + remainder : itemPrice,
         quantity: 1,
         image_url: item.image_url,
         is_veg: item.is_veg,
-        category_name: item.category_name
+        category_name: item.category_name,
+        restaurant_name: combo.restaurant_name
       });
     });
 
@@ -97,7 +98,7 @@ export default function ComboBuilder() {
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent" />
                     
                     <div className="absolute top-4 right-4">
-                      <div className="bg-green-500 text-black font-black px-4 py-2 rounded-2xl text-xl shadow-[0_10px_20px_rgba(34,197,94,0.3)] rotate-2">
+                      <div className="bg-green-500 text-black font-black px-4 py-2 rounded-2xl text-xl shadow-lg border border-white/20">
                         ₹{combo.price}
                       </div>
                     </div>
