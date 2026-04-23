@@ -1464,6 +1464,49 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                         <>
                             <FormInput label="Bundle Price (₹)" placeholder="499" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
                             <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Bundle Hero Photo (Swiggy Style)</label>
+                                <div 
+                                    onClick={() => document.getElementById('file-upload-combo')?.click()}
+                                    className="group relative w-full h-44 bg-white/5 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500/50 hover:bg-white/[0.07] transition-all overflow-hidden"
+                                >
+                                    {formData.image_url ? (
+                                        <>
+                                            <img src={formData.image_url.startsWith('http') ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                <span className="bg-black/60 px-4 py-2 rounded-xl text-[10px] font-black uppercase italic text-white backdrop-blur-md border border-white/10">Change Photo</span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors">🍱</div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 text-center px-6">Upload Composite Photo<br/><span className="text-[8px] opacity-50">(Burger + Fries + Drink)</span></span>
+                                        </>
+                                    )}
+                                    <input id="file-upload-combo" type="file" className="hidden" accept="image/*" onChange={handleUpload} />
+                                </div>
+                                <div className="pt-1 flex justify-end">
+                                    <button 
+                                        type="button" 
+                                        onClick={() => {
+                                            const newUrl = prompt('Enter Image URL manually:', formData.image_url);
+                                            if (newUrl !== null) setFormData({ ...formData, image_url: newUrl });
+                                        }}
+                                        className="text-[9px] font-black text-gray-600 hover:text-emerald-500 uppercase tracking-widest transition-colors"
+                                    >
+                                        Edit URL Manually
+                                    </button>
+                                </div>
+                             </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Combo Description</label>
+                                <textarea 
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 text-sm h-24"
+                                    placeholder="e.g. 1 Veg Burger + Medium Fries + Coke (250ml)"
+                                    value={formData.description || ''}
+                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Source Restaurant</label>
                                 <select 
                                     required
