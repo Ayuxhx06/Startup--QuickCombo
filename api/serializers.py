@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Category, MenuItem, Restaurant, Order, OrderItem, Address, Coupon, GlobalConfig
+from .models import User, Category, MenuItem, Restaurant, Order, OrderItem, Address, Coupon, GlobalConfig, PredefinedCombo
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -62,3 +62,10 @@ class GlobalConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = GlobalConfig
         fields = ['key', 'value', 'updated_at']
+
+class PredefinedComboSerializer(serializers.ModelSerializer):
+    items = MenuItemSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = PredefinedCombo
+        fields = ['id', 'name', 'description', 'items', 'price', 'image_url', 'is_active', 'created_at']

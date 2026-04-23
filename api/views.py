@@ -10,9 +10,9 @@ from django.core.cache import cache as django_cache
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from .models import User, Category, MenuItem, Order, OrderItem, Address, Restaurant, Coupon, CouponUsage, GlobalConfig
+from .models import User, Category, MenuItem, Order, OrderItem, Address, Restaurant, Coupon, CouponUsage, GlobalConfig, PredefinedCombo
 from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer,
-                          OrderSerializer, AddressSerializer, RestaurantSerializer, CouponSerializer, GlobalConfigSerializer)
+                          OrderSerializer, AddressSerializer, RestaurantSerializer, CouponSerializer, GlobalConfigSerializer, PredefinedComboSerializer)
 
 
 # ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -412,6 +412,14 @@ def restaurant_list(request):
     restaurants = Restaurant.objects.filter(is_active=True).order_by('-rating')
     data = RestaurantSerializer(restaurants, many=True).data
     django_cache.set('restaurant_list_v2', data, 60 * 15)
+    return Response(data)
+
+
+@api_view(['GET'])
+def combo_list(request):
+    """List all active predefined combos."""
+    combos = PredefinedCombo.objects.filter(is_active=True).order_by('-created_at')
+    data = PredefinedComboSerializer(combos, many=True).data
     return Response(data)
 
 

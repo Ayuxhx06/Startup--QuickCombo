@@ -90,7 +90,7 @@ export default function HomePage() {
                 </Link>
                 <Link href="/combo">
                   <motion.button whileTap={{ scale: 0.96 }} className="btn-ghost px-6 py-3 flex items-center gap-2 font-bold">
-                    <Zap size={18} />Build Combo
+                    <Zap size={18} />Explore Combos
                   </motion.button>
                 </Link>
               </div>

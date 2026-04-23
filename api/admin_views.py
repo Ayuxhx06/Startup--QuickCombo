@@ -7,8 +7,8 @@ from django.conf import settings
 from django.core.cache import cache
 
 # Use absolute imports for reliability on AlwaysData
-from api.models import User, Order, MenuItem, Restaurant, Category, Coupon
-from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer, CouponSerializer
+from api.models import User, Order, MenuItem, Restaurant, Category, Coupon, GlobalConfig
+from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer, CouponSerializer, GlobalConfigSerializer
 import csv
 import io
 import os
@@ -261,6 +261,7 @@ def admin_coupons(request):
         serializer = CouponSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            clear_admin_caches()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -271,6 +272,7 @@ def admin_coupons(request):
             serializer = CouponSerializer(coupon, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                clear_admin_caches()
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
         except Coupon.DoesNotExist:
@@ -281,6 +283,7 @@ def admin_coupons(request):
         try:
             coupon = Coupon.objects.get(pk=cpn_id)
             coupon.delete()
+            clear_admin_caches()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Coupon.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)

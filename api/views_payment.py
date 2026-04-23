@@ -8,7 +8,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from .models import Order, MenuItem, OrderItem
+from django.utils import timezone
+from .models import Order, MenuItem, OrderItem, Coupon, CouponUsage
+from .views import calculate_delivery_fee
 
 # Cashfree API Configuration
 CASHFREE_APP_ID = getattr(settings, 'CASHFREE_APP_ID', '')
@@ -29,24 +31,56 @@ def create_payment_session(request):
         if not items_data:
             return Response({'error': 'No items in order'}, status=400)
 
-        # Calculate Total
-        subtotal = sum(float(i['price']) * int(i['quantity']) for i in items_data)
-        delivery_fee = 40
-        discount = int(subtotal * 0.1) 
-        total = (subtotal - discount) + delivery_fee
+        # 1. Calculate Delivery Fee & Subtotal using the same logic as place_order
+        delivery_fee, subtotal = calculate_delivery_fee(items_data)
+        discount_amount = 0
+        applied_coupon_obj = None
+        coupon_code = data.get('coupon_code', '').strip().upper()
+        email = data.get('email', '').strip().lower()
 
-        # 1. Create Django Order (Pending Payment)
+        # 2. Handle Coupon
+        if coupon_code:
+            try:
+                coupon = Coupon.objects.get(code=coupon_code, is_active=True)
+                if (coupon.expiry_date >= timezone.now() and 
+                    subtotal >= float(coupon.min_order_value) and 
+                    (not coupon.total_max_uses or coupon.times_used < coupon.total_max_uses)):
+                    
+                    user_usage_count = CouponUsage.objects.filter(user_email=email, coupon=coupon).count()
+                    if user_usage_count < coupon.max_uses_per_user:
+                        if coupon.discount_type == 'percentage':
+                            discount_amount = (subtotal * float(coupon.discount_value)) / 100
+                            if coupon.max_discount_amount:
+                                discount_amount = min(discount_amount, float(coupon.max_discount_amount))
+                        else:
+                            discount_amount = float(coupon.discount_value)
+                        applied_coupon_obj = coupon
+            except Coupon.DoesNotExist:
+                pass
+
+        if applied_coupon_obj and applied_coupon_obj.is_free_delivery:
+            delivery_fee = 0
+
+        # Special Case: Free delivery for orders > 210 (matching frontend)
+        if subtotal > 210:
+            delivery_fee = 0
+
+        total = (subtotal - float(discount_amount)) + delivery_fee
+
+        # 3. Create Django Order (Pending Payment)
         order = Order.objects.create(
-            user_email=data.get('email', '').strip().lower(),
+            user_email=email,
             user_name=data.get('name', ''),
             user_phone=data.get('phone', ''),
             delivery_address=data.get('address', ''),
-            delivery_lat=data.get('lat'),
-            delivery_lng=data.get('lng'),
+            delivery_lat=data.get('lat') or 12.8231,
+            delivery_lng=data.get('lng') or 80.0453,
             payment_method='cashfree', 
             payment_status='pending',
             subtotal=subtotal,
             delivery_fee=delivery_fee,
+            discount_amount=discount_amount,
+            applied_coupon=coupon_code if applied_coupon_obj else "",
             total=total,
             notes=data.get('notes', ''),
             status='pending', 

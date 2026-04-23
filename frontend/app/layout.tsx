@@ -41,6 +41,9 @@ export const metadata: Metadata = {
     description: "Order food, beverages & daily essentials in minutes.",
     type: "website",
   },
+  verification: {
+    google: "ag-ZSpsaO3zuR22HjuBDPIdaFS_CPHDRe1ZAi3f8i-w",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -31,6 +31,7 @@ urlpatterns = [
     path('menu/<int:pk>/', views.menu_item_detail),
     path('categories/', views.categories_list),
     path('restaurants/', views.restaurant_list),
+    path('combos/', views.combo_list),
 
     # Coupons
     path('coupons/', views.public_coupons),
