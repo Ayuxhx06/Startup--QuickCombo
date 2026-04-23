@@ -38,7 +38,7 @@ export default function PremiumAdmin() {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<'restaurant' | 'menu' | 'category' | 'coupon'>('restaurant');
+  const [modalType, setModalType] = useState<'restaurant' | 'menu' | 'category' | 'coupon' | 'combo'>('restaurant');
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
   const [formLoading, setFormLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -345,7 +345,7 @@ export default function PremiumAdmin() {
     }
   };
 
-  const openModal = (type: 'restaurant' | 'menu' | 'category' | 'coupon', entity: any = null) => {
+  const openModal = (type: 'restaurant' | 'menu' | 'category' | 'coupon' | 'combo', entity: any = null) => {
     setModalType(type);
     setSelectedEntity(entity);
     setIsModalOpen(true);
@@ -751,8 +751,11 @@ export default function PremiumAdmin() {
                     <h3 className="text-2xl lg:text-3xl font-black italic uppercase">Combos Hub</h3>
                     <p className="text-gray-500">Manage hand-picked bundles and specialized pricing</p>
                   </div>
-                  <button className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto">
-                    <Plus size={18} /> CREATE COMBO (VIA DJANGO)
+                  <button 
+                    onClick={() => openModal('combo')}
+                    className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto"
+                  >
+                    <Plus size={18} /> CREATE NEW BUNDLE
                   </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1152,6 +1155,7 @@ export default function PremiumAdmin() {
                         headers={getHeaders()}
                         categories={categories}
                         restaurants={restaurants}
+                        menuItems={menuItems}
                         adminPassword={adminPassword}
                     />
                 </div>
@@ -1162,7 +1166,7 @@ export default function PremiumAdmin() {
   );
 }
 
-function EntityModal({ type, entity, onClose, onSave, headers, categories, restaurants, adminPassword }: any) {
+function EntityModal({ type, entity, onClose, onSave, headers, categories, restaurants, menuItems, adminPassword }: any) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<any>(entity || {});
 
@@ -1178,6 +1182,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
             else if (type === 'menu') endpoint = '/api/admin/menu/';
             else if (type === 'category') endpoint = '/api/admin/categories/';
             else if (type === 'coupon') endpoint = '/api/admin/coupons/';
+            else if (type === 'combo') endpoint = '/api/admin/combos/';
 
             if (entity?.id) {
                 await axios.patch(`${API}${endpoint}`, { ...sanitizedData, id: entity.id, category_slug: entity.category_slug }, headers);
@@ -1453,6 +1458,53 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                     </button>
                                 </div>
                             </div>
+                        </>
+                    )}
+                    {type === 'combo' && (
+                        <>
+                            <FormInput label="Bundle Price (₹)" placeholder="499" value={formData.price} onChange={(v: any) => setFormData({ ...formData, price: v })} type="number" />
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Source Restaurant</label>
+                                <select 
+                                    required
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 appearance-none text-white"
+                                    value={formData.restaurant || ''}
+                                    onChange={e => {
+                                        setFormData({ ...formData, restaurant: e.target.value, item_ids: [] });
+                                    }}
+                                >
+                                    <option value="" className="bg-black">Select Restaurant</option>
+                                    {restaurants.map((r: any) => <option key={r.id} value={r.id} className="bg-black">{r.name}</option>)}
+                                </select>
+                            </div>
+                            {formData.restaurant && (
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Select Bundle Items</label>
+                                    <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                                        {menuItems.filter((item: any) => item.restaurant == formData.restaurant).map((item: any) => (
+                                            <label key={item.id} className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-all">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={formData.item_ids?.includes(item.id)}
+                                                    onChange={e => {
+                                                        const ids = formData.item_ids || [];
+                                                        if (e.target.checked) setFormData({ ...formData, item_ids: [...ids, item.id] });
+                                                        else setFormData({ ...formData, item_ids: ids.filter((id: number) => id !== item.id) });
+                                                    }}
+                                                    className="w-4 h-4 accent-emerald-500 rounded border-white/10 bg-black"
+                                                />
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs font-black uppercase italic">{item.name}</span>
+                                                    <span className="text-[9px] text-gray-500 font-bold">₹{item.price}</span>
+                                                </div>
+                                            </label>
+                                        ))}
+                                        {menuItems.filter((item: any) => item.restaurant == formData.restaurant).length === 0 && (
+                                            <div className="text-center py-6 text-[10px] text-gray-600 font-bold uppercase italic">No items found for this restaurant</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </>
                     )}
                 </div>
