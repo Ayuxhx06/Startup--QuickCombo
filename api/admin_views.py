@@ -644,6 +644,12 @@ def admin_combos(request):
 
     elif request.method == 'POST':
         item_ids = request.data.get('item_ids', [])
+        # Ensure item_ids are integers
+        try:
+            item_ids = [int(i) for i in item_ids]
+        except (ValueError, TypeError):
+            item_ids = []
+
         data = request.data.copy()
         serializer = PredefinedComboSerializer(data=data)
         if serializer.is_valid():
@@ -658,6 +664,12 @@ def admin_combos(request):
         try:
             combo = PredefinedCombo.objects.get(pk=combo_id)
             item_ids = request.data.get('item_ids')
+            if item_ids is not None:
+                try:
+                    item_ids = [int(i) for i in item_ids]
+                except (ValueError, TypeError):
+                    pass
+            
             serializer = PredefinedComboSerializer(combo, data=request.data, partial=True)
             if serializer.is_valid():
                 combo = serializer.save()

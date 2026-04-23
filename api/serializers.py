@@ -65,7 +65,8 @@ class GlobalConfigSerializer(serializers.ModelSerializer):
 
 class PredefinedComboSerializer(serializers.ModelSerializer):
     items = MenuItemSerializer(many=True, read_only=True)
+    restaurant_name = serializers.ReadOnlyField(source='restaurant.name')
     
     class Meta:
         model = PredefinedCombo
-        fields = ['id', 'name', 'description', 'items', 'price', 'image_url', 'is_active', 'created_at']
+        fields = ['id', 'name', 'description', 'items', 'price', 'image_url', 'restaurant', 'restaurant_name', 'is_active', 'created_at']

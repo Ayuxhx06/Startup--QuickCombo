@@ -1174,7 +1174,12 @@ export default function PremiumAdmin() {
 
 function EntityModal({ type, entity, onClose, onSave, headers, categories, restaurants, menuItems, adminPassword }: any) {
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState<any>(entity || {});
+    const [formData, setFormData] = useState<any>(() => {
+        if (type === 'combo' && entity?.items) {
+            return { ...entity, item_ids: entity.items.map((i: any) => i.id) };
+        }
+        return entity || {};
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
