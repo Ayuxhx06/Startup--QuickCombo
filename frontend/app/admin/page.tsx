@@ -34,6 +34,7 @@ export default function PremiumAdmin() {
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [coupons, setCoupons] = useState<any[]>([]);
+  const [combos, setCombos] = useState<any[]>([]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -116,6 +117,8 @@ export default function PremiumAdmin() {
         await safeFetch(`${base}/api/admin/users/`, setUsers);
       } else if (activeTab === 'promos') {
         await safeFetch(`${base}/api/admin/coupons/`, setCoupons);
+      } else if (activeTab === 'combos') {
+        await safeFetch(`${base}/api/admin/combos/`, setCombos);
       }
 
       // GLOBAL REFRESH (Individual safe fetches)
@@ -223,6 +226,7 @@ export default function PremiumAdmin() {
       else if (type === 'menu') endpoint = '/api/admin/menu/';
       else if (type === 'category') endpoint = '/api/admin/categories/';
       else if (type === 'coupon') endpoint = '/api/admin/coupons/';
+      else if (type === 'combo') endpoint = '/api/admin/combos/';
 
       await axios.delete(`${API}${endpoint}`, {
         ...getHeaders(),
@@ -444,6 +448,7 @@ export default function PremiumAdmin() {
                   { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
                   { id: 'orders', label: 'Orders Hub', icon: ShoppingBag },
                   { id: 'menu', label: 'Food Items', icon: Utensils },
+                  { id: 'combos', label: 'Combos', icon: Package },
                   { id: 'essentials', label: 'Essentials', icon: Package },
                   { id: 'categories', label: 'Categories', icon: Layers },
                   { id: 'restaurants', label: 'Partners', icon: Store },
@@ -733,6 +738,59 @@ export default function PremiumAdmin() {
                        <div className="col-span-full py-20 text-center text-gray-600 font-black uppercase tracking-widest italic">No Essentials Registered Yet</div>
                    )}
                  </div>
+              </motion.div>
+            )}
+
+             {activeTab === 'combos' && (
+              <motion.div 
+                key="combos" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+                className="bg-[#080808] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl"
+              >
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-10">
+                  <div>
+                    <h3 className="text-2xl lg:text-3xl font-black italic uppercase">Combos Hub</h3>
+                    <p className="text-gray-500">Manage hand-picked bundles and specialized pricing</p>
+                  </div>
+                  <button className="bg-emerald-500 text-black font-black px-6 py-3 rounded-xl hover:bg-emerald-400 transition-all flex items-center gap-2 self-start sm:self-auto">
+                    <Plus size={18} /> CREATE COMBO (VIA DJANGO)
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {combos.map(combo => (
+                    <div key={combo.id} className="bg-white/5 rounded-[32px] overflow-hidden border border-white/5 group hover:border-emerald-500/20 transition-all flex flex-col">
+                      <div className="h-40 relative">
+                        <img src={combo.image_url || combo.items[0]?.image_url} className="w-full h-full object-cover opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#080808] to-transparent" />
+                        <div className="absolute bottom-5 left-5">
+                          <h4 className="font-black text-2xl italic uppercase">{combo.name}</h4>
+                          <p className="text-emerald-500 font-black text-xl italic">₹{combo.price}</p>
+                        </div>
+                      </div>
+                      <div className="p-6 flex-grow">
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {combo.items.map((item: any) => (
+                            <span key={item.id} className="text-[10px] font-black bg-white/5 px-2.5 py-1.5 rounded-lg text-gray-400 uppercase border border-white/5">
+                              {item.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="p-6 pt-0 flex justify-end gap-3">
+                         <button 
+                            onClick={() => deleteEntity('combo', combo.id)}
+                            className="p-3 bg-red-500/10 text-red-500 rounded-2xl hover:bg-red-500 hover:text-white transition-all border border-red-500/20"
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                      </div>
+                    </div>
+                  ))}
+                  {combos.length === 0 && (
+                    <div className="col-span-full py-20 text-center text-gray-600 font-black uppercase tracking-widest italic border-2 border-dashed border-white/5 rounded-[2rem]">
+                      No active combos detected in infrastructure
+                    </div>
+                  )}
+                </div>
               </motion.div>
             )}
 
