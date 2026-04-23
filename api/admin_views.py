@@ -7,8 +7,8 @@ from django.conf import settings
 from django.core.cache import cache
 
 # Use absolute imports for reliability on AlwaysData
-from api.models import User, Order, MenuItem, Restaurant, Category, Coupon, GlobalConfig
-from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer, CouponSerializer, GlobalConfigSerializer
+from api.models import User, Order, MenuItem, Restaurant, Category, Coupon, GlobalConfig, PredefinedCombo
+from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer, CouponSerializer, GlobalConfigSerializer, PredefinedComboSerializer
 import csv
 import io
 import os
@@ -632,3 +632,47 @@ def admin_toggle_site(request):
     config.save()
     
     return Response({'online': config.value == 'true'})
+
+@api_view(['GET', 'POST', 'PATCH', 'DELETE'])
+def admin_combos(request):
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    if request.method == 'GET':
+        combos = PredefinedCombo.objects.all().order_by('-created_at')
+        return Response(PredefinedComboSerializer(combos, many=True).data)
+
+    elif request.method == 'POST':
+        item_ids = request.data.get('item_ids', [])
+        data = request.data.copy()
+        serializer = PredefinedComboSerializer(data=data)
+        if serializer.is_valid():
+            combo = serializer.save()
+            if item_ids:
+                combo.items.set(item_ids)
+            return Response(PredefinedComboSerializer(combo).data, status=201)
+        return Response(serializer.errors, status=400)
+
+    elif request.method == 'PATCH':
+        combo_id = request.data.get('id')
+        try:
+            combo = PredefinedCombo.objects.get(pk=combo_id)
+            item_ids = request.data.get('item_ids')
+            serializer = PredefinedComboSerializer(combo, data=request.data, partial=True)
+            if serializer.is_valid():
+                combo = serializer.save()
+                if item_ids is not None:
+                    combo.items.set(item_ids)
+                return Response(PredefinedComboSerializer(combo).data)
+            return Response(serializer.errors, status=400)
+        except PredefinedCombo.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)
+
+    elif request.method == 'DELETE':
+        combo_id = request.data.get('id')
+        try:
+            combo = PredefinedCombo.objects.get(pk=combo_id)
+            combo.delete()
+            return Response(status=204)
+        except PredefinedCombo.DoesNotExist:
+            return Response({'error': 'Not found'}, status=404)

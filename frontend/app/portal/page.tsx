@@ -21,6 +21,7 @@ export default function AdminPortal() {
   const [stats, setStats] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [combos, setCombos] = useState<any[]>([]);
 
   // Auto-login check
   useEffect(() => {
@@ -51,6 +52,7 @@ export default function AdminPortal() {
     setStats(null);
     setOrders([]);
     setMenuItems([]);
+    setCombos([]);
   };
 
   const getHeaders = () => ({
@@ -60,14 +62,16 @@ export default function AdminPortal() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [sRes, oRes, mRes] = await Promise.all([
+      const [sRes, oRes, mRes, cRes] = await Promise.all([
         axios.get(`${API}/api/admin/stats/`, getHeaders()),
         axios.get(`${API}/api/admin/orders/`, getHeaders()),
-        axios.get(`${API}/api/admin/menu/`, getHeaders())
+        axios.get(`${API}/api/admin/menu/`, getHeaders()),
+        axios.get(`${API}/api/admin/combos/`, getHeaders())
       ]);
       setStats(sRes.data);
       setOrders(oRes.data);
       setMenuItems(mRes.data);
+      setCombos(cRes.data);
     } catch (e: any) {
       toast.error('Invalid Credentials or Load Failed');
       if (e.response?.status === 401 || e.response?.status === 403) {
@@ -93,6 +97,17 @@ export default function AdminPortal() {
     try {
       await axios.delete(`${API}/api/admin/menu/`, { data: { id }, ...getHeaders() });
       toast.success('Deleted successfully');
+      fetchData();
+    } catch (e) {
+      toast.error('Delete failed');
+    }
+  };
+
+  const deleteCombo = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this combo?')) return;
+    try {
+      await axios.delete(`${API}/api/admin/combos/`, { data: { id }, ...getHeaders() });
+      toast.success('Combo deleted');
       fetchData();
     } catch (e) {
       toast.error('Delete failed');
@@ -159,6 +174,7 @@ export default function AdminPortal() {
             { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
             { id: 'orders', label: 'Orders', icon: ShoppingBag },
             { id: 'menu', label: 'Menu Items', icon: Utensils },
+            { id: 'combos', label: 'Combos', icon: Package },
           ].map(item => (
             <button
               key={item.id}
@@ -266,6 +282,48 @@ export default function AdminPortal() {
                      </div>
                    ))}
                  </div>
+              </motion.div>
+            )}
+            {activeTab === 'combos' && (
+              <motion.div 
+                key="combos" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                className="bg-[#0a0a0a] rounded-3xl p-8 border border-white/5"
+              >
+                <div className="flex justify-between items-center mb-8">
+                  <h3 className="text-xl font-bold">Predefined Combos</h3>
+                  <button className="bg-green-500 text-black px-5 py-2 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-all">
+                    <Plus size={18} /> Add New Combo (via Django)
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {combos.map(combo => (
+                    <div key={combo.id} className="bg-white/5 rounded-[32px] overflow-hidden border border-white/5 group hover:border-green-500/30 transition-all flex flex-col">
+                      <div className="h-32 relative">
+                        <img src={combo.image_url || combo.items[0]?.image_url} className="w-full h-full object-cover opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+                        <div className="absolute bottom-4 left-4">
+                          <h4 className="font-black text-xl">{combo.name}</h4>
+                          <p className="text-green-500 font-bold">₹{combo.price}</p>
+                        </div>
+                      </div>
+                      <div className="p-5 flex-grow">
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {combo.items.map((item: any) => (
+                            <span key={item.id} className="text-[10px] font-bold bg-white/5 px-2 py-1 rounded-md text-gray-400 uppercase">
+                              {item.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="p-5 pt-0 flex justify-end gap-2">
+                        <button onClick={() => deleteCombo(combo.id)} className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all">
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {combos.length === 0 && <div className="col-span-2 text-center py-20 text-gray-500">No combos found.</div>}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

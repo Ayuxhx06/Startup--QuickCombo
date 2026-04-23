@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/restaurants/', admin_views.admin_restaurants),
     path('admin/coupons/', admin_views.admin_coupons),
     path('admin/users/', admin_views.admin_users),
+    path('admin/combos/', admin_views.admin_combos),
     path('admin/bulk-import/', admin_views.admin_bulk_import),
     path('admin/upload-image/', admin_views.admin_upload_image),
     path('admin/clear-cache/', admin_views.admin_clear_cache),
