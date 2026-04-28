@@ -505,7 +505,26 @@ export default function CheckoutPage() {
               </div>
             ))}
           </div>
+
+          {onlyEssentials && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mt-4 p-4 rounded-2xl bg-orange-500/10 border-2 border-orange-500/30 flex gap-3 items-start shadow-[0_0_20px_rgba(251,146,60,0.1)]"
+            >
+              <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0 animate-pulse">
+                <span className="text-orange-500 text-xl">💡</span>
+              </div>
+              <div>
+                <p className="text-orange-400 text-[11px] font-black leading-tight uppercase tracking-[0.1em] mb-1">Important Note</p>
+                <p className="text-gray-200 text-xs font-bold leading-relaxed">
+                  We're almost there! To complete this order, please include at least one <span className="text-green-400">food item</span> or <span className="text-green-400">combo</span> along with your essentials.
+                </p>
+              </div>
+            </motion.div>
+          )}
         </section>
+
 
         {/* Special Requests Section */}
         {specialRequests.length > 0 && (
@@ -658,14 +677,8 @@ export default function CheckoutPage() {
           </div>
         </section>
 
-        {onlyEssentials && (
-          <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-xl flex gap-3 items-start mt-4 mb-2 shadow-lg">
-            <span className="text-orange-500 mt-0.5 text-lg">💡</span>
-            <p className="text-orange-200 text-sm font-bold leading-relaxed">
-              We're almost there! To complete this order, please include at least one food item or combo along with your essentials.
-            </p>
-          </div>
-        )}
+        {/* Deleted old note position */}
+
 
       </div>
 
