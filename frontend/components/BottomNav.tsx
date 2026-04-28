@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, UtensilsCrossed, Zap, ClipboardList, User } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+
 
 const navItems = [
   { href: '/', icon: Home, label: 'Home' },
@@ -16,6 +19,8 @@ const navItems = [
 export default function BottomNav() {
   const pathname = usePathname();
   const { itemCount } = useCart();
+  const { isLoggedIn, setShowAuthModal } = useAuth();
+  const router = useRouter();
 
   if (pathname.includes('/checkout') || pathname.includes('/admin') || pathname.includes('/portal')) return null;
 
@@ -24,12 +29,21 @@ export default function BottomNav() {
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
         {navItems.map(({ href, icon: Icon, label, highlight }) => {
           const isActive = pathname === href;
+          
+          const handleClick = (e: React.MouseEvent) => {
+            if (href === '/profile' && !isLoggedIn) {
+              e.preventDefault();
+              setShowAuthModal(true);
+            }
+          };
+
           return (
-            <Link href={href} key={href} className="flex-1">
+            <Link href={href} key={href} onClick={handleClick} className="flex-1">
               <motion.div
                 whileTap={{ scale: 0.85 }}
                 className="flex flex-col items-center gap-0.5 py-1 relative"
               >
+
                 <div className={`relative p-2 rounded-xl transition-all duration-200 ${
                   highlight
                     ? 'bg-green-500 text-black shadow-lg shadow-green-500/30'

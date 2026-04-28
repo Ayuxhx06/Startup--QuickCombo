@@ -659,27 +659,6 @@ export default function CheckoutPage() {
             </div>
           </div>
         </section>
-
-        {/* Donation/Extra Card (Optional) */}
-        <section className="bg-gradient-to-br from-[#2a1b1b] to-[#1c1212] rounded-[20px] p-4 border border-red-900/30">
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="font-bold text-white mb-1">Let's serve a brighter future</h3>
-              <p className="text-gray-400 text-xs w-4/5">Empower young minds through nutritious meals.</p>
-            </div>
-          </div>
-          <div className="flex justify-between items-center mt-4 pt-4 border-t border-white/5">
-            <span className="font-bold text-sm">Donate to Feeding India</span>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-400 border border-gray-600 rounded px-2 py-1">₹3 <span className="ml-1 text-[10px]">✏️</span></span>
-              <button className="text-red-400 font-bold text-sm bg-red-400/10 px-4 py-1.5 rounded-lg">ADD</button>
-            </div>
-          </div>
-        </section>
-
-        {/* Deleted old note position */}
-
-
       </div>
 
       {/* Floating Action Bar (Zomato Style) */}

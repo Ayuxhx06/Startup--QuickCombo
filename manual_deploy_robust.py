@@ -11,6 +11,8 @@ files = [
     (r"c:\Placement project\Quickcombo\api\views_payment.py", "/home/quickcombo/www/quickcombo_backend/api/views_payment.py"),
     (r"c:\Placement project\Quickcombo\frontend\app\checkout\page.tsx", "/home/quickcombo/fresh_app/app/checkout/page.tsx"),
     (r"c:\Placement project\Quickcombo\frontend\components\CartPanel.tsx", "/home/quickcombo/fresh_app/components/CartPanel.tsx"),
+    (r"c:\Placement project\Quickcombo\frontend\components\BottomNav.tsx", "/home/quickcombo/fresh_app/components/BottomNav.tsx"),
+    (r"c:\Placement project\Quickcombo\frontend\app\about\page.tsx", "/home/quickcombo/fresh_app/app/about/page.tsx"),
 ]
 
 ssh = paramiko.SSHClient()
