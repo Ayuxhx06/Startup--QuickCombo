@@ -569,7 +569,8 @@ def place_order(request):
         if applied_coupon_obj and applied_coupon_obj.is_free_delivery:
             delivery_fee = 0
 
-        total = (subtotal - float(discount_amount)) + delivery_fee
+        packing_fee = 10
+        total = (subtotal - float(discount_amount)) + delivery_fee + packing_fee
 
         # 3. Create Order
         order = Order.objects.create(

@@ -65,7 +65,8 @@ def create_payment_session(request):
         if subtotal > 210:
             delivery_fee = 0
 
-        total = (subtotal - float(discount_amount)) + delivery_fee
+        packing_fee = 10
+        total = (subtotal - float(discount_amount)) + delivery_fee + packing_fee
 
         # 3. Create Django Order (Pending Payment)
         order = Order.objects.create(

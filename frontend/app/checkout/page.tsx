@@ -213,10 +213,15 @@ export default function CheckoutPage() {
     setDeliveryFee(fee);
   }, [items, total, specialRequests, appliedCoupon]);
 
-  const currentCalculatedTotal = items.length > 0 ? (total - discountAmount + deliveryFee) : 0;
+  const packingCharge = 10;
+  const currentCalculatedTotal = items.length > 0 ? (total - discountAmount + deliveryFee + packingCharge) : 0;
 
   const hasFood = items.some(i => !['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
   const hasEssentials = items.some(i => ['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
+  
+  // Special items count as essentials, if no regular food exists and we have essentials/special requests
+  const onlyEssentials = !hasFood && (hasEssentials || specialRequests.length > 0);
+
   let etaRange = '30-35 mins'; 
   if (hasFood && hasEssentials) etaRange = '40-45 mins';
   else if (hasEssentials && !hasFood) etaRange = '20 mins';
@@ -232,7 +237,7 @@ export default function CheckoutPage() {
     if (!finalAddress) { toast.error('Delivery address is required (House/Flat No.)'); return; }
     
     const currentCalculatedTotal = items.length > 0 
-      ? (parseFloat(total as any) - discountAmount + deliveryFee) 
+      ? (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge) 
       : 0;
 
     setLoading(true);
@@ -621,11 +626,15 @@ export default function CheckoutPage() {
               <span>Delivery Partner Fee</span>
               <span className={deliveryFee === 0 ? 'text-green-500 font-black' : ''}>{deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}</span>
             </div>
+            <div className="flex justify-between text-gray-400 border-b border-white/5 pb-3">
+              <span>Packing Charges</span>
+              <span>₹{packingCharge}</span>
+            </div>
             <div className="flex justify-between font-bold text-lg text-white pt-1">
               <span>Total Bill</span>
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 text-sm line-through">₹{(parseFloat(total as any) || 0) + deliveryFee}</span>
-                <span>₹{(parseFloat(total as any) || 0) - discountAmount + deliveryFee}</span>
+                <span className="text-gray-500 text-sm line-through">₹{(parseFloat(total as any) || 0) + deliveryFee + packingCharge}</span>
+                <span>₹{(parseFloat(total as any) || 0) - discountAmount + deliveryFee + packingCharge}</span>
               </div>
             </div>
           </div>
@@ -648,7 +657,14 @@ export default function CheckoutPage() {
           </div>
         </section>
 
-
+        {onlyEssentials && (
+          <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex gap-3 items-start mt-4 mb-2 shadow-lg">
+            <span className="text-red-500 mt-0.5 text-lg">⚠️</span>
+            <p className="text-red-400 text-sm font-bold leading-relaxed">
+              You cannot order essentials only. You have to order some food type item to place the order.
+            </p>
+          </div>
+        )}
 
       </div>
 
@@ -680,11 +696,11 @@ export default function CheckoutPage() {
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={handlePlaceOrder}
-          disabled={loading || items.length === 0}
+          disabled={loading || items.length === 0 || onlyEssentials}
           className="bg-green-500 hover:bg-green-400 text-black rounded-[14px] px-6 py-3.5 flex items-center gap-3 min-w-[160px] shadow-[0_4px_16px_rgba(34,197,94,0.3)] disabled:opacity-50"
         >
           <div className="flex flex-col items-start border-r border-black/20 pr-3">
-            <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + deliveryFee) ? 0 : (parseFloat(total as any) - discountAmount + deliveryFee)}</span>
+            <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + deliveryFee + packingCharge) ? 0 : (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge)}</span>
             <span className="text-[10px] font-bold text-black/70">TOTAL</span>
           </div>
           <div className="flex items-center font-black text-[15px]">
