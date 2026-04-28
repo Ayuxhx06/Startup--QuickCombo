@@ -216,11 +216,12 @@ export default function CheckoutPage() {
   const packingCharge = 10;
   const currentCalculatedTotal = items.length > 0 ? (total - discountAmount + deliveryFee + packingCharge) : 0;
 
-  const hasFood = items.some(i => !['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
-  const hasEssentials = items.some(i => ['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
+  const hasFood = items.some(i => i.restaurant || i.restaurant_name || i.category_name?.toLowerCase().includes('bundle'));
+  const hasEssentials = items.some(i => ['essentials', 'grocery', 'snacks', 'beverages', 'drinks'].includes(i.category_name?.toLowerCase() || ''));
   
-  // Special items count as essentials, if no regular food exists and we have essentials/special requests
-  const onlyEssentials = !hasFood && (hasEssentials || specialRequests.length > 0);
+  // An order is only essentials if there's NO restaurant item or bundle present
+  const onlyEssentials = !hasFood && (items.length > 0 || specialRequests.length > 0);
+
 
   let etaRange = '30-35 mins'; 
   if (hasFood && hasEssentials) etaRange = '40-45 mins';

@@ -11,9 +11,10 @@ export default function CartPanel() {
   const { user, setShowAuthModal } = useAuth();
   const router = useRouter();
 
-  const hasFood = items.some(i => !['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
-  const hasEssentials = items.some(i => ['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
-  const onlyEssentials = !hasFood && (hasEssentials || specialRequests.length > 0);
+  const hasFood = items.some(i => i.restaurant || i.restaurant_name || i.category_name?.toLowerCase().includes('bundle'));
+  const hasEssentials = items.some(i => ['essentials', 'grocery', 'snacks', 'beverages', 'drinks'].includes(i.category_name?.toLowerCase() || ''));
+  const onlyEssentials = !hasFood && (items.length > 0 || specialRequests.length > 0);
+
 
   const handleCheckout = () => {
     if (!user) {
