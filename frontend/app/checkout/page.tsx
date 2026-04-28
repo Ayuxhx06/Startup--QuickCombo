@@ -658,10 +658,10 @@ export default function CheckoutPage() {
         </section>
 
         {onlyEssentials && (
-          <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex gap-3 items-start mt-4 mb-2 shadow-lg">
-            <span className="text-red-500 mt-0.5 text-lg">⚠️</span>
-            <p className="text-red-400 text-sm font-bold leading-relaxed">
-              You cannot order essentials only. You have to order some food type item to place the order.
+          <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-xl flex gap-3 items-start mt-4 mb-2 shadow-lg">
+            <span className="text-orange-500 mt-0.5 text-lg">💡</span>
+            <p className="text-orange-200 text-sm font-bold leading-relaxed">
+              We're almost there! To complete this order, please include at least one food item or combo along with your essentials.
             </p>
           </div>
         )}

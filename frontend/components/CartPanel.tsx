@@ -7,9 +7,13 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 export default function CartPanel() {
-  const { isOpen, setIsOpen, items, removeItem, updateQuantity, total, itemCount, clearCart } = useCart();
+  const { isOpen, setIsOpen, items, removeItem, updateQuantity, total, itemCount, clearCart, specialRequests } = useCart();
   const { user, setShowAuthModal } = useAuth();
   const router = useRouter();
+
+  const hasFood = items.some(i => !['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
+  const hasEssentials = items.some(i => ['essentials', 'grocery'].includes(i.category_name?.toLowerCase() || ''));
+  const onlyEssentials = !hasFood && (hasEssentials || specialRequests.length > 0);
 
   const handleCheckout = () => {
     if (!user) {
@@ -162,6 +166,24 @@ export default function CartPanel() {
                   ))
                 )}
               </AnimatePresence>
+
+              {items.length > 0 && onlyEssentials && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex gap-3 items-start"
+                >
+                  <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
+                    <span className="text-orange-500 text-sm">💡</span>
+                  </div>
+                  <div>
+                    <p className="text-orange-200 text-xs font-bold leading-tight uppercase tracking-wider mb-1">Order Tip</p>
+                    <p className="text-gray-400 text-[11px] leading-relaxed">
+                      To help us deliver your essentials quickly, please add at least one <span className="text-green-400 font-bold">Food item</span> or a <span className="text-green-400 font-bold">Combo</span> to your cart.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* Footer */}
@@ -191,9 +213,10 @@ export default function CartPanel() {
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={handleCheckout}
-                    className="w-full btn-primary py-4 flex items-center justify-center gap-2 font-bold text-base"
+                    disabled={onlyEssentials}
+                    className="w-full btn-primary py-4 flex items-center justify-center gap-2 font-bold text-base disabled:opacity-50 disabled:grayscale"
                   >
-                    Proceed to Checkout
+                    {onlyEssentials ? 'Add Food to Continue' : 'Proceed to Checkout'}
                     <ArrowRight size={18} />
                   </motion.button>
                 </motion.div>
