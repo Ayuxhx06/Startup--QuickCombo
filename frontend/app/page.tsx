@@ -5,12 +5,17 @@ import useSWR from 'swr';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Zap, Star, Clock, MapPin, ChevronRight, Search } from 'lucide-react';
+import { 
+  ArrowRight, Zap, Star, Clock, MapPin, ChevronRight, Search,
+  Coffee, IceCream, Drumstick, Carrot, UtensilsCrossed, Package, 
+  Soup, Pizza, Sandwich, Flame, Store, Utensils, Croissant, Wheat
+} from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 const WeatherWidget = dynamic(() => import('@/components/WeatherWidget'), { ssr: false });
 import FoodCard from '@/components/FoodCard';
 import ManualAddBox from '@/components/ManualAddBox';
+import MenuModal from '@/components/MenuModal';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
@@ -35,6 +40,27 @@ export default function HomePage() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('');
   const [search, setSearch] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedRest, setSelectedRest] = useState<{id: number, name: string} | null>(null);
+  const [restMenu, setRestMenu] = useState<MenuItem[]>([]);
+  const [loadingMenu, setLoadingMenu] = useState(false);
+
+  const handleOpenMenu = async (e: React.MouseEvent, rest: Restaurant) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedRest({ id: rest.id, name: rest.name });
+    setIsMenuOpen(true);
+    setLoadingMenu(true);
+    try {
+      const res = await axios.get(`${API}/api/menu/?restaurant=${rest.id}`);
+      setRestMenu(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingMenu(false);
+    }
+  };
+
 
   const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
@@ -54,6 +80,26 @@ export default function HomePage() {
     r.name.toLowerCase().includes(search.toLowerCase()) ||
     r.cuisines.toLowerCase().includes(search.toLowerCase())
   );
+
+  const getCategoryIcon = (slug: string, isActive: boolean) => {
+    const s = slug.toLowerCase();
+    const color = isActive ? "#22c55e" : "#9ca3af";
+    const props = { strokeWidth: 1.5, size: 28, color };
+
+    if (s.includes('beverage')) return <Coffee {...props} />;
+    if (s.includes('dessert')) return <IceCream {...props} />;
+    if (s.includes('non-veg') || s.includes('chicken') || s.includes('meat')) return <Drumstick {...props} />;
+    if (s.includes('veg') && !s.includes('non-veg')) return <Carrot {...props} />;
+    if (s.includes('biryani') || s.includes('rice') || s.includes('pulao')) return <Wheat {...props} />;
+    if (s.includes('essential')) return <Package {...props} />;
+    if (s.includes('indian')) return <UtensilsCrossed {...props} />;
+    if (s.includes('chinese')) return <Soup {...props} />;
+    if (s.includes('fast-food') || s.includes('burger')) return <Sandwich {...props} />;
+    if (s.includes('italian') || s.includes('pizza')) return <Pizza {...props} />;
+    if (s.includes('combo')) return <Flame {...props} />;
+    if (s.includes('snack')) return <Croissant {...props} />;
+    return <Utensils {...props} />;
+  };
 
   return (
     <div className="page-wrapper">
@@ -112,61 +158,64 @@ export default function HomePage() {
       </section>
 
       {/* Categories */}
-      <section className="px-4 mb-6">
-        <h2 className="font-black text-lg mb-4">Browse Categories</h2>
+      <section className="px-4 mb-8">
+        <h2 className="font-black text-xl mb-5">Explore Categories</h2>
         <div className="flex gap-4 pb-4 overflow-x-auto no-scrollbar scroll-smooth snap-x">
-          {categories.slice(0, 6).map((cat, i) => (
-            <div key={cat.slug} className="flex gap-4 snap-center">
-              {i === 1 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-                  className="min-w-[70px]"
-                >
-                  <Link href="/restaurants">
-                    <motion.div whileTap={{ scale: 0.92 }} className="flex flex-col items-center gap-2 cursor-pointer">
-                      <div className="w-[54px] h-[54px] rounded-full flex items-center justify-center text-2xl shadow-[0_4px_12px_rgba(0,0,0,0.5)] transition-colors bg-[#1c1c1c] border border-transparent">
-                        🏪
-                      </div>
-                      <div className="flex flex-col items-center border-b-[3px] pb-1.5 w-full mx-auto border-transparent">
-                        <span className="text-[10px] font-bold tracking-tight whitespace-nowrap text-gray-400">
+          {categories.slice(0, 8).map((cat, i) => {
+            const isRestaurantsCard = i === 1;
+            const isActive = activeCategory === cat.slug;
+            
+            return (
+              <div key={cat.slug} className="flex gap-4 snap-center">
+                {isRestaurantsCard && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+                  >
+                    <Link href="/restaurants" className="snap-center">
+                      <motion.div whileTap={{ scale: 0.95 }} className="flex flex-col items-center gap-3 cursor-pointer min-w-[72px]">
+                        <div className="w-[64px] h-[64px] rounded-[22px] flex items-center justify-center transition-all duration-300 bg-[#121212] border border-transparent shadow-sm hover:bg-[#1a1a1a]">
+                          <Store strokeWidth={1.5} size={28} color="#9ca3af" />
+                        </div>
+                        <span className="text-[12px] font-medium tracking-wide whitespace-nowrap text-[#9ca3af]">
                           Restaurants
                         </span>
-                      </div>
+                      </motion.div>
+                    </Link>
+                  </motion.div>
+                )}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Link href={`/menu?category=${cat.slug}`} className="snap-center">
+                    <motion.div
+                      whileTap={{ scale: 0.95 }}
+                      className="flex flex-col items-center gap-3 cursor-pointer min-w-[72px] relative"
+                      onClick={() => setActiveCategory(cat.slug)}
+                    >
+                      <motion.div 
+                        animate={isActive ? { scale: 1.05 } : { scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className={`w-[64px] h-[64px] rounded-[22px] flex items-center justify-center transition-all duration-300 ${
+                          isActive 
+                            ? 'bg-[#121212] border border-green-500 shadow-[0_0_15px_rgba(34,197,94,0.25)]' 
+                            : 'bg-[#121212] border border-transparent shadow-sm hover:bg-[#1a1a1a]'
+                        }`}
+                      >
+                        {getCategoryIcon(cat.slug, isActive)}
+                      </motion.div>
+                      <span className={`text-[12px] font-medium tracking-wide whitespace-nowrap transition-colors duration-300 ${
+                        isActive ? 'text-white' : 'text-[#9ca3af]'
+                      }`}>
+                        {cat.name}
+                      </span>
                     </motion.div>
                   </Link>
                 </motion.div>
-              )}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="min-w-[70px]"
-              >
-                <Link href={`/menu?category=${cat.slug}`}>
-                  <motion.div
-                    whileTap={{ scale: 0.92 }}
-                    className="flex flex-col items-center gap-2 cursor-pointer"
-                    onClick={() => setActiveCategory(cat.slug)}
-                  >
-                    <div className={`w-[54px] h-[54px] rounded-full flex items-center justify-center text-2xl shadow-[0_4px_12px_rgba(0,0,0,0.5)] transition-colors ${
-                      activeCategory === cat.slug ? 'bg-green-500/20 border border-green-500/50' : 'bg-[#1c1c1c] border border-transparent'
-                    }`}>
-                      {cat.icon}
-                    </div>
-                    <div className={`flex flex-col items-center border-b-[3px] pb-1.5 w-full mx-auto ${
-                      activeCategory === cat.slug
-                        ? 'border-green-500'
-                        : 'border-transparent'
-                    }`}>
-                      <span className={`text-[10px] font-bold tracking-tight whitespace-nowrap ${activeCategory === cat.slug ? 'text-white' : 'text-gray-400'}`}>
-                        {cat.name}
-                      </span>
-                    </div>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -186,36 +235,44 @@ export default function HomePage() {
             </div>
           ) : (
             filteredRestaurants.map((rest, i) => (
-              <Link key={rest.id} href={`/menu?restaurant=${rest.id}`}>
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="min-w-[280px] sm:min-w-[320px] rounded-3xl overflow-hidden glass hover:border-green-500/40 transition-all snap-center group cursor-pointer"
-                >
-                  <div className="h-[140px] relative overflow-hidden">
-                    <Image 
-                      src={rest.image_url.startsWith('http') ? rest.image_url : `${API}${rest.image_url}`} 
-                      alt={rest.name} 
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110" 
-                      sizes="(max-width: 768px) 100vw, 320px"
-                    />
-                    <div className="absolute top-0 right-0 p-3">
-                      <div className="glass px-2.5 py-1 rounded-full text-xs font-black flex items-center gap-1">
-                        <Star size={12} className="text-green-400 fill-green-400" /> {rest.rating}
-                      </div>
+              <motion.div
+                key={rest.id}
+                onClick={() => router.push(`/menu?restaurant=${rest.id}`)}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="min-w-[280px] sm:min-w-[320px] rounded-3xl overflow-hidden glass hover:border-green-500/40 transition-all snap-center group cursor-pointer"
+              >
+                <div className="h-[140px] relative overflow-hidden">
+                  <Image 
+                    src={rest.image_url.startsWith('http') ? rest.image_url : `${API}${rest.image_url}`} 
+                    alt={rest.name} 
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                    sizes="(max-width: 768px) 100vw, 320px"
+                  />
+                  <div className="absolute top-0 right-0 p-3">
+                    <div className="glass px-2.5 py-1 rounded-full text-xs font-black flex items-center gap-1">
+                      <Star size={12} className="text-green-400 fill-green-400" /> {rest.rating}
                     </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-bold text-lg leading-tight mb-1 truncate">{rest.name}</h3>
-                    <p className="text-gray-400 text-xs truncate mb-2">{rest.cuisines}</p>
-                    <div className="flex items-center gap-3 text-xs font-semibold text-gray-300">
-                      <span className="flex items-center gap-1"><Clock size={12} className="text-green-400" /> {rest.delivery_time} min</span>
-                    </div>
+                </div>
+                <div className="p-4 relative">
+                  <h3 className="font-bold text-lg leading-tight mb-1 truncate">{rest.name}</h3>
+                  <p className="text-gray-400 text-xs truncate mb-2">{rest.cuisines}</p>
+                  <div className="flex items-center gap-3 text-xs font-semibold text-gray-300">
+                    <span className="flex items-center gap-1"><Clock size={12} className="text-green-400" /> {rest.delivery_time} min</span>
                   </div>
-                </motion.div>
-              </Link>
+                  
+                  {/* Menu Button Overlay */}
+                  <button 
+                    onClick={(e) => handleOpenMenu(e, rest)}
+                    className="absolute bottom-4 right-4 bg-green-500 text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-400 transition-all shadow-lg z-20"
+                  >
+                    VIEW MENU
+                  </button>
+                </div>
+              </motion.div>
             ))
           )}
         </div>
@@ -315,12 +372,29 @@ export default function HomePage() {
                 VIEW_CERTIFICATION_HUB
               </motion.button>
             </Link>
+            <MenuModal 
+        isOpen={isMenuOpen} 
+        onClose={() => setIsMenuOpen(false)} 
+        restaurantName={selectedRest?.name || ''} 
+        items={restMenu} 
+      />
+    </div>
+
+        </div>
+        <div className="text-center mt-8 pb-4 space-y-2">
+          <p className="text-[10px] text-gray-700 font-black tracking-widest uppercase italic">QuickCombo • Made with ❤️ in India</p>
+          <div className="flex justify-center gap-4 text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+            <Link href="/terms" className="hover:text-green-500 transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-green-500 transition-colors">Privacy</Link>
           </div>
         </div>
-        <div className="text-center mt-8 pb-4">
-          <p className="text-[10px] text-gray-700 font-black tracking-widest uppercase italic">QuickCombo • Made with ❤️ in India</p>
-        </div>
       </section>
+      <MenuModal 
+        isOpen={isMenuOpen} 
+        onClose={() => setIsMenuOpen(false)} 
+        restaurantName={selectedRest?.name || ''} 
+        items={restMenu} 
+      />
     </div>
   );
 }
