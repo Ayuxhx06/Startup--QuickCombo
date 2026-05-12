@@ -49,7 +49,7 @@ export const metadata: Metadata = {
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "732009088656-32g92jcl20iubm821262d1u5053n96m2.apps.googleusercontent.com"; // Placeholder
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "82846188379-l5qb1pli9i7ofn6ti0in5nb8nonh2q4v.apps.googleusercontent.com";
 
   return (
     <html lang="en" className={jakarta.variable} data-scroll-behavior="smooth">
