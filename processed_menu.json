@@ -1,0 +1,4280 @@
+[
+  {
+    "id": "5342",
+    "name": "pepper chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/d15pft6qn8dmshlia4ro.jpg"
+  },
+  {
+    "id": "4720",
+    "name": "muskmelon milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/oda7qm7de9xios8vxsax.jpg"
+  },
+  {
+    "id": "4198",
+    "name": "daal fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/qzun8hqdhds4lltcjlw8.jpg"
+  },
+  {
+    "id": "5246",
+    "name": "paneer tikka",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/btgremq37ruhxm410anc.jpg"
+  },
+  {
+    "id": "5108",
+    "name": "chicken sandwich",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/mlfs3xnvegkdocjdaf2d.jpg"
+  },
+  {
+    "id": "4676",
+    "name": "paneer porotta roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/nokqttm3cywz3q9pf31p.jpg"
+  },
+  {
+    "id": "5148",
+    "name": "veg pan fried momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/sddlmc3z0igwazfftrtn.jpg"
+  },
+  {
+    "id": "5173",
+    "name": "samosa chat",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/rurkcnuolxzjrbf09nmd.jpg"
+  },
+  {
+    "id": "5267",
+    "name": "garlic chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/uiaifvdh5jlwncktlxg8.jpg"
+  },
+  {
+    "id": "4204",
+    "name": "paneer kolhapuri",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/rpkuup8n175dbw6cewp2.jpg"
+  },
+  {
+    "id": "5112",
+    "name": "veg burger double decker",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/rpjfooh7nxml3nhxomc3.jpg"
+  },
+  {
+    "id": "5577",
+    "name": "coke",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/nqpbd2mlvicoc5vn4hnq.jpg"
+  },
+  {
+    "id": "5443",
+    "name": "stuffed naan (non veg)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/mrjbm9atnh38ofvtilqw.jpg"
+  },
+  {
+    "id": "5077",
+    "name": "egg bhurji",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/kh21twhlae5f3lnsw4nf.jpg"
+  },
+  {
+    "id": "5076",
+    "name": "egg masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/gluolrlyimp6sgthtrfx.jpg"
+  },
+  {
+    "id": "5164",
+    "name": "paneer 65",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/mdtbaejklhzqocisilsn.jpg"
+  },
+  {
+    "id": "5427",
+    "name": "malabar fish curry",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/nua90gwp0u79pomu3vi5.jpg"
+  },
+  {
+    "id": "5463",
+    "name": "chicken 65 (boneless)",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/ijpnbuqkclqxvbytyr5d.jpg"
+  },
+  {
+    "id": "5465",
+    "name": "chicken drumstick (5 pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/ibqysygvviaaaqypbwg0.jpg"
+  },
+  {
+    "id": "5425",
+    "name": "kadai fish",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/c9ezeqat9onhv0g2hx2l.jpg"
+  },
+  {
+    "id": "5068",
+    "name": "mushroom pepper",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/zeynw1hhhx1vjenppiqp.jpg"
+  },
+  {
+    "id": "4666",
+    "name": "smiley fries (6pcs)",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/evycsih5amaqlqjyxfhp.jpg"
+  },
+  {
+    "id": "5189",
+    "name": "chicken cutlet (1 plate 2pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/iu5orfskylo2yi52oofy.jpg"
+  },
+  {
+    "id": "5124",
+    "name": "egg maggi",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/g9dpnplksiurrrat3sgt.jpg"
+  },
+  {
+    "id": "5201",
+    "name": "papaya juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/kicxvvhg1e3jkm4kd0hd.jpg"
+  },
+  {
+    "id": "5070",
+    "name": "baigan fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/vmpaq9dh3j1vxsapv3gf.jpg"
+  },
+  {
+    "id": "4657",
+    "name": "chees toast",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/bokoxhvskliy4cjl8ing.jpg"
+  },
+  {
+    "id": "5208",
+    "name": "strawberry milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/bme4iihrmghlx5eqtwsb.jpg"
+  },
+  {
+    "id": "4203",
+    "name": "paneer dopyaza",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/bhvpq5pgqomgfq8ofsvu.jpg"
+  },
+  {
+    "id": "5106",
+    "name": "veg sandwich",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/eb7jaq71olwt2wr2odge.jpg"
+  },
+  {
+    "id": "5213",
+    "name": "papaya milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/yirfe3rf6moyknf6z9pi.jpg"
+  },
+  {
+    "id": "5336",
+    "name": "chicken choupsey",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/k6qgv8xybwxlvxrrtdjy.jpg"
+  },
+  {
+    "id": "4126",
+    "name": "lolipop chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/ozkse2r2ghemsirruivg.jpg"
+  },
+  {
+    "id": "5471",
+    "name": "chettinad spl chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/lbol2td0tnsel4cqbhoq.jpg"
+  },
+  {
+    "id": "5143",
+    "name": "chilly chicken roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/cpxac7guj6hojxyrbxfa.jpg"
+  },
+  {
+    "id": "4742",
+    "name": "kit kat milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/l67x6k5soprjgfvmarlt.jpg"
+  },
+  {
+    "id": "5130",
+    "name": "quality  lassi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/k6kkgmja5th3ndeqgz69.jpg"
+  },
+  {
+    "id": "4696",
+    "name": "badam milk",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/sbwvyubdjrmnhh7ozv1j.jpg"
+  },
+  {
+    "id": "4730",
+    "name": "avocado milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/qmaspi6uusb3scaeat87.jpg"
+  },
+  {
+    "id": "4131",
+    "name": "sez. chicken momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/tm3shuahqcs6b0pvbiho.jpg"
+  },
+  {
+    "id": "4121",
+    "name": "hydrabadi kuska",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/rq7l7qvwgpmyq8qjvggo.jpg"
+  },
+  {
+    "id": "4133",
+    "name": "chilli veg momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/sqotrbeambgpqkzhnrh4.jpg"
+  },
+  {
+    "id": "4672",
+    "name": "veg maggi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/e48gzl8bxrusvwztfipv.jpg"
+  },
+  {
+    "id": "5062",
+    "name": "paneer masala",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/i7btu1w1ihqhxblohbbe.jpg"
+  },
+  {
+    "id": "4716",
+    "name": "mango lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/cbzgss8fz6gpfexu6hmb.jpg"
+  },
+  {
+    "id": "4719",
+    "name": "chikku milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/rehwb9tivzdaztb8x5iu.jpg"
+  },
+  {
+    "id": "5263",
+    "name": "crispy fish finger (3pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/st1hpmadydea89pf61g7.jpg"
+  },
+  {
+    "id": "5276",
+    "name": "ladybird chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/yxjkmnw4xvtiz3wscl10.jpg"
+  },
+  {
+    "id": "5606",
+    "name": "butter naan",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/hqv4guyxzr0nlqhdhkik.jpg"
+  },
+  {
+    "id": "5450",
+    "name": "tandoori chicken half",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/nvitqdpsstgnntd3t2lu.jpg"
+  },
+  {
+    "id": "5423",
+    "name": "steam rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/rwlr0rhyycv031j2tsa9.jpg"
+  },
+  {
+    "id": "5381",
+    "name": "chettinad chicken",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/ikwmux9iudqpybajwuyn.jpg"
+  },
+  {
+    "id": "5459",
+    "name": "reshmi kabab (6 pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/n4iureyl06gcaghyo0pw.jpg"
+  },
+  {
+    "id": "4715",
+    "name": "grape lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/q5igzl4zspdf4ssw7o5r.jpg"
+  },
+  {
+    "id": "4145",
+    "name": "ginger paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/tchrk4bt4ygm50oduxtp.jpg"
+  },
+  {
+    "id": "5150",
+    "name": "paneer steam momos",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/g9jpnkmfqufr7mdq3hy7.jpg"
+  },
+  {
+    "id": "5058",
+    "name": "aloo dum",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/k0gf9fuxejkdhzcngcq3.jpg"
+  },
+  {
+    "id": "4025",
+    "name": "tandoori chicken qarter",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/nj3k5y5txudpg4crp4yl.jpg"
+  },
+  {
+    "id": "4771",
+    "name": "mixed juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/mtoqhqxb628o1xus8cf1.jpg"
+  },
+  {
+    "id": "5439",
+    "name": "pudina paratha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/kcyfcwkccszzxozilyvj.jpg"
+  },
+  {
+    "id": "5440",
+    "name": "lachha paratha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/ssfodnr6llbnbkfgla8v.jpg"
+  },
+  {
+    "id": "5334",
+    "name": "chicken chattinad boneless",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/sl88ctf1jwnzj9uhxpsw.jpg"
+  },
+  {
+    "id": "4712",
+    "name": "jaljeera lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/kjsmmdwd0pjtoplmd3ww.jpg"
+  },
+  {
+    "id": "5436",
+    "name": "masala kulcha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/khhueyhdv0r84iam9adb.jpg"
+  },
+  {
+    "id": "5462",
+    "name": "chicken 65 (bone)",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/stlmvlbsnpbqvigy0gvv.jpg"
+  },
+  {
+    "id": "5467",
+    "name": "prawn 65",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/gv5ohxv1cihzfjdl2frh.jpg"
+  },
+  {
+    "id": "5119",
+    "name": "plain maggi",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/m5mccbge0afhhb1srzi7.jpg"
+  },
+  {
+    "id": "5853",
+    "name": "nutella brownie",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/ubw2heob2ljyvfv5zuhi.jpg"
+  },
+  {
+    "id": "5291",
+    "name": "prawn chopsuey",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/gq7rc3r934p6toua86dq.jpg"
+  },
+  {
+    "id": "5371",
+    "name": "dal tadka",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/csxb9xjozuugoa39jtmu.jpg"
+  },
+  {
+    "id": "4705",
+    "name": "mint soda",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/zfnlxtxceuvh58u53bop.jpg"
+  },
+  {
+    "id": "5270",
+    "name": "sesame chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/lstw52ipwkmbsrh6291b.jpg"
+  },
+  {
+    "id": "5207",
+    "name": "fruit lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/rnrnaaxws4qq5v5rmyfp.jpg"
+  },
+  {
+    "id": "4710",
+    "name": "fresh lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/shbvyicwnk7f0dodpgot.jpg"
+  },
+  {
+    "id": "5580",
+    "name": "winkies marble cake (purple)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/d44qvnt1wgdsc96cebgt.jpg"
+  },
+  {
+    "id": "5205",
+    "name": "pineapple lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/mocjmnr3lfjelx7gvfjj.jpg"
+  },
+  {
+    "id": "5421",
+    "name": "mushroom pulao",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/xzqx68c8yw2jkcmjrxan.jpg"
+  },
+  {
+    "id": "5432",
+    "name": "butter roti",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/rdgipapraao7qdimftcf.jpg"
+  },
+  {
+    "id": "5451",
+    "name": "tandoori chicken quarter",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/lezeg8nyg7ymerq0lvcd.jpg"
+  },
+  {
+    "id": "5282",
+    "name": "ginger mushroom",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/iaxyspdnk85glzzmaj2m.jpg"
+  },
+  {
+    "id": "5410",
+    "name": "veg rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/nqz0zmrgyechfscq0j37.jpg"
+  },
+  {
+    "id": "5413",
+    "name": "veg pulao",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/eatfmvcs5vx9crcbuvs1.jpg"
+  },
+  {
+    "id": "4189",
+    "name": "veg kolhapuri",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/gmassyrwla0yzmarpp4y.jpg"
+  },
+  {
+    "id": "5360",
+    "name": "chicken cheese roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/jn7rohpmvscdnbjgiw5l.jpg"
+  },
+  {
+    "id": "5385",
+    "name": "chicken handi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/sl3oqltgv8s3rnrhlvif.jpg"
+  },
+  {
+    "id": "5418",
+    "name": "cashew nut pulao",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/qsgvpdvozktehu3grrrp.jpg"
+  },
+  {
+    "id": "5098",
+    "name": "veg corn club sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/ubnvqshdoy3qrn9gcgnb.jpg"
+  },
+  {
+    "id": "5466",
+    "name": "andhra chicken 65",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/fmc5rih38pvjrkexcrdi.jpg"
+  },
+  {
+    "id": "5346",
+    "name": "chicken bhurji",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/hlajhkwjofgo4kbhuijm.jpg"
+  },
+  {
+    "id": "5454",
+    "name": "tangdi kabab (2 pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/rh9btizlzjodqftdkl05.jpg"
+  },
+  {
+    "id": "5442",
+    "name": "garlic naan",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/vsu4ce6kwf03eszgqyf5.jpg"
+  },
+  {
+    "id": "5163",
+    "name": "veg nuggets",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/cpxj1uywiv8s0hm6ccub.jpg"
+  },
+  {
+    "id": "4784",
+    "name": "butter scotch shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/nlaptjqhcpeknenf44cs.jpg"
+  },
+  {
+    "id": "4723",
+    "name": "guava milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/gtxjzgel5hhoeuosxac3.jpg"
+  },
+  {
+    "id": "5838",
+    "name": "hot chocolate",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/zkcjnlfdzh0ksek7o3z2.jpg"
+  },
+  {
+    "id": "5420",
+    "name": "gobi pulao",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/jenzdz8sjhzshius4qkt.jpg"
+  },
+  {
+    "id": "5343",
+    "name": "chicken 65",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/ctm0za7vjqrybzcnieqh.jpg"
+  },
+  {
+    "id": "5084",
+    "name": "sweet corn chicken soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/xawoqmhqcs9h1cqryyhc.jpg"
+  },
+  {
+    "id": "4684",
+    "name": "white sauce chicken pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/buuyjxnaf4jnz91e7nl3.jpg"
+  },
+  {
+    "id": "5121",
+    "name": "mushroom maggi",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/gmjj2hcvztekkseikf63.jpg"
+  },
+  {
+    "id": "4141",
+    "name": "chilli paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/nd7ppi9vf5ibqpdqngdv.jpg"
+  },
+  {
+    "id": "5171",
+    "name": "chicken lolly pop (4pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/inmn8uzdenl1gb0mrgx4.jpg"
+  },
+  {
+    "id": "5204",
+    "name": "strawberry lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/v0ljtnqr2pywjph0pulv.jpg"
+  },
+  {
+    "id": "5560",
+    "name": "lays (wafer chips)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/nokbpjpia3kti4atrvaw.jpg"
+  },
+  {
+    "id": "5407",
+    "name": "mixed szechuan rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/mvaxca0gzxxscmxzkbmh.jpg"
+  },
+  {
+    "id": "4748",
+    "name": "jack fruit milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553149/menu_items/yfysq03dusbw4unf1si4.jpg"
+  },
+  {
+    "id": "5072",
+    "name": "mix veg",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/rkm4dzstzswrhqt4zooi.jpg"
+  },
+  {
+    "id": "4191",
+    "name": "veg kurma",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/tbucbkvf8djmdiaoj8vo.jpg"
+  },
+  {
+    "id": "5126",
+    "name": "sp chicken maggi",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553148/menu_items/z7cvt8ngcz9a6ginqbwb.jpg"
+  },
+  {
+    "id": "5457",
+    "name": "chicken tikka (6 pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/afox8yr77834ylnvnrfl.jpg"
+  },
+  {
+    "id": "5337",
+    "name": "chicken kolhapuri",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/trcalnnnpxy3ugcpnmby.jpg"
+  },
+  {
+    "id": "5384",
+    "name": "chicken punjabi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/krsyfegleipuxhebhdno.jpg"
+  },
+  {
+    "id": "5593",
+    "name": "red bull yellow edition",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/grxr6pymxn71cstaq8i1.jpg"
+  },
+  {
+    "id": "4735",
+    "name": "sharjah milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/cpm7tscipnmjkmvgh3cm.jpg"
+  },
+  {
+    "id": "5109",
+    "name": "chicken corn egg jumbo",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/pgx8zonk7w2agveo4aqs.jpg"
+  },
+  {
+    "id": "4728",
+    "name": "strawberry milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/ia47kj7d4utnxk5rad0r.jpg"
+  },
+  {
+    "id": "5133",
+    "name": "complan / horlicks",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553150/menu_items/joncyfzzakgi5dqv1dlh.jpg"
+  },
+  {
+    "id": "5460",
+    "name": "fish tikka",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/eoj1n2x6qq9a6hg1wnyl.jpg"
+  },
+  {
+    "id": "4700",
+    "name": "orange mojito",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/ew1bpsc3bztvklmmawmv.jpg"
+  },
+  {
+    "id": "4682",
+    "name": "red sauce chicken pastha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/iu70vfp7493oz8vcb97r.jpg"
+  },
+  {
+    "id": "4655",
+    "name": "chees bread omlet",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/e8ocuo8kxa1rhq8gpkaj.jpg"
+  },
+  {
+    "id": "5216",
+    "name": "vanilla milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/pijlruqfarhr4rfz69lj.jpg"
+  },
+  {
+    "id": "5178",
+    "name": "kallal chat",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/paaiwthgpajx0ihzfasj.jpg"
+  },
+  {
+    "id": "5430",
+    "name": "prawn chettinad",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/akts6t9vtks7wzqmitxq.jpg"
+  },
+  {
+    "id": "4138",
+    "name": "honey chilli veg momo",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/prflqwcetkepfkfqzpaj.jpg"
+  },
+  {
+    "id": "4673",
+    "name": "cheese maggi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/g9gfwdiivxe3nxynziah.jpg"
+  },
+  {
+    "id": "4128",
+    "name": "chicken manchurian momo",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/bl69jg1bqbenxpnqt05v.jpg"
+  },
+  {
+    "id": "5469",
+    "name": "gobi 65",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/fn1jfi3x56i0yv8lzbgh.jpg"
+  },
+  {
+    "id": "4200",
+    "name": "matar paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/z48ccbgw9mb2sxjfdz34.jpg"
+  },
+  {
+    "id": "5194",
+    "name": "mango juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/q965jhvstccjhqyqs3ep.jpg"
+  },
+  {
+    "id": "4733",
+    "name": "kiwi milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/oyyl6bff2qhog3keggly.jpg"
+  },
+  {
+    "id": "4744",
+    "name": "brownie milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/qf0tta5nuvzwabbcurks.jpg"
+  },
+  {
+    "id": "5550",
+    "name": "uncle chipps (spicy treat)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/dwkmkshyqb5ekvxumqfo.jpg"
+  },
+  {
+    "id": "5146",
+    "name": "chicken kabab roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/dji9nmtfv4ilmaomdpzw.jpg"
+  },
+  {
+    "id": "4662",
+    "name": "white sauce pastha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/g4hjmgtdhl6qgelzmkhk.jpg"
+  },
+  {
+    "id": "4667",
+    "name": "french fries (l)",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/ktbpos4au1kwqhebguks.jpg"
+  },
+  {
+    "id": "4718",
+    "name": "pappaya milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/dkcnlczry571uges2vnp.jpg"
+  },
+  {
+    "id": "5242",
+    "name": "ajwain chicken (quarter)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/uma3oh1igfxlqiwv3iup.jpg"
+  },
+  {
+    "id": "5257",
+    "name": "890 chicken (half)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553151/menu_items/skjzmpah6uyhny2zytzf.jpg"
+  },
+  {
+    "id": "5265",
+    "name": "fish with lemon butter sauce (4pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/leco8wyqps4wgszt5ty8.jpg"
+  },
+  {
+    "id": "5203",
+    "name": "ginger lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/bkymwv8kdtpg8ryvdlir.jpg"
+  },
+  {
+    "id": "5252",
+    "name": "sp. shawarma plate",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/fdm6vpujxirgzn5bo951.jpg"
+  },
+  {
+    "id": "5470",
+    "name": "mushroom 65",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/ywwmuwgp5w62j7anywi7.jpg"
+  },
+  {
+    "id": "5317",
+    "name": "sz gold fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/mop7roybhjtjldjicmra.jpg"
+  },
+  {
+    "id": "5229",
+    "name": "lollipop chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/usojcgfqzhjmsexdzvvk.jpg"
+  },
+  {
+    "id": "5149",
+    "name": "veg szechwan momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553152/menu_items/sonpszn8wgesqbkvs0t9.jpg"
+  },
+  {
+    "id": "5586",
+    "name": "croissant vanilla creme",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/dk2cnv28q58rvmkksmlz.jpg"
+  },
+  {
+    "id": "5100",
+    "name": "mushroom paneer club sandwich",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/hbprznzzzzs30t6k3r8q.jpg"
+  },
+  {
+    "id": "5180",
+    "name": "tikka chat",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/fk6db3k7g8s5pup7slke.jpg"
+  },
+  {
+    "id": "4193",
+    "name": "aloo jeera fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/xk9jqbnbjlqyzh25vgj5.jpg"
+  },
+  {
+    "id": "4207",
+    "name": "paneer bhurji",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/arxme8accyqohdepcrzj.jpg"
+  },
+  {
+    "id": "4134",
+    "name": "veg manchurian momo",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/rk5lm46lyknj87g08kug.jpg"
+  },
+  {
+    "id": "4679",
+    "name": "chicken sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/h4pjn0vnon6pur90nyhx.jpg"
+  },
+  {
+    "id": "4738",
+    "name": "water melon milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/ld9kcwi9grdtywxsrz7o.jpg"
+  },
+  {
+    "id": "4747",
+    "name": "tender coconut milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/srguxxoexfmsgupqifuf.jpg"
+  },
+  {
+    "id": "5105",
+    "name": "chicken paneer corn egg club sandwich",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/j8ohnpblfz9py4ql6bfd.jpg"
+  },
+  {
+    "id": "4726",
+    "name": "banana milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/lix7qqkef9dappv8f4fq.jpg"
+  },
+  {
+    "id": "5101",
+    "name": "aloo paneer club sandwich",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/dc6kfsmfnd00wouqajyq.jpg"
+  },
+  {
+    "id": "5309",
+    "name": "sz chicken fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/tatvbi8oqf5gwldbevod.jpg"
+  },
+  {
+    "id": "5315",
+    "name": "shanghai chicken fried rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/m8xijdhj4bqmsny8gvu0.jpg"
+  },
+  {
+    "id": "5303",
+    "name": "sz egg fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/dykoisw0i8d3vqafrtw8.jpg"
+  },
+  {
+    "id": "5488",
+    "name": "chicken noodles",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553153/menu_items/fm0vzz4uus6axp8ayq6e.jpg"
+  },
+  {
+    "id": "4699",
+    "name": "blue curacao mojito",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/fvwpecjepxzclqpvdffs.jpg"
+  },
+  {
+    "id": "4195",
+    "name": "green peas masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/g8wq7kd3plxbuu2cb7v3.jpg"
+  },
+  {
+    "id": "5367",
+    "name": "veg szechuan chopsey",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/lzpgspzkekrdpi82wwqy.jpg"
+  },
+  {
+    "id": "4129",
+    "name": "garlic chicken momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/lev5xuwh0firgcbw9w4a.jpg"
+  },
+  {
+    "id": "4143",
+    "name": "dragon paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/vllvyf6jccjuu60dfffr.jpg"
+  },
+  {
+    "id": "5859",
+    "name": "ultimate burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/jjkn2f3op7aivrrm6g4e.jpg"
+  },
+  {
+    "id": "5860",
+    "name": "veggie supreme pizza",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/p9cbp8rr9wpnudjyoxmx.jpg"
+  },
+  {
+    "id": "5861",
+    "name": "spicy chicken wings",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/tz6x37owuglck835wsy0.jpg"
+  },
+  {
+    "id": "5862",
+    "name": "classic cold coffee",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/zqqjpx14qbkjymvwpxyw.jpg"
+  },
+  {
+    "id": "5863",
+    "name": "lays magic masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/ig7dxho2xv41pnvsbisd.jpg"
+  },
+  {
+    "id": "5864",
+    "name": "margherita pizza",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/sitn2v5ozr8xppvphhtz.jpg"
+  },
+  {
+    "id": "5865",
+    "name": "dark chocolate shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/ynhwwskaukwsxqp2fplz.jpg"
+  },
+  {
+    "id": "5610",
+    "name": "non veg rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553154/menu_items/hjq3zjbkshv9ecefryzz.jpg"
+  },
+  {
+    "id": "5858",
+    "name": "blueberry cheesecake",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/im1fwtzpibpq3cdc6gev.jpg"
+  },
+  {
+    "id": "5428",
+    "name": "prawn pepper masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/ayl6wp8a2eeqqot6zbsj.jpg"
+  },
+  {
+    "id": "5378",
+    "name": "kadai veg",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/za4qbktwwjtcef5l0feb.jpg"
+  },
+  {
+    "id": "5447",
+    "name": "egg fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/fk4ztk5ew9x3tkbibz3w.jpg"
+  },
+  {
+    "id": "4707",
+    "name": "sp lime soda",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/dswq1icgmwwpxhnkqv6g.jpg"
+  },
+  {
+    "id": "4156",
+    "name": "chilli potato",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/jtdbfgaxqkec2feaaovo.jpg"
+  },
+  {
+    "id": "5296",
+    "name": "chicken 65 boneless (6pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/bvgjybyoe2bspct44kyj.jpg"
+  },
+  {
+    "id": "5568",
+    "name": "cornitos nacho (korean chilli)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/nuqfi2j9rnztwjgiqqex.jpg"
+  },
+  {
+    "id": "5845",
+    "name": "rosemilk tresleches",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/ctsjlrijcryixecqvgcq.jpg"
+  },
+  {
+    "id": "5286",
+    "name": "prawn masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/cgendpshloqkhkqndfn9.jpg"
+  },
+  {
+    "id": "5411",
+    "name": "paneer rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/ntrhotyya1x1qothjyb4.jpg"
+  },
+  {
+    "id": "5364",
+    "name": "chicken american chopsey",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/byesw6umvu38fh6n13za.jpg"
+  },
+  {
+    "id": "5456",
+    "name": "badami kabab",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/nfr1zzpip51fxooc2dy0.jpg"
+  },
+  {
+    "id": "5446",
+    "name": "egg chettinad",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/xx989josrlamkb2rrqol.jpg"
+  },
+  {
+    "id": "5347",
+    "name": "lemon chicken",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/jg2v2gzcyyz0pwm7gkpw.jpg"
+  },
+  {
+    "id": "4706",
+    "name": "grape soda",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/wpd8o8ywus8cpgfz7xer.jpg"
+  },
+  {
+    "id": "5566",
+    "name": "paper boat swing zesty pomegranate juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/mpd19iira3m8bigpfewu.jpg"
+  },
+  {
+    "id": "5595",
+    "name": "red bull red edition",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/xkgvayiqrpih6v1zovzm.jpg"
+  },
+  {
+    "id": "5415",
+    "name": "veg pulao",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553155/menu_items/ke97sjdx9r2ktedfd0qe.jpg"
+  },
+  {
+    "id": "5576",
+    "name": "winkies love bite cake",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/jtwnuqcgzexwqg7aesog.jpg"
+  },
+  {
+    "id": "5841",
+    "name": "authentic tiramisu",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/eqkwvhxamsnt7zjwisuz.jpg"
+  },
+  {
+    "id": "5372",
+    "name": "dal b fry",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/wjohkd3do9hccnkt5ofd.jpg"
+  },
+  {
+    "id": "4148",
+    "name": "mushroom manchurian",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/ifmqln1dammizfcrkfuo.jpg"
+  },
+  {
+    "id": "5239",
+    "name": "afghani chicken (quarter)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/lrx1xpfbodts20r87mzw.jpg"
+  },
+  {
+    "id": "5266",
+    "name": "chilly chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/mpwsy54bw6adlef8nnbh.jpg"
+  },
+  {
+    "id": "5211",
+    "name": "apple milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/cvzmrgudwung9ssyyo2d.jpg"
+  },
+  {
+    "id": "5383",
+    "name": "chicken hyderabadi",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/ua1ueg0m4nrodq1rbjot.jpg"
+  },
+  {
+    "id": "5605",
+    "name": "chicken burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/gjemd3p3q6tewqqcssae.jpg"
+  },
+  {
+    "id": "4397",
+    "name": "chennai 65 biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/ed4abnyppodabyhtspib.jpg"
+  },
+  {
+    "id": "5104",
+    "name": "quality paneer club sandwich",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/gyrq1zp1hfizfr3uqq9n.jpg"
+  },
+  {
+    "id": "4675",
+    "name": "paneer chapathi roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/d2tu8fmogl9uvpxfmkwm.jpg"
+  },
+  {
+    "id": "5200",
+    "name": "guava juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/ijlyauqcqk4xoemzmxut.jpg"
+  },
+  {
+    "id": "5117",
+    "name": "chicken burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/ehkbw9iywr3osm7g0uar.jpg"
+  },
+  {
+    "id": "5493",
+    "name": "chilli potato",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/buiti63r6wbol2ubxiqp.jpg"
+  },
+  {
+    "id": "4722",
+    "name": "apple milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/fq5x1ssbelvyi8esqsjp.jpg"
+  },
+  {
+    "id": "4776",
+    "name": "dry fruit falooda",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/ixbhxmwfrg8uqvzkexki.jpg"
+  },
+  {
+    "id": "5142",
+    "name": "chicken manchurian roll",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553156/menu_items/lrzwliotob6kkev5n8e6.jpg"
+  },
+  {
+    "id": "5132",
+    "name": "coffee",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/cc3ajefenusx6durueif.jpg"
+  },
+  {
+    "id": "4188",
+    "name": "mix veg curry",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/nxr34l6ecpt4lqyzcubt.jpg"
+  },
+  {
+    "id": "5261",
+    "name": "fish sizzler",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/jfnmpmlw6ng75nadb6ma.jpg"
+  },
+  {
+    "id": "4698",
+    "name": "choco milk",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/lcb1qpktgcutvshn1xzh.jpg"
+  },
+  {
+    "id": "5587",
+    "name": "croissant cocoa creame",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/n2mtrnkp0vdzixaw503a.jpg"
+  },
+  {
+    "id": "5601",
+    "name": "sting red",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/mvmu1p50ve2wwubbwlgk.jpg"
+  },
+  {
+    "id": "5064",
+    "name": "paneer chattinad",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/m995bkr29tqwlknkjsak.jpg"
+  },
+  {
+    "id": "4763",
+    "name": "banana juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/mvyhog7wxhohuykef1kw.jpg"
+  },
+  {
+    "id": "5232",
+    "name": "banjari till",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/dnbz55jv4ry3xcatflpa.jpg"
+  },
+  {
+    "id": "5301",
+    "name": "sz veg fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553157/menu_items/y5vsoz7tuzt97ajuta15.jpg"
+  },
+  {
+    "id": "5111",
+    "name": "paneer burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/o3eyihkkjqeodnzcfyyq.jpg"
+  },
+  {
+    "id": "5086",
+    "name": "chicken manchow soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/k20oqonah0luiiaxbnut.jpg"
+  },
+  {
+    "id": "5325",
+    "name": "fish pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/v90grijrrq5wvjp0pvd9.jpg"
+  },
+  {
+    "id": "5322",
+    "name": "sz egg pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/ik8ym9dgddvckh1o6oha.jpg"
+  },
+  {
+    "id": "5570",
+    "name": "cornitos nacho cheese and herbs",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/qfxdwky9ueyvqlmpjzzf.jpg"
+  },
+  {
+    "id": "5598",
+    "name": "minute maid pulpy orange",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/x1c2gxcaa9dvaprryufr.jpg"
+  },
+  {
+    "id": "5405",
+    "name": "egg szechuan rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/tlpyplcqrdfndfzzb4lq.jpg"
+  },
+  {
+    "id": "5837",
+    "name": "biscoff shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/pm8roajubtpipuljeqf0.jpg"
+  },
+  {
+    "id": "5197",
+    "name": "orange juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/eidi9hypm5kv016bw6a9.jpg"
+  },
+  {
+    "id": "4772",
+    "name": "abc juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/gp1vlbnkutgfyeuy5f8b.jpg"
+  },
+  {
+    "id": "5145",
+    "name": "aloo tikka roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/irfwblwbskwvyohqraxh.jpg"
+  },
+  {
+    "id": "5434",
+    "name": "butter naan",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/fx8vojjvywjhyuoz2pgs.jpg"
+  },
+  {
+    "id": "5141",
+    "name": "chicken roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/n3lyglobwenncvgmtkgs.jpg"
+  },
+  {
+    "id": "5494",
+    "name": "chicken dragon momo",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/ib5nhxknia2pvukrvivr.jpg"
+  },
+  {
+    "id": "4689",
+    "name": "chicken porotta roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/ksy2q2k36oicvk7rahod.jpg"
+  },
+  {
+    "id": "5556",
+    "name": "cavin's strawberry milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/sezj9wf5uvcduy5oobna.jpg"
+  },
+  {
+    "id": "5549",
+    "name": "smoodh chocolate dairy",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/vib6yj47ateliyyvt8cx.jpg"
+  },
+  {
+    "id": "5563",
+    "name": "bingo (red)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/b5nmklg6dfye7x2jr3hn.jpg"
+  },
+  {
+    "id": "4752",
+    "name": "muskmelon juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/cpwi1frawelyxo799duk.jpg"
+  },
+  {
+    "id": "5392",
+    "name": "chicken rajoli",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/b3a6chrqmm8wakttaa7q.jpg"
+  },
+  {
+    "id": "5192",
+    "name": "pineapple juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/howecqsgjvwyhq9pygdb.jpg"
+  },
+  {
+    "id": "5118",
+    "name": "chicken  double decker",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553158/menu_items/o76dvcyr12lw05vhrpuq.jpg"
+  },
+  {
+    "id": "5389",
+    "name": "pepper chicken masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/uzaygoaxnpan59f3c9bd.jpg"
+  },
+  {
+    "id": "4743",
+    "name": "diary milk milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/qicwkymufjfndyuguhpp.jpg"
+  },
+  {
+    "id": "5092",
+    "name": "paneer sandwich",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/db09iyqe6vywkwncigmh.jpg"
+  },
+  {
+    "id": "4149",
+    "name": "dragon mushroom",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/onn5tbqcrexckioncfwr.jpg"
+  },
+  {
+    "id": "4697",
+    "name": "pistha milk",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553159/menu_items/wehssrmwasysothj2ttq.jpg"
+  },
+  {
+    "id": "5281",
+    "name": "butter pepper mushroom",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/qkxjatvfwvaa4z9fvjcf.jpg"
+  },
+  {
+    "id": "5348",
+    "name": "chicken hydrabadi",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/gqdifmnufpbvnzksn3z6.jpg"
+  },
+  {
+    "id": "5851",
+    "name": "fudgy brownie",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/m4ohomdhm5s9o53i1unm.jpg"
+  },
+  {
+    "id": "5850",
+    "name": "choco burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/vpf2b1pj8bz3xlryfdgi.jpg"
+  },
+  {
+    "id": "5844",
+    "name": "butterscotch tresleches",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/gagudggijfahemscia3c.jpg"
+  },
+  {
+    "id": "5094",
+    "name": "cheese sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/n4yiwbsq4inpcu4quayz.jpg"
+  },
+  {
+    "id": "4210",
+    "name": "kadai mushroom",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/hyuq9npcysfkkymhpbc1.jpg"
+  },
+  {
+    "id": "5401",
+    "name": "mixed rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/jjrfj21zvmy2padj6zv3.jpg"
+  },
+  {
+    "id": "5233",
+    "name": "punjabi tikka",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/jxcagouaoi04gbalxrtz.jpg"
+  },
+  {
+    "id": "5404",
+    "name": "szechuan chicken rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/glyjrdi8mkklfqefukeb.jpg"
+  },
+  {
+    "id": "5458",
+    "name": "malai kabab (6 pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/mobs4nl7igwridcj4trt.jpg"
+  },
+  {
+    "id": "5433",
+    "name": "naan",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/jl1lu0uwefhelf8z4clq.jpg"
+  },
+  {
+    "id": "5354",
+    "name": "masala tomato omelette",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/lrjulyfr5fqajt5ju2r4.jpg"
+  },
+  {
+    "id": "5340",
+    "name": "chicken bhunai",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/j5t8fxa4ae2otg77lw7c.jpg"
+  },
+  {
+    "id": "5608",
+    "name": "shawarma plate",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/n2dsireqn7glv9p8cawb.jpg"
+  },
+  {
+    "id": "4037",
+    "name": "chicken steam momo",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/bpxqengnrw5mychwmlsy.jpg"
+  },
+  {
+    "id": "5484",
+    "name": "veg fry momo",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/jqivhnbpkz2mdbkzslvs.jpg"
+  },
+  {
+    "id": "5553",
+    "name": "cavin's vanilla milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/qt267powgwhihs7at8we.jpg"
+  },
+  {
+    "id": "5397",
+    "name": "chilli chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553160/menu_items/nbpxjglyoxgk01ghoyso.jpg"
+  },
+  {
+    "id": "5368",
+    "name": "chinese veg chopsey",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/whkjlhpamqarbbgpcljh.jpg"
+  },
+  {
+    "id": "5492",
+    "name": "veg",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/p1zyjv013pnhp3rumick.jpg"
+  },
+  {
+    "id": "5288",
+    "name": "veg chopsuey",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/j1rpdqcgm86eoavzpmoi.jpg"
+  },
+  {
+    "id": "5165",
+    "name": "pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/oatgluadizedbeqqtula.jpg"
+  },
+  {
+    "id": "5438",
+    "name": "aloo paratha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/xcazawgz7rhniv5xe3ks.jpg"
+  },
+  {
+    "id": "5330",
+    "name": "red sauce with cheese pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/olr4cpv5lhlctrz8wzj4.jpg"
+  },
+  {
+    "id": "5295",
+    "name": "fish chattinad",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/uscgxxm4kgorclb6ov7q.jpg"
+  },
+  {
+    "id": "4040",
+    "name": "veg fried momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/vs8pjazpiktpxjsqinav.jpg"
+  },
+  {
+    "id": "5569",
+    "name": "winkin cow vanilla milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/orfyqkdrxi1xvr90n7ya.jpg"
+  },
+  {
+    "id": "5597",
+    "name": "mountain dew",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/ddw0qiloctdfwptupun8.jpg"
+  },
+  {
+    "id": "5391",
+    "name": "chicken do pyaza",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/q138jmliqi048snwclfm.jpg"
+  },
+  {
+    "id": "5103",
+    "name": "mexican paneer club sandwich",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/aw4wblgj6onqnulilt5w.jpg"
+  },
+  {
+    "id": "5274",
+    "name": "honey chilly chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/nlqjdqh262l8xvpczoao.jpg"
+  },
+  {
+    "id": "4147",
+    "name": "chilli mushroom",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/jjo5xet0fgmjltlch0iv.jpg"
+  },
+  {
+    "id": "5452",
+    "name": "afghani chicken full",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/bv5n48iqxwrzzqw5glb0.jpg"
+  },
+  {
+    "id": "5179",
+    "name": "manchurian chat",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553161/menu_items/ubhrho25iefjzucl4xo6.jpg"
+  },
+  {
+    "id": "5555",
+    "name": "blue lays",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/o85zsx8qqom3hjdyr3gf.jpg"
+  },
+  {
+    "id": "5210",
+    "name": "chikku milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/k6pcqoei8u4j1oog5d2b.jpg"
+  },
+  {
+    "id": "5107",
+    "name": "paneer mushroom aloo jumbo",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/c0vrirrgc8vviikzlvkt.jpg"
+  },
+  {
+    "id": "5358",
+    "name": "chicken tikka roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/kdqpym8o1x4y7fboqgfp.jpg"
+  },
+  {
+    "id": "5089",
+    "name": "chicken pepper soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/uuirzdzmgdqxmp5dsvq3.jpg"
+  },
+  {
+    "id": "4775",
+    "name": "royal falooda",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/p5fdl8fx0mpsi5s0ibx9.jpg"
+  },
+  {
+    "id": "5253",
+    "name": "alien chicken (full)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/thw9v8ffc61dvazl3spj.jpg"
+  },
+  {
+    "id": "5217",
+    "name": "butterscotch milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/w5jdgm8iwcieyeoouod1.jpg"
+  },
+  {
+    "id": "4704",
+    "name": "lime soda",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/yat9eouhtg0ep64mb8z6.jpg"
+  },
+  {
+    "id": "4120",
+    "name": "hydrabadi egg biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/oloxsvcy66ssz7azmygj.jpg"
+  },
+  {
+    "id": "5588",
+    "name": "fanta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/yjpabyn3us5duljyvzlw.jpg"
+  },
+  {
+    "id": "4201",
+    "name": "kadai paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/wadtjtuj2q6kp770bnxa.jpg"
+  },
+  {
+    "id": "4135",
+    "name": "garlic veg momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/oaemgwz3ie4wyomhcfc7.jpg"
+  },
+  {
+    "id": "4741",
+    "name": "snickers milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/fozsfin3mvlysemlosog.jpg"
+  },
+  {
+    "id": "4005",
+    "name": "hydrabadi chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/pyzova3qra3m6yfz7xsq.jpg"
+  },
+  {
+    "id": "5491",
+    "name": "veg fried rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/qhghmhgn7bycrscibf2g.jpg"
+  },
+  {
+    "id": "5314",
+    "name": "mutton fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/tplfv4ytemwfxcjj9lgh.jpg"
+  },
+  {
+    "id": "5353",
+    "name": "mushroom omelette",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/ryp464xq8cd4126hdibu.jpg"
+  },
+  {
+    "id": "5081",
+    "name": "veg manchow soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/pqyeang2y4twclvbdih9.jpg"
+  },
+  {
+    "id": "5313",
+    "name": "sz prawn fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/snchgcw4fceuxjjyob8k.jpg"
+  },
+  {
+    "id": "5125",
+    "name": "chicken maggi",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/e35mjo5p0pq6ddg3h8sh.jpg"
+  },
+  {
+    "id": "4754",
+    "name": "fig juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/cewel2nd35bvzsl6c0wn.jpg"
+  },
+  {
+    "id": "5481",
+    "name": "plain biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553162/menu_items/purhtfytdib6uibd7hna.jpg"
+  },
+  {
+    "id": "4779",
+    "name": "dry fruit sundae",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/apke7oigb05sycznms39.jpg"
+  },
+  {
+    "id": "5195",
+    "name": "strawberry juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/zcofwdm9vdvifiqopxao.jpg"
+  },
+  {
+    "id": "5215",
+    "name": "chocolate milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/eplcuseemlflrbglqstz.jpg"
+  },
+  {
+    "id": "5258",
+    "name": "890 chicken (quarter)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/paislyvovhrvxg90nlnb.jpg"
+  },
+  {
+    "id": "5373",
+    "name": "aloo methi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/dryrky603awawdr2hy5q.jpg"
+  },
+  {
+    "id": "5294",
+    "name": "prawn chattinad",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/lfs57yppqz36h0zzf5su.jpg"
+  },
+  {
+    "id": "5356",
+    "name": "boiled rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/jtlcxklvn3bukaenj1r5.jpg"
+  },
+  {
+    "id": "5063",
+    "name": "paneer punjabi",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/gdtfyf7n980bfz5rgyoy.jpg"
+  },
+  {
+    "id": "5305",
+    "name": "sz paneer fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553163/menu_items/pseiliilqnbvarvjyne8.jpg"
+  },
+  {
+    "id": "5311",
+    "name": "sz fish fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/fgrrwcydnjsqytfr7p51.jpg"
+  },
+  {
+    "id": "5190",
+    "name": "chicken wraps",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/wigl3ecmfqywke7k6mb9.jpg"
+  },
+  {
+    "id": "5476",
+    "name": "chicken hyderabadi biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/et5ajtwbtmgnvcsm2srw.jpg"
+  },
+  {
+    "id": "4122",
+    "name": "hyd chicken 65 biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/jrol845jqylzzqqxru4q.jpg"
+  },
+  {
+    "id": "4123",
+    "name": "alfam chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/kkkhak0k3wewdmuoqc3p.jpg"
+  },
+  {
+    "id": "5321",
+    "name": "egg pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/vojgtmyfkz1r9qgwmnzo.jpg"
+  },
+  {
+    "id": "5326",
+    "name": "sz fish pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/mhqbgmqwfxy5xrfrmr5j.jpg"
+  },
+  {
+    "id": "5390",
+    "name": "chicken fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/iressg6diw64yv6lurwy.jpg"
+  },
+  {
+    "id": "5399",
+    "name": "egg rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/fyz5hxvv77klijc00pbn.jpg"
+  },
+  {
+    "id": "5306",
+    "name": "mushroom fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/s17wdqmj1wha3mqza9os.jpg"
+  },
+  {
+    "id": "5066",
+    "name": "paneer tikka masala",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/qodehzoawtkripo1vhed.jpg"
+  },
+  {
+    "id": "5154",
+    "name": "chicken steam momos",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/xqnkdcr1gvtqjn8oyvym.jpg"
+  },
+  {
+    "id": "5408",
+    "name": "fish szechuan rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/fgg5vozvdfjf8sin1iqx.jpg"
+  },
+  {
+    "id": "5386",
+    "name": "chicken chanjata",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/sw5hkw8cxhjcmwwuwzuq.jpg"
+  },
+  {
+    "id": "4677",
+    "name": "chicken bread omlet",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/fslz55wuev6layoz2b79.jpg"
+  },
+  {
+    "id": "5102",
+    "name": "chicken egg club sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/ycohadl2pepz3iw6smok.jpg"
+  },
+  {
+    "id": "4023",
+    "name": "tandoori chicken full",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/ykqwaszcy5omfswqkl3v.jpg"
+  },
+  {
+    "id": "5144",
+    "name": "double cheese chicken roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/y8yvn2as33jj01sevqub.jpg"
+  },
+  {
+    "id": "5312",
+    "name": "prawn fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553164/menu_items/j3wes9lzzphqzyuomh9n.jpg"
+  },
+  {
+    "id": "4139",
+    "name": "chicken tikka",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/xzn2nwdzxbb65fkkhjii.jpg"
+  },
+  {
+    "id": "5357",
+    "name": "double chicken roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/afwyf5ldr6mxzavl8t8a.jpg"
+  },
+  {
+    "id": "5609",
+    "name": "veg rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/lx9jaoetefviinjadpuy.jpg"
+  },
+  {
+    "id": "5573",
+    "name": "lays indian magic masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/ourfgimreodgod8mcbix.jpg"
+  },
+  {
+    "id": "5558",
+    "name": "bingo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/bvvmxts6bg3a7j8adc38.jpg"
+  },
+  {
+    "id": "5268",
+    "name": "chicken manchurian",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/jak0cdixgpiyodt0phgg.jpg"
+  },
+  {
+    "id": "5116",
+    "name": "veg paneer burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/ki57270dhdvck8mac0ev.jpg"
+  },
+  {
+    "id": "4768",
+    "name": "avocado juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/eytszwufrosenspveglt.jpg"
+  },
+  {
+    "id": "4783",
+    "name": "pistha shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/llythv4of7xxc7s9df73.jpg"
+  },
+  {
+    "id": "5604",
+    "name": "veg burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/vhq3gkukjkrmh60kfgjj.jpg"
+  },
+  {
+    "id": "5087",
+    "name": "hot & sour chicken soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/xsgcq7upcpwqheaxdphk.jpg"
+  },
+  {
+    "id": "5600",
+    "name": "coke",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/sppwoawqtiepmkafhb6r.jpg"
+  },
+  {
+    "id": "4695",
+    "name": "rose milk",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/fbe3c17zna5bmvijemob.jpg"
+  },
+  {
+    "id": "5181",
+    "name": "aloo tikka chat",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/vidozbrewmskuc803ata.jpg"
+  },
+  {
+    "id": "5572",
+    "name": "kurkure puffcorn",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/dwtjqsmzbwa991hksua7.jpg"
+  },
+  {
+    "id": "5174",
+    "name": "panipuri",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/vlsbmmesmbiaggw6qqot.jpg"
+  },
+  {
+    "id": "5468",
+    "name": "fish 65",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/rvni70kuqz9p3ys0nb5h.jpg"
+  },
+  {
+    "id": "5571",
+    "name": "winkin cow bourbon shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/b5fis1w9ajcbfu2aoxqh.jpg"
+  },
+  {
+    "id": "4773",
+    "name": "fruit salad",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/bd4nxmrz2m6wxumklo1v.jpg"
+  },
+  {
+    "id": "5444",
+    "name": "stuffed naan (veg)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/v322tpeicqcvrqarulwa.jpg"
+  },
+  {
+    "id": "5424",
+    "name": "fish masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/ldpzhyz8hehgltjlkiks.jpg"
+  },
+  {
+    "id": "4044",
+    "name": "ginger chicken",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553165/menu_items/cko5bi8ftjsm5ka9pkkj.jpg"
+  },
+  {
+    "id": "5394",
+    "name": "chicken cheese",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/geplv1czd2i2txyzjhev.jpg"
+  },
+  {
+    "id": "5271",
+    "name": "dragon chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/n57dsvmlr1fcbbbcwaml.jpg"
+  },
+  {
+    "id": "5562",
+    "name": "paper boat swing mixed fruit",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/ymhkj6so4s0r2nsb9t5w.jpg"
+  },
+  {
+    "id": "5110",
+    "name": "veg burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/gsrboxdsc8yzrsshk39a.jpg"
+  },
+  {
+    "id": "4212",
+    "name": "mushroom punjabi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/qaiggfasnbyblcitputh.jpg"
+  },
+  {
+    "id": "5564",
+    "name": "kurkure orange",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/fh3wukl8nhkxqeh9ybth.jpg"
+  },
+  {
+    "id": "5594",
+    "name": "appy fizz",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/y5in2w1sonaid9umoi3a.jpg"
+  },
+  {
+    "id": "4670",
+    "name": "nuggets veg (6pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/pnrh4tbw2qg5dwwlp8xv.jpg"
+  },
+  {
+    "id": "5475",
+    "name": "chicken 65 biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/igepslonvdnlh2zptmpg.jpg"
+  },
+  {
+    "id": "5327",
+    "name": "prawn pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/szbps0tu2pi52cdlexw8.jpg"
+  },
+  {
+    "id": "5057",
+    "name": "dal makhani",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/bzmn9fh9v8pki2swqmiq.jpg"
+  },
+  {
+    "id": "5431",
+    "name": "roti",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/saazvaxvwds9q4awgjaj.jpg"
+  },
+  {
+    "id": "5455",
+    "name": "lasooni kabab",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/babb8oa8d64wnieognny.jpg"
+  },
+  {
+    "id": "5375",
+    "name": "mutter masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553166/menu_items/bxe3bhd7wrnyxhytnqny.jpg"
+  },
+  {
+    "id": "5554",
+    "name": "green lays",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/q6vvogoi8wyu4taaq4jo.jpg"
+  },
+  {
+    "id": "4777",
+    "name": "mango mastani",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/rud2unbkztk15dcysfep.jpg"
+  },
+  {
+    "id": "5366",
+    "name": "szechuan chicken chopsey",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/ttkig9gecw66j2to85tw.jpg"
+  },
+  {
+    "id": "4725",
+    "name": "dates milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/nixbtu9dg2c4o0waw30r.jpg"
+  },
+  {
+    "id": "4157",
+    "name": "dragon potato",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/y70zbcikjaeooz8kl0ii.jpg"
+  },
+  {
+    "id": "5426",
+    "name": "fish chettinad",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/vjrelzprbucmpivswqba.jpg"
+  },
+  {
+    "id": "4654",
+    "name": "bread omlet",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/rfu0jdsdsojeppqacx19.jpg"
+  },
+  {
+    "id": "5435",
+    "name": "kulcha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/ime0rnpw4t0l6pzkpd3w.jpg"
+  },
+  {
+    "id": "5396",
+    "name": "szechuan mushroom",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/qtl5ircxl8znm6ykmrxr.jpg"
+  },
+  {
+    "id": "5409",
+    "name": "prawn szechuan rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/gfmslanniso4bthof13k.jpg"
+  },
+  {
+    "id": "4152",
+    "name": "sezwan mushroom",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/sbmyw3psgngivjna7pwq.jpg"
+  },
+  {
+    "id": "5129",
+    "name": "strawberry lassi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/zig01jqqmkf4cixsroam.jpg"
+  },
+  {
+    "id": "5285",
+    "name": "ginger prawn",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/qzevsm9jeorvdwwib51e.jpg"
+  },
+  {
+    "id": "5547",
+    "name": "smoodh toffee caramel",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/ig9u5eptmwrx8lhcgkaa.jpg"
+  },
+  {
+    "id": "5565",
+    "name": "kurkure green chutney",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/qjerj5tgqohgk579g74d.jpg"
+  },
+  {
+    "id": "5402",
+    "name": "fish rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/bhvjsqli4agcss8gujgu.jpg"
+  },
+  {
+    "id": "4721",
+    "name": "pomegranate milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/cqtnudrt5klckgriwvpl.jpg"
+  },
+  {
+    "id": "5480",
+    "name": "prawn biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/wj0mwolv9e5lyf0e70ty.jpg"
+  },
+  {
+    "id": "5065",
+    "name": "paneer butter masala",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/kvp1a7avoe0hvigf7zbx.jpg"
+  },
+  {
+    "id": "5441",
+    "name": "phulka",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553167/menu_items/laoxsnwrtcwyfzlxhvhb.jpg"
+  },
+  {
+    "id": "4663",
+    "name": "red sauce pastha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/uqj95cpz3ajeiw7zo15v.jpg"
+  },
+  {
+    "id": "4154",
+    "name": "gobi manchurian",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/faqfbmorjadq1bkpcyzb.jpg"
+  },
+  {
+    "id": "5078",
+    "name": "chilli egg (2pcs)",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/lvgqsvj2orgvavauxcoa.jpg"
+  },
+  {
+    "id": "5147",
+    "name": "veg steam momos",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/lmxmnsov8bpzw4lrtucv.jpg"
+  },
+  {
+    "id": "5183",
+    "name": "chinese samosa",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/gss0rfhmwcwpnp1yizvr.jpg"
+  },
+  {
+    "id": "5359",
+    "name": "chicken tikka cheese roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/itffyc9u4ycdlsrtyniu.jpg"
+  },
+  {
+    "id": "5074",
+    "name": "aloo dal masala",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/lyq20xnlbbybbgxebig4.jpg"
+  },
+  {
+    "id": "5429",
+    "name": "kadai prawn",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/mynelfrl2c2nw4nkkq52.jpg"
+  },
+  {
+    "id": "5228",
+    "name": "egg biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/kizrkui4zrrcjzw5qytd.jpg"
+  },
+  {
+    "id": "5602",
+    "name": "maaza",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/h2gthlqpjoocz7eglfze.jpg"
+  },
+  {
+    "id": "5398",
+    "name": "chicken rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/h9pqdocsrsqjozfaa6gc.jpg"
+  },
+  {
+    "id": "5191",
+    "name": "watermelon juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/ss8e2kegptpqgaoj86cd.jpg"
+  },
+  {
+    "id": "4668",
+    "name": "peri peri fries (l)",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/vhbwnygmy3iio5gzv40c.jpg"
+  },
+  {
+    "id": "5082",
+    "name": "veg clear soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/ppglndewpjleegkcmcmk.jpg"
+  },
+  {
+    "id": "5188",
+    "name": "hashworm wraps",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/hzj4kg4mleylab2zdfng.jpg"
+  },
+  {
+    "id": "5485",
+    "name": "veg dragon momo",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553168/menu_items/dlqxm8vzchq4inzhnfyi.jpg"
+  },
+  {
+    "id": "5214",
+    "name": "dry fruit milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/mcktayyu5fho1amwzoqf.jpg"
+  },
+  {
+    "id": "5578",
+    "name": "paper boat mixed berries juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/w5lqmhdpzessqkmrlsis.jpg"
+  },
+  {
+    "id": "5247",
+    "name": "malai kabab (6pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/iiqlbeqqumqwq2a9quzk.jpg"
+  },
+  {
+    "id": "5419",
+    "name": "paneer pulao",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/tgbzuri65m45fmqldybf.jpg"
+  },
+  {
+    "id": "5856",
+    "name": "burnt basque cheesecake",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/zdr2hvhu9nn8crkzrkhb.jpg"
+  },
+  {
+    "id": "5855",
+    "name": "lotus biscoff cheesecake",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/ki2behw5o6g5ypvysgxz.jpg"
+  },
+  {
+    "id": "5328",
+    "name": "sz prawn pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/nzn08i61m7f8nzudnwpf.jpg"
+  },
+  {
+    "id": "5854",
+    "name": "brownie with ice cream",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/umrssnmyqgvxprbcnwhn.jpg"
+  },
+  {
+    "id": "5363",
+    "name": "paneer tikka roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/uk2tt7j3rtgldki9uo59.jpg"
+  },
+  {
+    "id": "4709",
+    "name": "lemon dew",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/jgwxwydahstoqt1r5ael.jpg"
+  },
+  {
+    "id": "4746",
+    "name": "choco chikku milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/ee7d1dq2biju7nm8vyg2.jpg"
+  },
+  {
+    "id": "5177",
+    "name": "sev puri",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/f41iu7mjqbyb4zjp37sg.jpg"
+  },
+  {
+    "id": "5355",
+    "name": "chinese dressed omelette",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/x5sujvpyrfvigck1rr6v.jpg"
+  },
+  {
+    "id": "4196",
+    "name": "aloo gobi masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/tpj9v1vxmvxmoqosqtyh.jpg"
+  },
+  {
+    "id": "5260",
+    "name": "chicken sizzler",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/utl5pf72otafkcpmn6ac.jpg"
+  },
+  {
+    "id": "5264",
+    "name": "fish with lemon butter sauce (2pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553169/menu_items/qzd8x8grgt5jlru3akhs.jpg"
+  },
+  {
+    "id": "5332",
+    "name": "gold pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/snkdztipslg5zosjalbz.jpg"
+  },
+  {
+    "id": "5581",
+    "name": "paper boat nata mango juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/znmjtkz2m09wxeeobp1m.jpg"
+  },
+  {
+    "id": "5584",
+    "name": "swiss roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/kqa8jwiuuyzj9lvwmv0d.jpg"
+  },
+  {
+    "id": "5422",
+    "name": "peas pulao",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/klshjop0rbcexpfvgfhf.jpg"
+  },
+  {
+    "id": "4745",
+    "name": "choco banana milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/mge1feby82r1zvsmam8i.jpg"
+  },
+  {
+    "id": "5209",
+    "name": "mango milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/wxj9pzfzzsxna8v8a5no.jpg"
+  },
+  {
+    "id": "5238",
+    "name": "afghani chicken (half)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/tjtohkzhvhubx7kkjptx.jpg"
+  },
+  {
+    "id": "5339",
+    "name": "chicken rajasthani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/vr7xkvgp9arbdw4wwecp.jpg"
+  },
+  {
+    "id": "5318",
+    "name": "veg pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/bwteolxa8twssnx2trw2.jpg"
+  },
+  {
+    "id": "5483",
+    "name": "veg steam momo",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/jtj6bobhstsguswxi4ws.jpg"
+  },
+  {
+    "id": "5168",
+    "name": "chicken nuggets",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/gxwocwj0x7j5hnpyivac.jpg"
+  },
+  {
+    "id": "5388",
+    "name": "chicken bharta",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/jijmxehmowmwsesz0xem.jpg"
+  },
+  {
+    "id": "5842",
+    "name": "blueberry tiramisu",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/qxyrysod7k1eb5jibkfx.jpg"
+  },
+  {
+    "id": "5840",
+    "name": "tiramisu hot chocolate",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/f4xrf80yhixclidnxp8a.jpg"
+  },
+  {
+    "id": "5479",
+    "name": "mutton biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/yxsm3ihe1lhiwk9jjxss.jpg"
+  },
+  {
+    "id": "5155",
+    "name": "chicken fry momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/wenrvhgn9ofconjx8w2v.jpg"
+  },
+  {
+    "id": "5156",
+    "name": "chicken szechwan momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/o1ic1za3mdghafoab7pt.jpg"
+  },
+  {
+    "id": "5412",
+    "name": "mushroom rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/rwhotz8zzglpdwwuylvg.jpg"
+  },
+  {
+    "id": "4729",
+    "name": "custard apple milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/r2irm3vegi4o4japfvgg.jpg"
+  },
+  {
+    "id": "5852",
+    "name": "oreo brownie",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/mpmprmbgmaxxvxqpefnv.jpg"
+  },
+  {
+    "id": "5849",
+    "name": "koshari",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/hubyd6qr8p6xi0rumjvw.jpg"
+  },
+  {
+    "id": "5847",
+    "name": "kunafa chocolate",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/dtfnhbmpwiki7jv3unga.jpg"
+  },
+  {
+    "id": "5846",
+    "name": "mango misu",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/dymh57kp5sglyxicuent.jpg"
+  },
+  {
+    "id": "5843",
+    "name": "triple chocolate cake",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/m1wglymgp47oiuprqtcr.jpg"
+  },
+  {
+    "id": "4144",
+    "name": "garlic paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/hmkqlzu9lgbzrtp2obuv.jpg"
+  },
+  {
+    "id": "5250",
+    "name": "shawarma plate",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/zzjsmtdwvulzdpvyhwcb.jpg"
+  },
+  {
+    "id": "5487",
+    "name": "veg noodles",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/z4mxsfvw2ufarwkgyqlb.jpg"
+  },
+  {
+    "id": "4659",
+    "name": "chilly chees sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/xk9g2aqnevaxgqkrdtnb.jpg"
+  },
+  {
+    "id": "4136",
+    "name": "dragon veg momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/qccym2jdxoyvv3ozry1d.jpg"
+  },
+  {
+    "id": "5575",
+    "name": "winkin cow",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/mgrsjicppmwuihkrxlqq.jpg"
+  },
+  {
+    "id": "5302",
+    "name": "egg fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/wzsjauazuuulr4wdgtun.jpg"
+  },
+  {
+    "id": "5283",
+    "name": "garlic mushroom",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/zqrdwwmmxdjqvef0ojuk.jpg"
+  },
+  {
+    "id": "5193",
+    "name": "chikku juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/ge6iaul1k9kzd4txujmv.jpg"
+  },
+  {
+    "id": "4042",
+    "name": "chicker manchurian",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/dmcl0ugacfvraxkyq9an.jpg"
+  },
+  {
+    "id": "5153",
+    "name": "egg fry momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/s0ksoccep4akkbx3gwni.jpg"
+  },
+  {
+    "id": "4692",
+    "name": "grape lassi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553170/menu_items/ziucnoedkgwuffjuutlm.jpg"
+  },
+  {
+    "id": "5437",
+    "name": "paneer kulcha",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/aaimhe2rswlmdogpltwe.jpg"
+  },
+  {
+    "id": "4208",
+    "name": "mushroom butter masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/knj1l3yrmd7hhtq69eht.jpg"
+  },
+  {
+    "id": "4683",
+    "name": "cheesy creamy chicken pastha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/ayndaun2xb19jmyktzeu.jpg"
+  },
+  {
+    "id": "5075",
+    "name": "egg domino masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/ijxz9vdkfizgqvwu5nua.jpg"
+  },
+  {
+    "id": "4669",
+    "name": "cheesy fries (l)",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/cfmrqenp51ly5muxebxt.jpg"
+  },
+  {
+    "id": "5161",
+    "name": "salsa",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/jkxqbarbttrxqsxvh0ev.jpg"
+  },
+  {
+    "id": "5836",
+    "name": "milo shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/wwkgxhlv60xfbrlac8x5.jpg"
+  },
+  {
+    "id": "5835",
+    "name": "korean cheese bun",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553171/menu_items/hmtpcgtfln4armlwgicf.jpg"
+  },
+  {
+    "id": "4780",
+    "name": "chocolate shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/kuzpjr9bcn35b5uwgcmm.jpg"
+  },
+  {
+    "id": "4731",
+    "name": "mango milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/x0tvbqttguitga1hbytt.jpg"
+  },
+  {
+    "id": "4137",
+    "name": "sez. veg momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/d49pua7db4hwpb6mifoo.jpg"
+  },
+  {
+    "id": "5139",
+    "name": "egg roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/hcaxkntpihnvvq1nmprn.jpg"
+  },
+  {
+    "id": "4690",
+    "name": "lassi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/qsh5t5w16tmwplvsvmd6.jpg"
+  },
+  {
+    "id": "4778",
+    "name": "spanish",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/lrlzmlbgjyu8ddhrhbg3.jpg"
+  },
+  {
+    "id": "5172",
+    "name": "chicken lolly pop (6pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/z8zlawshm5wdhjjgdzb9.jpg"
+  },
+  {
+    "id": "5113",
+    "name": "paneer burger double decker",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/lg7a9knx3zpnvsyxjsbr.jpg"
+  },
+  {
+    "id": "5245",
+    "name": "chicken tikka (quarter)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/dfbaznkvfassm5fm8d6b.jpg"
+  },
+  {
+    "id": "5234",
+    "name": "tandoori chicken (full)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/byfwyaq2oi94wprm9pp8.jpg"
+  },
+  {
+    "id": "5131",
+    "name": "tea",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/buq2xrogs3iudjodjr5d.jpg"
+  },
+  {
+    "id": "5160",
+    "name": "aloo tikka",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/kydfggfofrymbmfyumn6.jpg"
+  },
+  {
+    "id": "4039",
+    "name": "veg steam momo",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/u0pkqchmbogrp7jpjeha.jpg"
+  },
+  {
+    "id": "4211",
+    "name": "mushroom dopyaza",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/qaidcqqkl8ktrkuot8er.jpg"
+  },
+  {
+    "id": "4734",
+    "name": "dragon milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/hwb03aywwxkdvqublhov.jpg"
+  },
+  {
+    "id": "4736",
+    "name": "mixed fruit milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/uds8bvbfe04latbpe5t6.jpg"
+  },
+  {
+    "id": "4749",
+    "name": "water melon juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/npt8ai8bbbjqgaozf9ee.jpg"
+  },
+  {
+    "id": "5088",
+    "name": "cream of mushroom soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/b1ejyuc3hycfom7iz4zr.jpg"
+  },
+  {
+    "id": "4770",
+    "name": "beetroot juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/chzf166de0nud6emg8sz.jpg"
+  },
+  {
+    "id": "5090",
+    "name": "veg sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/tkjdv05jvszbm6zyv4ad.jpg"
+  },
+  {
+    "id": "5198",
+    "name": "pomegranate juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/l9jkl3osepwlng7injtj.jpg"
+  },
+  {
+    "id": "5202",
+    "name": "lime juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/ksvsueyao8jftakxmvc5.jpg"
+  },
+  {
+    "id": "5212",
+    "name": "pineapple milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/o87ywmc6jgwguqphdxcd.jpg"
+  },
+  {
+    "id": "5248",
+    "name": "tangdi kabab (2pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553172/menu_items/exxycuif3ktyj7q2m0ca.jpg"
+  },
+  {
+    "id": "5251",
+    "name": "sp. shawarma roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/piizbm2lp59rzt71bwoo.jpg"
+  },
+  {
+    "id": "5241",
+    "name": "ajwain chicken (half)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/zhrmyuiswplr1a1qgfi2.jpg"
+  },
+  {
+    "id": "5361",
+    "name": "paneer cheese roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/apgkpagdkavku0kkrcn8.jpg"
+  },
+  {
+    "id": "5298",
+    "name": "chicken lollipop (4pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/urc0mp1inugzodxtzeic.jpg"
+  },
+  {
+    "id": "5351",
+    "name": "paneer omelette",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/bdgbynguvvwqjgk5qxui.jpg"
+  },
+  {
+    "id": "5344",
+    "name": "chilly chicken gravy",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/mesg6l2j4xorula3l3qv.jpg"
+  },
+  {
+    "id": "5287",
+    "name": "prawn manchurian",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553173/menu_items/km6x8awir7aom4fuwgrt.jpg"
+  },
+  {
+    "id": "4708",
+    "name": "masala cola",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/xvx8xhyratulrd70ds0a.jpg"
+  },
+  {
+    "id": "5461",
+    "name": "haryali kabab",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/z4brifv9yxak4g1pjpru.jpg"
+  },
+  {
+    "id": "5400",
+    "name": "mutton rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/nkzgmibejore1n6ghkxk.jpg"
+  },
+  {
+    "id": "5406",
+    "name": "mutton szechuan rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/nofdljcmarhp7khyb04y.jpg"
+  },
+  {
+    "id": "5365",
+    "name": "veg american chopsey",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/exit3lwq25oendnosjgy.jpg"
+  },
+  {
+    "id": "5376",
+    "name": "mixed veg masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/v61251vtio34egjvsgpo.jpg"
+  },
+  {
+    "id": "5379",
+    "name": "veg handi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/a71xavle2v8ncophdsfh.jpg"
+  },
+  {
+    "id": "5310",
+    "name": "fish fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/ohxkldkh6fzgfnyoswbe.jpg"
+  },
+  {
+    "id": "5159",
+    "name": "afghani chicken momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/z2rhszi6nwc6f7fytynr.jpg"
+  },
+  {
+    "id": "5138",
+    "name": "aloo paneer roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/zsc8shtrz2cpruiomtfz.jpg"
+  },
+  {
+    "id": "5136",
+    "name": "paneer roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/lucciefzlzfzllbuyixy.jpg"
+  },
+  {
+    "id": "4781",
+    "name": "strawberry shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/ady2budjrg1bnoxfr5dy.jpg"
+  },
+  {
+    "id": "5227",
+    "name": "fish biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/wyprq0lvbhcer5aaceln.jpg"
+  },
+  {
+    "id": "5231",
+    "name": "plain biryani (kuska)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/ievnk0vj2a7gllotxemn.jpg"
+  },
+  {
+    "id": "5477",
+    "name": "mushroom biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/agcwjc0gefuuseqiaqwd.jpg"
+  },
+  {
+    "id": "5220",
+    "name": "tamilnadu chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/pf5sjdgrp4iee98xhsfv.jpg"
+  },
+  {
+    "id": "4124",
+    "name": "tandoori chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/i4nqkculgnn5mfaug88m.jpg"
+  },
+  {
+    "id": "5166",
+    "name": "paneer pasta",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/dqlogolhbmbkxpufibht.jpg"
+  },
+  {
+    "id": "5329",
+    "name": "mix veg pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/zjq2zxgtfne2anwgel0e.jpg"
+  },
+  {
+    "id": "5320",
+    "name": "sz paneer pasta",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/fbmrhyqiuvhdvhqbygnd.jpg"
+  },
+  {
+    "id": "5308",
+    "name": "chicken fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/agezazceyxkmk5t0lbye.jpg"
+  },
+  {
+    "id": "5243",
+    "name": "chicken tikka (full)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553174/menu_items/vftz3lb0j1lqagou9sjk.jpg"
+  },
+  {
+    "id": "4024",
+    "name": "tandoori chicken half",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/rpprfmrsfpjzplt3kqcs.jpg"
+  },
+  {
+    "id": "5135",
+    "name": "veg roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/tvbabx9c5qc3bsgpnnf8.jpg"
+  },
+  {
+    "id": "5249",
+    "name": "shawarma roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/afxn7imyvclou7snanjr.jpg"
+  },
+  {
+    "id": "5240",
+    "name": "ajwain chicken (full)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/pxxozcaodkxdlzamq6vq.jpg"
+  },
+  {
+    "id": "5255",
+    "name": "alien chicken (quarter)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/urddoqgorycnef88yhsa.jpg"
+  },
+  {
+    "id": "5273",
+    "name": "ginger chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/nivfblgn2yyj49uworbx.jpg"
+  },
+  {
+    "id": "5262",
+    "name": "fish & chips",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/qeo2iebupireszkr5rtu.jpg"
+  },
+  {
+    "id": "5278",
+    "name": "paneer manchurian",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/k2jdz9nqzg7zawxrqmce.jpg"
+  },
+  {
+    "id": "5290",
+    "name": "chinese chopsuey",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/dl8lpm16e5wzn0i0fatg.jpg"
+  },
+  {
+    "id": "5293",
+    "name": "paneer 65 starter",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/bnerqnvces5hr3qrtir0.jpg"
+  },
+  {
+    "id": "5299",
+    "name": "chicken lollipop (6pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/dhhwhfzoq7aymqjbyjhq.jpg"
+  },
+  {
+    "id": "5349",
+    "name": "plain omelette",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/mvwm0iuk3bgks5tahgxu.jpg"
+  },
+  {
+    "id": "4767",
+    "name": "kiwi juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/ripe1fioeisfd1isx5ww.jpg"
+  },
+  {
+    "id": "5218",
+    "name": "oreo milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/tth9ihk7wzgdkyl3ptgr.jpg"
+  },
+  {
+    "id": "5152",
+    "name": "egg steam momos",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/obi7rdeu8fq0bsmhti9l.jpg"
+  },
+  {
+    "id": "5335",
+    "name": "butter chicken masala",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/onltl0ezpppa86u7lrq5.jpg"
+  },
+  {
+    "id": "5324",
+    "name": "sz chicken pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/q9zydqmkxdmmbrvnpjwg.jpg"
+  },
+  {
+    "id": "5331",
+    "name": "white sauce pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/sqvj7mqcopubkn6lnean.jpg"
+  },
+  {
+    "id": "4146",
+    "name": "sezhwan paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/zxjf71cypqdjmq41psqe.jpg"
+  },
+  {
+    "id": "5120",
+    "name": "paneer maggi",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553175/menu_items/t2ksa6fhmdgk605kwcog.jpg"
+  },
+  {
+    "id": "4153",
+    "name": "chilli gobi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/w6cwprjauejozupfyuir.jpg"
+  },
+  {
+    "id": "4685",
+    "name": "nuggets chicken (6pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/xvw4znrsayjpf9loq1oo.jpg"
+  },
+  {
+    "id": "5236",
+    "name": "tandoori chicken (quarter)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/feyfql6dotgppj7prgcs.jpg"
+  },
+  {
+    "id": "5857",
+    "name": "chocolate cheesecake",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/tgkuklswgzky80w89cso.jpg"
+  },
+  {
+    "id": "5382",
+    "name": "chicken masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/kcklrikefawh7xyijh8j.jpg"
+  },
+  {
+    "id": "5284",
+    "name": "chilly prawn",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/iksv2psipfultmvdd08q.jpg"
+  },
+  {
+    "id": "5272",
+    "name": "coriander chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/ktpwxgclqprg78o3a08g.jpg"
+  },
+  {
+    "id": "5122",
+    "name": "hindustan maggi",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/qja5iejkr796widm1k3k.jpg"
+  },
+  {
+    "id": "5115",
+    "name": "chicken burger double decker",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/ixzuvpfp1bpmtzsgamuo.jpg"
+  },
+  {
+    "id": "5352",
+    "name": "italian masala omelette",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/zcnogyxkovybn8ftviuw.jpg"
+  },
+  {
+    "id": "5221",
+    "name": "hyderabadi chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/vnmytdyycue4dgxfwdlp.jpg"
+  },
+  {
+    "id": "5222",
+    "name": "quality  biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/qhk5e49ohkhon1iyjhm7.jpg"
+  },
+  {
+    "id": "5097",
+    "name": "egg sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/rkar2mobx4jhtcfgmgko.jpg"
+  },
+  {
+    "id": "5395",
+    "name": "babycorn manchurian",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/zdnc4ko0avbjz7pagg2r.jpg"
+  },
+  {
+    "id": "5187",
+    "name": "mushroom wraps",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/nnn6771jm7cyjvi1ezx5.jpg"
+  },
+  {
+    "id": "4125",
+    "name": "chicken tikka biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/tgupl5hwvcw1ocphvahc.jpg"
+  },
+  {
+    "id": "4206",
+    "name": "shahi paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/fr8vhv4zssykisuvtzft.jpg"
+  },
+  {
+    "id": "4127",
+    "name": "chilli chicken momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/zdhj11seu5trwtsqptsi.jpg"
+  },
+  {
+    "id": "4681",
+    "name": "chicken rose pastha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/qfgrcwpd8ywhfh8mzb8t.jpg"
+  },
+  {
+    "id": "4732",
+    "name": "mango sp milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/lnkwsu1b3oaxhvw6gj2m.jpg"
+  },
+  {
+    "id": "5362",
+    "name": "paneer tikka cheese roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/oulwbkyui3pwcbadjqx9.jpg"
+  },
+  {
+    "id": "4041",
+    "name": "chilli chicken",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/xbj4alz1h7bh84wylfnx.jpg"
+  },
+  {
+    "id": "5316",
+    "name": "gold fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/vcxpqwiwsscgazmbxv05.jpg"
+  },
+  {
+    "id": "5380",
+    "name": "butter chicken",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/snrmtwbrwipa0jdnasct.jpg"
+  },
+  {
+    "id": "4387",
+    "name": "chennai kuska",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/divejfgd9b1auua1jtmp.jpg"
+  },
+  {
+    "id": "5223",
+    "name": "boneless chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/y3pfww9nfdjfg1ttbnmb.jpg"
+  },
+  {
+    "id": "5474",
+    "name": "chilli chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553176/menu_items/iqftr55t0te0guklhqdh.jpg"
+  },
+  {
+    "id": "5083",
+    "name": "sweet corn veg soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/qunrumpozuxzri52msem.jpg"
+  },
+  {
+    "id": "5186",
+    "name": "samosa (1 plate 2pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/lgov3qr2shkgdznrc1uc.jpg"
+  },
+  {
+    "id": "4664",
+    "name": "cheesy creamy pastha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553191/menu_items/dj7vhqqoje6evywtqlno.jpg"
+  },
+  {
+    "id": "5338",
+    "name": "kadai chicken",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/xems3kej2ndwxvwpmlt1.jpg"
+  },
+  {
+    "id": "5099",
+    "name": "paneer club sandwich",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/com7ovffuse6s7eg7r7g.jpg"
+  },
+  {
+    "id": "5607",
+    "name": "shawarma roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/ugdgm9q1efnw2trjcij1.jpg"
+  },
+  {
+    "id": "5323",
+    "name": "chicken pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/krxrvjffmedotasltlwb.jpg"
+  },
+  {
+    "id": "4194",
+    "name": "chana masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/zxxppdb2sw7onqabtpsk.jpg"
+  },
+  {
+    "id": "5235",
+    "name": "tandoori chicken (half)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/bof5eyr26foyvisevfzh.jpg"
+  },
+  {
+    "id": "5060",
+    "name": "aloo jeera",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/qskjyrc0zel7mdsgnv16.jpg"
+  },
+  {
+    "id": "5254",
+    "name": "alien chicken (half)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/wltlvnsjrmweidj55wh1.jpg"
+  },
+  {
+    "id": "5269",
+    "name": "orange chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/mrlomb7a1l5ufcfojngw.jpg"
+  },
+  {
+    "id": "5277",
+    "name": "chilly paneer",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/sfj0k9finnnwaxgtzqkk.jpg"
+  },
+  {
+    "id": "5275",
+    "name": "cashew chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/xsfzsrgabtcii3rfifcu.jpg"
+  },
+  {
+    "id": "5289",
+    "name": "chicken chopsuey",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/wusv9qscc3szfwdomsvj.jpg"
+  },
+  {
+    "id": "5350",
+    "name": "masala omelette",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/aeqnn0iavrx1z9f7koej.jpg"
+  },
+  {
+    "id": "5061",
+    "name": "aloo matar",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/opzxlvghc6hcijqbee3a.jpg"
+  },
+  {
+    "id": "5175",
+    "name": "dahi puri",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553177/menu_items/i7ifn6iiacqpgrukzgup.jpg"
+  },
+  {
+    "id": "5403",
+    "name": "prawn rice/noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/hpae7nwgohitzphnlwhx.jpg"
+  },
+  {
+    "id": "5591",
+    "name": "sprite",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/kt8kqcdnouylv0zp9ovy.jpg"
+  },
+  {
+    "id": "4701",
+    "name": "green apple mojito",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/sfsaucw4dmlv5stmjcpn.jpg"
+  },
+  {
+    "id": "5585",
+    "name": "monster zero sugar (white)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/vxaexnwutlyem75w9uzt.jpg"
+  },
+  {
+    "id": "4727",
+    "name": "carrot milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553187/menu_items/pexymngdrwhob45gycrq.jpg"
+  },
+  {
+    "id": "5612",
+    "name": "diet coke",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/o0i9n2sgvcplmf4u6yhu.jpg"
+  },
+  {
+    "id": "5280",
+    "name": "baby corn manchurian",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/nf5qmwndzjmgjvcdmzfw.jpg"
+  },
+  {
+    "id": "5599",
+    "name": "sprite",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/ycywwvcpccuqjkztnwww.jpg"
+  },
+  {
+    "id": "5603",
+    "name": "limca",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/gbj4ofumnmwvozcdt8lo.jpg"
+  },
+  {
+    "id": "5224",
+    "name": "tandoori biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/icpho2j8kaipynai43sh.jpg"
+  },
+  {
+    "id": "4199",
+    "name": "daal tarka",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/qqhyzzrek5wkf8wuuno4.jpg"
+  },
+  {
+    "id": "5279",
+    "name": "chilly baby corn",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/tyimiiggjvqahuklii7w.jpg"
+  },
+  {
+    "id": "5489",
+    "name": "veg thukpa",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/z512bpyhm9agt2vv7vot.jpg"
+  },
+  {
+    "id": "5377",
+    "name": "veg kolapuri",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/ezfu9k6immh3mkuhufyw.jpg"
+  },
+  {
+    "id": "5449",
+    "name": "tandoori chicken full",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/uqhpnsyf6s0zak4cln87.jpg"
+  },
+  {
+    "id": "5472",
+    "name": "chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/o2ijujvsdswkzqv2iaku.jpg"
+  },
+  {
+    "id": "5319",
+    "name": "sz veg pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553178/menu_items/vyvcswhbhmqh2nck7rkc.jpg"
+  },
+  {
+    "id": "5839",
+    "name": "whipped hot chocolate",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/wjmm2uzqtm08sceouqda.jpg"
+  },
+  {
+    "id": "5369",
+    "name": "chinese chicken chopsey",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/a19cljyp3axigboaypx2.jpg"
+  },
+  {
+    "id": "5414",
+    "name": "baby corn rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/vcy1klpiu0v9vip88q1i.jpg"
+  },
+  {
+    "id": "5341",
+    "name": "chicken tikka masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/sns7einwmxkl9lkmr8w3.jpg"
+  },
+  {
+    "id": "4038",
+    "name": "chicken fried momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/nyyomd98mthlqgbcfqbv.jpg"
+  },
+  {
+    "id": "4703",
+    "name": "green mint mojito",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/dqucxuppgowwriksxr4j.jpg"
+  },
+  {
+    "id": "5582",
+    "name": "winkies pineapple cake",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/hihsugaqhnp5tcybh2rp.jpg"
+  },
+  {
+    "id": "5583",
+    "name": "winkies nut-raisin cake",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/ptftridyc4b237xttqul.jpg"
+  },
+  {
+    "id": "5162",
+    "name": "fresh fries",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/wmb6imlnalcyerjxwvk6.jpg"
+  },
+  {
+    "id": "5490",
+    "name": "veg momo in soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553179/menu_items/m09eu0gxb4tpebt7rvf6.jpg"
+  },
+  {
+    "id": "5182",
+    "name": "american chat",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/rgsrd8rb9c6qco9udoya.jpg"
+  },
+  {
+    "id": "5134",
+    "name": "boost / badam milk",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/owhgzn3r5mspaep8bmni.jpg"
+  },
+  {
+    "id": "5848",
+    "name": "chocolate tub",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/k4ynhkdpgcdysuyzhneg.jpg"
+  },
+  {
+    "id": "5611",
+    "name": "cold coffee",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/uhdjmzmsfqglbk90mzjg.jpg"
+  },
+  {
+    "id": "5307",
+    "name": "sz mushroom fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/bimcelkt2wzmjcudkvtq.jpg"
+  },
+  {
+    "id": "5416",
+    "name": "jeera rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/gpiczrdbym4aozqo7zae.jpg"
+  },
+  {
+    "id": "5297",
+    "name": "chicken 65 boneless (8pcs)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/ketxmctuo7jldpjyvwne.jpg"
+  },
+  {
+    "id": "5219",
+    "name": "kitkat milk shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/bozyuqpsoflbfy8yyapn.jpg"
+  },
+  {
+    "id": "5557",
+    "name": "yellow lays",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/belip86r3ad8qjp88vsl.jpg"
+  },
+  {
+    "id": "5567",
+    "name": "paper boat swing slupry mango",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/imadu7tmao1wvruubkzd.jpg"
+  },
+  {
+    "id": "4765",
+    "name": "custard apple juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/iqaax3ytca6bpmdrq4rw.jpg"
+  },
+  {
+    "id": "5244",
+    "name": "chicken tikka (half)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/uafahy4uweglsmh3stmz.jpg"
+  },
+  {
+    "id": "5592",
+    "name": "red bull energy drink",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/xr2aktoabrum9sb29mvw.jpg"
+  },
+  {
+    "id": "5170",
+    "name": "fish finger",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/q6gmhxuwep1xvbrgihpp.jpg"
+  },
+  {
+    "id": "5128",
+    "name": "bengali lassi",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/ecrwnudngqoa3seuapwr.jpg"
+  },
+  {
+    "id": "5206",
+    "name": "mint lime",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/hbjvgx07il7vtq89slxr.jpg"
+  },
+  {
+    "id": "4155",
+    "name": "dragon gobi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553187/menu_items/u3d3kj7jybglvf6kupbf.jpg"
+  },
+  {
+    "id": "5486",
+    "name": "chicken",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/nkxwhxudqvnhvs9yvin7.jpg"
+  },
+  {
+    "id": "5259",
+    "name": "prawn sizzler",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553180/menu_items/xhhqqwmf1pxdou52iufa.jpg"
+  },
+  {
+    "id": "5184",
+    "name": "kachori (1 plate 2pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/qjpfgr4klclpmxg1yfhu.jpg"
+  },
+  {
+    "id": "5185",
+    "name": "kachori (1 plate 4pcs)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/caszxcj3alcgnv9gvd8s.jpg"
+  },
+  {
+    "id": "5056",
+    "name": "dal fry",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/n0z461vpihd4rw4lbdfk.jpg"
+  },
+  {
+    "id": "5374",
+    "name": "mushroom pepper fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/gonicendd8jgay1ta8bb.jpg"
+  },
+  {
+    "id": "4737",
+    "name": "dry fruit milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/dqxab41g5p8ofr2wexzx.jpg"
+  },
+  {
+    "id": "4785",
+    "name": "black current shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553187/menu_items/w8azpasrv8e8nueou9l5.jpg"
+  },
+  {
+    "id": "4758",
+    "name": "cucumber juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/bbxqv531idhsmveyhs56.jpg"
+  },
+  {
+    "id": "4774",
+    "name": "classic falooda",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/qsxlx8xjk2ik5v1b3r6i.jpg"
+  },
+  {
+    "id": "5551",
+    "name": "smoodh chocolate hazelnut",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/t0il7czwijwppnynmink.jpg"
+  },
+  {
+    "id": "4192",
+    "name": "aloo jeera masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553195/menu_items/xr3f448f9exqp217onmz.jpg"
+  },
+  {
+    "id": "5079",
+    "name": "tomato soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/dci8xokjliki5eobchih.jpg"
+  },
+  {
+    "id": "4132",
+    "name": "honey chilli chicken momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/i2zlxhhq13cwc9l2vf4q.jpg"
+  },
+  {
+    "id": "4656",
+    "name": "paneer bread omlet",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/r7wzjz1jlsnvrdenuswv.jpg"
+  },
+  {
+    "id": "4130",
+    "name": "dragon chicken momo",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/kct5hmserekyagpmfjmk.jpg"
+  },
+  {
+    "id": "5085",
+    "name": "chicken clear soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/k1gk2sut5frbpwaid86n.jpg"
+  },
+  {
+    "id": "5095",
+    "name": "double cheese sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/l4uzq1osd4srzohgonmz.jpg"
+  },
+  {
+    "id": "5069",
+    "name": "baigan masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/clrhrzh3ktesygfmjwix.jpg"
+  },
+  {
+    "id": "5114",
+    "name": "chicken burger",
+    "category": "fastfood",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553189/menu_items/kmhx5iqotduthkas4plh.jpg"
+  },
+  {
+    "id": "5123",
+    "name": "bengali maggi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553181/menu_items/hzpqnjbrdfxwx0qpidni.jpg"
+  },
+  {
+    "id": "4043",
+    "name": "dragon chicken",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/lrjmttfua8g8lfs9gov8.jpg"
+  },
+  {
+    "id": "4757",
+    "name": "pappaya juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/w7kn4qto4vt8bwhyq76x.jpg"
+  },
+  {
+    "id": "5387",
+    "name": "chicken keema masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/h9ptg4cnri9mmm05x2vj.jpg"
+  },
+  {
+    "id": "5473",
+    "name": "moghlai chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/rjfylxejbzivmdnsuu9q.jpg"
+  },
+  {
+    "id": "5226",
+    "name": "hyderabadi mutton biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/rhwnsynx8slgzzzqsgxx.jpg"
+  },
+  {
+    "id": "5393",
+    "name": "chicken rogan josh",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/nsd9wwbtokfhmphhn9df.jpg"
+  },
+  {
+    "id": "5225",
+    "name": "afghani biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/cl5nzvy1apl36ckoij1s.jpg"
+  },
+  {
+    "id": "5417",
+    "name": "ghee rice",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/tj89mlnhvu98bq75srrw.jpg"
+  },
+  {
+    "id": "5137",
+    "name": "mushroom roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/wqalzykznlxbn50hwuln.jpg"
+  },
+  {
+    "id": "4045",
+    "name": "sezwan chicken",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/vefgsgvvxvfvzwlfn1ha.jpg"
+  },
+  {
+    "id": "5196",
+    "name": "apple juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/ytmxnlaywkwgr7l1sgci.jpg"
+  },
+  {
+    "id": "5292",
+    "name": "paneer chattinad starter",
+    "category": "north_indian",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/j0roljjomuxtyehqgpm2.jpg"
+  },
+  {
+    "id": "5574",
+    "name": "winkin cow strawberry milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/phfwpfsvbhfi70keiqtb.jpg"
+  },
+  {
+    "id": "5559",
+    "name": "frooti",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/koaw951jeymhcidb53os.jpg"
+  },
+  {
+    "id": "4739",
+    "name": "pineapple milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/h8tsmkv37xvicyqztdgb.jpg"
+  },
+  {
+    "id": "5464",
+    "name": "chicken lollipop (5 pcs)",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/gyoa6bfjjgi1kp1ssijb.jpg"
+  },
+  {
+    "id": "4691",
+    "name": "pine lassi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/j7pohapg6jbqstshm6fp.jpg"
+  },
+  {
+    "id": "5071",
+    "name": "baigan pepper fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553182/menu_items/mabvpcdtbbxkilg0cox6.jpg"
+  },
+  {
+    "id": "5140",
+    "name": "double egg roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/wsqluig4c0t1sgxu9jxc.jpg"
+  },
+  {
+    "id": "5059",
+    "name": "aloo fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/roicyjx0f5r5uqzjmik6.jpg"
+  },
+  {
+    "id": "5237",
+    "name": "afghani chicken (full)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/df1ig1ikfridcgfei4ex.jpg"
+  },
+  {
+    "id": "4653",
+    "name": "omlet",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/xtvk2ocjwhbrufkbz8c1.jpg"
+  },
+  {
+    "id": "5080",
+    "name": "hot dog veg soup",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/ll9odoosq82gvjs6gynu.jpg"
+  },
+  {
+    "id": "5256",
+    "name": "890 chicken (full)",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/tfhedvfh70s7mtkc3bcx.jpg"
+  },
+  {
+    "id": "5199",
+    "name": "grape juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/aftdhst0ugcvqy3ex98a.jpg"
+  },
+  {
+    "id": "5230",
+    "name": "veg biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/vg7c56jxz271m4q5c2qz.jpg"
+  },
+  {
+    "id": "4740",
+    "name": "oreo milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/iiqlrgkjemsurtccewqo.jpg"
+  },
+  {
+    "id": "5579",
+    "name": "paper boat nata de coco lychee juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/zq6mwodtfcsnuhcuuqfb.jpg"
+  },
+  {
+    "id": "4769",
+    "name": "dragon juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/pdpbh8ltj6qcjgxclf6s.jpg"
+  },
+  {
+    "id": "4751",
+    "name": "mosambi juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/viedwgbimmuf5a5icgzr.jpg"
+  },
+  {
+    "id": "4764",
+    "name": "carrot juice",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/dsid8nmplpqbenn6pa6p.jpg"
+  },
+  {
+    "id": "4782",
+    "name": "vanila shake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/gkxtfhgbt6stchguaxrw.jpg"
+  },
+  {
+    "id": "5091",
+    "name": "corn sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553187/menu_items/wppsriboyjkyhjc4u300.jpg"
+  },
+  {
+    "id": "4008",
+    "name": "chennai chicken biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/wryean7hl7nehe4e5dyc.jpg"
+  },
+  {
+    "id": "4385",
+    "name": "chennai egg biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553183/menu_items/efuh95b3xf80cspgifcm.jpg"
+  },
+  {
+    "id": "5345",
+    "name": "chicken masala chattinad",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/obud2ukwklwruzytnkft.jpg"
+  },
+  {
+    "id": "5333",
+    "name": "maharaja pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/geuqbqjrrlk5fe8fgblv.jpg"
+  },
+  {
+    "id": "5151",
+    "name": "paneer manchurian momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/hbsmung9mvwratobf8p2.jpg"
+  },
+  {
+    "id": "4688",
+    "name": "chicken chapathi roll",
+    "category": "rolls",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/igo3blqjxswd9plfbtlf.jpg"
+  },
+  {
+    "id": "5445",
+    "name": "egg keema masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/rx1wjxdlou9yklzjlpqe.jpg"
+  },
+  {
+    "id": "5167",
+    "name": "french fry",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/axebnam9dvrrsvu3dgaq.jpg"
+  },
+  {
+    "id": "5453",
+    "name": "afghani chicken half",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/dbxp10t2tmgvwsu1fyng.jpg"
+  },
+  {
+    "id": "4724",
+    "name": "fig milkshake",
+    "category": "beverages",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/oyeh2nwnkqtiiiwgftgz.jpg"
+  },
+  {
+    "id": "4671",
+    "name": "maggi",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/hnwzs0acgrsqbwqbqg5i.jpg"
+  },
+  {
+    "id": "5169",
+    "name": "chicken popcorn",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553187/menu_items/oah1orrnrq4gptwvjc19.jpg"
+  },
+  {
+    "id": "4665",
+    "name": "rose pastha",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/dgadpxbwb5rghs40ce0l.jpg"
+  },
+  {
+    "id": "5073",
+    "name": "beans masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/yfznqolrtwoibhtcn2nb.jpg"
+  },
+  {
+    "id": "5158",
+    "name": "chicken garlic momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/zmasku1wjrjplzq1mnz9.jpg"
+  },
+  {
+    "id": "5127",
+    "name": "mango lassi",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/flvekhd4wotzvn3cfabp.jpg"
+  },
+  {
+    "id": "5561",
+    "name": "doritos",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/dbu9rgnm0lvwep77h5k4.jpg"
+  },
+  {
+    "id": "5552",
+    "name": "uncle chipps (plain salted)",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553187/menu_items/rlrseinbvs0sp0xj4qrq.jpg"
+  },
+  {
+    "id": "5176",
+    "name": "hahi puri",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/ocvhc9wsw5hrqeesfjzz.jpg"
+  },
+  {
+    "id": "5067",
+    "name": "mushroom masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/deso1afthmntaqkecd1v.jpg"
+  },
+  {
+    "id": "5370",
+    "name": "mutton pasta",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/hmqhnpa2u2cr5fezuouz.jpg"
+  },
+  {
+    "id": "4197",
+    "name": "gobi masala",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/xjoazxmt20al5w8xu8tp.jpg"
+  },
+  {
+    "id": "5300",
+    "name": "veg fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553184/menu_items/evc66zckvbiliu8nsfxn.jpg"
+  },
+  {
+    "id": "5304",
+    "name": "paneer fried rice / noodles",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/xynvbmc7hhwkd2wfpljw.jpg"
+  },
+  {
+    "id": "5478",
+    "name": "paneer biryani",
+    "category": "biryani",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/wbv5xwrzv271llbkqexk.jpg"
+  },
+  {
+    "id": "5157",
+    "name": "chicken dragon momos",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553185/menu_items/diriuaczwxt75ypwtxob.jpg"
+  },
+  {
+    "id": "5589",
+    "name": "munch max",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553189/menu_items/ouckb9rew32arkzi3lvg.jpg"
+  },
+  {
+    "id": "4702",
+    "name": "passion fruit mojito",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553187/menu_items/lkeabn8ggjmzpatovzrk.jpg"
+  },
+  {
+    "id": "5096",
+    "name": "chilli cheese corn sandwich",
+    "category": "chinese",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553186/menu_items/dzwigawcxdpmz9vlpw7x.jpg"
+  },
+  {
+    "id": "5093",
+    "name": "aloo sandwich",
+    "category": "default",
+    "image": "https://res.cloudinary.com/ddx4bpfgx/image/upload/v1777553187/menu_items/uzhlxpn6mlu5aiq8vipz.jpg"
+  }
+]

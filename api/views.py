@@ -216,6 +216,8 @@ def send_order_confirmation_email(order):
                 f"<td style='color:#d1d5db;font-size:13px'>{order.user_email}</td></tr>"
                 f"<tr><td style='padding:5px 0;color:#9ca3af;font-size:13px'>💳 Payment</td>"
                 f"<td style='color:#f59e0b;font-size:13px;font-weight:700;text-transform:uppercase'>{order.payment_method} — {order.payment_status}</td></tr>"
+                f"<tr><td style='padding:10px 0 5px;color:#22c55e;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px' colspan='2'>📝 Special Instructions / Notes</td></tr>"
+                f"<tr><td style='color:#ffffff;font-size:13px;line-height:1.5' colspan='2'>{order.notes or 'None'}</td></tr>"
                 f"</table></div>"
             )
             admin_html = html_template.replace("@TITLE@", "🥗 QuickCombo — NEW ORDER!").replace("@MESSAGE@", admin_message)
@@ -283,6 +285,49 @@ def verify_otp(request):
     })
 
 
+@api_view(['POST'])
+def google_login(request):
+    """
+    Handle Google Sign-In.
+    Verifies the ID token and gets or creates the user.
+    """
+    token = request.data.get('token')
+    if not token:
+        return Response({'error': 'Token is required'}, status=400)
+
+    try:
+        # Verify access token and get user info from Google
+        response = requests.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        if response.status_code != 200:
+            return Response({'error': 'Invalid Google token'}, status=400)
+
+        data = response.json()
+        email = data.get('email', '')
+        if email:
+            email = email.lower()
+        name = data.get('name', '')
+
+        if not email:
+            return Response({'error': 'Email not found in Google account'}, status=400)
+
+        # Get or create user
+        user, created = User.objects.get_or_create(email=email)
+        if created or not user.name:
+            user.name = name
+            user.save()
+
+        return Response({
+            'message': 'Login successful',
+            'user': UserSerializer(user).data,
+            'token': f"qc-token-{user.id}-{user.email}"
+        })
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
+
 @api_view(['GET', 'PATCH'])
 def user_profile(request):
     email = request.headers.get('X-User-Email', '').strip().lower()
@@ -341,7 +386,8 @@ def menu_list(request):
             Q(restaurant__name__icontains=search)
         )
     if featured:
-        items = items.filter(is_featured=True)
+        from django.db.models import Count
+        items = items.annotate(order_count=Count('orderitem')).order_by('-order_count', '-rating')[:15]
     if combo_eligible:
         items = items.filter(is_combo_eligible=True)
     if restaurant_id:
@@ -572,14 +618,31 @@ def place_order(request):
         packing_fee = 10
         total = (subtotal - float(discount_amount)) + delivery_fee + packing_fee
 
+        lat = float(data.get('lat') or 12.8231)
+        lng = float(data.get('lng') or 80.0453)
+
+        # 0. Validate Delivery Radius (8km from SRM Kattankulathur)
+        import math
+        def haversine(lat1, lon1, lat2, lon2):
+            R = 6371.0  # Earth radius in kilometers
+            dlat = math.radians(lat2 - lat1)
+            dlon = math.radians(lon2 - lon1)
+            a = math.sin(dlat / 2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2)**2
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+            return R * c
+
+        distance = haversine(12.8231, 80.0453, lat, lng)
+        if distance > 8.0:
+            return Response({'error': 'This is not deliverable at your location for now. We currently serve only within an 8km radius of SRM Kattankulathur.'}, status=400)
+
         # 3. Create Order
         order = Order.objects.create(
             user_email=email,
             user_name=data.get('name', ''),
             user_phone=data.get('phone', ''),
             delivery_address=data.get('address', ''),
-            delivery_lat=data.get('lat') or 12.8231,
-            delivery_lng=data.get('lng') or 80.0453,
+            delivery_lat=lat,
+            delivery_lng=lng,
             payment_method=data.get('payment_method', 'cod'),
             subtotal=subtotal,
             delivery_fee=delivery_fee,
@@ -654,23 +717,26 @@ def order_list(request):
     return Response(OrderSerializer(orders, many=True).data)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def order_detail(request, order_id):
     try:
         order = Order.objects.get(pk=order_id)
     except Order.DoesNotExist:
         return Response({'error': 'Order not found'}, status=404)
 
-    # Simulate rider movement
-    if order.status == 'out_for_delivery' and order.delivery_lat:
-        import math
-        elapsed = (timezone.now() - order.updated_at).seconds / 60
-        progress = min(elapsed / 25, 1.0)
-        # Rider starts 2km away, moves toward delivery location
-        start_lat = float(order.delivery_lat) + 0.018
-        start_lng = float(order.delivery_lng) + 0.015
-        order.rider_lat = start_lat + (float(order.delivery_lat) - start_lat) * progress
-        order.rider_lng = start_lng + (float(order.delivery_lng) - start_lng) * progress
+    # Support status update via GET for easier rider access/reliability
+    new_status = request.GET.get('new_status')
+    if new_status:
+        order.status = new_status
+        order.save()
+        return Response(OrderSerializer(order).data)
+
+    if request.method == 'POST':
+        status = request.data.get('status')
+        if status:
+            order.status = status
+            order.save()
+            return Response(OrderSerializer(order).data)
 
     return Response(OrderSerializer(order).data)
 
@@ -700,18 +766,10 @@ def order_tracking(request, order_id):
     start_lat = d_lat + 0.015
     start_lng = d_lng + 0.012
     
+    # Use real rider location if available, otherwise default to start
     if not rider_lat:
         rider_lat = start_lat
         rider_lng = start_lng
-        
-    if order.status == 'out_for_delivery':
-        elapsed_seconds = (timezone.now() - order.updated_at).seconds
-        progress = min(elapsed_seconds / 300.0, 1.0)
-        rider_lat = start_lat + (d_lat - start_lat) * progress
-        rider_lng = start_lng + (d_lng - start_lng) * progress
-    elif order.status == 'delivered':
-        rider_lat = d_lat
-        rider_lng = d_lng
 
     has_food, has_essentials = False, False
     for i in order.items.all():
@@ -751,39 +809,97 @@ def order_tracking(request, order_id):
         'eta_string': eta_string,
     })
 
+@api_view(['POST'])
+def update_rider_location(request, order_id):
+    """
+    Rider updates their live location here.
+    """
+    try:
+        order = Order.objects.get(id=order_id)
+        lat = request.data.get('lat')
+        lng = request.data.get('lng')
+        
+        if lat is None or lng is None:
+            return Response({'error': 'lat and lng required'}, status=400)
+            
+        order.rider_lat = float(lat)
+        order.rider_lng = float(lng)
+        order.save()
+        
+        return Response({'status': 'Location updated successfully'})
+    except Order.DoesNotExist:
+        return Response({'error': 'Order not found'}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
 
 # ─── Location ─────────────────────────────────────────────────────────────────
 
 @api_view(['GET'])
 def location_autocomplete(request):
     q = request.GET.get('q', '')
-    if not q or len(q) < 3:
+    print(f"DEBUG: location_autocomplete called with q='{q}'")
+    if not q or len(q) < 2:
         return Response([])
     try:
-        api_key = getattr(settings, 'GEOAPIFY_KEY', '')
-        if not api_key:
-            print("Error: GEOAPIFY_KEY not configured.")
-            return Response({'error': 'Location service not configured'}, status=500)
+        api_key = getattr(settings, 'MAPBOX_KEY', '')
 
+        # Try Mapbox first
         r = requests.get(
-            "https://api.geoapify.com/v1/geocode/autocomplete",
-            params={'text': q, 'apiKey': api_key, 'limit': 5, 'filter': 'countrycode:in'},
-            timeout=8
+            f"https://api.mapbox.com/geocoding/v5/mapbox.places/{q}.json",
+            params={
+                'access_token': api_key, 
+                'country': 'in', 
+                'limit': 8,
+                'proximity': '80.0453,12.8231', # Focus on SRM KTR area
+                'types': 'poi,address,neighborhood,locality,place'
+            },
+            timeout=5
         )
-        if r.status_code != 200:
-             print(f"Geoapify Error (Autocomplete): {r.status_code} - {r.text}")
-             return Response({'error': 'Location service error'}, status=r.status_code)
+        
+        if r.status_code == 200:
+            features = r.json().get('features', [])
+            results = [{
+                'display': f.get('place_name', ''),
+                'name': f.get('text', ''),
+                'city': next((c.get('text') for c in f.get('context', []) if 'place' in c.get('id', '')), ''),
+                'lat': f.get('center', [0, 0])[1],
+                'lng': f.get('center', [0, 0])[0],
+                'source': 'mapbox'
+            } for f in features]
+            if results:
+                return Response(results, headers={'X-Backend-Version': 'Mapbox-v2'})
 
-        features = r.json().get('features', [])
-        results = [{
-            'display': f.get('properties', {}).get('formatted', ''),
-            'name': f.get('properties', {}).get('name', ''),
-            'city': f.get('properties', {}).get('city', ''),
-            'lat': f.get('properties', {}).get('lat'),
-            'lng': f.get('properties', {}).get('lon'),
-        } for f in features]
-        return Response(results)
+        # Fallback to Nominatim (OSM) if Mapbox fails or returns no results
+        print(f"Mapbox failed or no results (Status {r.status_code}), falling back to Nominatim...")
+        nr = requests.get(
+            "https://nominatim.openstreetmap.org/search",
+            params={
+                'q': q,
+                'format': 'json',
+                'addressdetails': 1,
+                'limit': 8,
+                'countrycodes': 'in',
+                'viewbox': '79.9,12.9,80.2,12.7', # Bound to SRM area
+                'bounded': 0
+            },
+            headers={'User-Agent': 'QuickCombo/1.0'},
+            timeout=5
+        )
+        if nr.status_code == 200:
+            osm_results = [{
+                'display': item.get('display_name', ''),
+                'name': item.get('display_name', '').split(',')[0],
+                'city': item.get('address', {}).get('city', ''),
+                'lat': float(item.get('lat')),
+                'lng': float(item.get('lon')),
+                'source': 'osm'
+            } for item in nr.json()]
+            return Response(osm_results, headers={'X-Backend-Version': 'Mapbox-v2'})
+
+        return Response({'error': 'Location service currently unavailable'}, status=503)
     except Exception as e:
+        print(f"Location Error: {str(e)}")
         return Response({'error': str(e)}, status=500)
 
 
@@ -794,25 +910,30 @@ def reverse_geocode(request):
     if not lat or not lng:
         return Response({'error': 'lat and lng required'}, status=400)
     try:
-        api_key = getattr(settings, 'GEOAPIFY_KEY', '')
-        if not api_key:
-             print("Error: GEOAPIFY_KEY not configured.")
-             return Response({'error': 'Location service not configured'}, status=500)
+        api_key = getattr(settings, 'MAPBOX_KEY', '')
 
+        # Try Mapbox
         r = requests.get(
-            "https://api.geoapify.com/v1/geocode/reverse",
-            params={'lat': lat, 'lon': lng, 'apiKey': api_key},
-            timeout=8
+            f"https://api.mapbox.com/geocoding/v5/mapbox.places/{lng},{lat}.json",
+            params={'access_token': api_key, 'limit': 1},
+            timeout=5
         )
-        if r.status_code != 200:
-             print(f"Geoapify Error (Reverse): {r.status_code} - {r.text}")
-             return Response({'error': 'Location service error'}, status=r.status_code)
+        if r.status_code == 200:
+            features = r.json().get('features', [])
+            if features:
+                return Response({'address': features[0].get('place_name', ''), 'source': 'mapbox'})
 
-        features = r.json().get('features', [])
-        if features:
-            props = features[0].get('properties', {})
-            return Response({'address': props.get('formatted', '')})
-        return Response({'address': ''})
+        # Fallback to Nominatim
+        nr = requests.get(
+            "https://nominatim.openstreetmap.org/reverse",
+            params={'lat': lat, 'lon': lng, 'format': 'json', 'addressdetails': 1},
+            headers={'User-Agent': 'QuickCombo/1.0'},
+            timeout=5
+        )
+        if nr.status_code == 200:
+            return Response({'address': nr.json().get('display_name', ''), 'source': 'osm'})
+
+        return Response({'error': 'Reverse location service unavailable'}, status=503)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
@@ -911,11 +1032,11 @@ def debug_db(request):
 
     # Check API keys (obfuscated)
     brevo_key = getattr(settings, 'BREVO_API_KEY', '')
-    geo_key = getattr(settings, 'GEOAPIFY_KEY', '')
+    mapbox_key = getattr(settings, 'MAPBOX_KEY', '')
     
     return Response({
         'status': 'healthy' if db_ok else 'unhealthy',
-        'version_timestamp': '2026-04-08_12:35_FINAL_FIX',
+        'version_timestamp': '2026-05-03_RIDER_FIX_V2',
         'database': {
             'connected': db_ok,
             'error': db_error if not db_ok else None,
@@ -925,8 +1046,8 @@ def debug_db(request):
         'api_keys': {
             'brevo_configured': bool(brevo_key),
             'brevo_preview': f"{brevo_key[:10]}...{brevo_key[-4:]}" if brevo_key else "MISSING",
-            'geoapify_configured': bool(geo_key),
-            'geoapify_preview': f"{geo_key[:10]}...{geo_key[-4:]}" if geo_key else "MISSING",
+            'mapbox_configured': bool(mapbox_key),
+            'mapbox_preview': f"{mapbox_key[:10]}...{mapbox_key[-4:]}" if mapbox_key else "MISSING",
         }
     })
 
@@ -960,6 +1081,11 @@ def check_config(request):
 def get_site_config(request):
     """Expose site operational status and other public config."""
     site_online = GlobalConfig.objects.filter(key='site_online').first()
+    orders_enabled = GlobalConfig.objects.filter(key='orders_enabled').first()
+    orders_disabled_message = GlobalConfig.objects.filter(key='orders_disabled_message').first()
+
     return Response({
-        'site_online': site_online.value == 'true' if site_online else True
+        'site_online': site_online.value == 'true' if site_online else True,
+        'orders_enabled': orders_enabled.value == 'true' if orders_enabled else True,
+        'orders_disabled_message': orders_disabled_message.value if orders_disabled_message else "We are currently not accepting orders. Please try again later."
     })

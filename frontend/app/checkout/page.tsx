@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import Link from 'next/link';
 import Confetti from 'react-confetti';
 import toast from 'react-hot-toast';
 import { useCart } from '@/context/CartContext';
@@ -44,6 +45,12 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<number | null>(null);
   const [finalTotal, setFinalTotal] = useState(0);
   
+  // -- Delivery / Contact Details --
+  const [fullName, setFullName] = useState(user?.name || '');
+  const [phoneNumber, setPhoneNumber] = useState(user?.phone || '');
+  const [ordersEnabled, setOrdersEnabled] = useState(true);
+  const [ordersDisabledMessage, setOrdersDisabledMessage] = useState('');
+  
   // -- Promo / Coupon States --
   const [couponInput, setCouponInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
@@ -84,7 +91,23 @@ export default function CheckoutPage() {
       if (savedLat && !lat) setLat(parseFloat(savedLat));
       if (savedLng && !lng) setLng(parseFloat(savedLng));
     }
+
+    // Fetch site config (ordering status)
+    axios.get(`${API}/api/config/`)
+      .then(res => {
+        setOrdersEnabled(res.data.orders_enabled !== false);
+        setOrdersDisabledMessage(res.data.orders_disabled_message || '');
+      })
+      .catch(err => console.error('Config fetch failed:', err));
+
   }, [user, items]);
+
+  useEffect(() => {
+    if (user) {
+      if (!fullName) setFullName(user.name);
+      if (!phoneNumber) setPhoneNumber(user.phone);
+    }
+  }, [user]);
 
   const handleLocate = () => {
     setLocating(true);
@@ -237,6 +260,9 @@ export default function CheckoutPage() {
     const finalAddress = address ? address.trim() : (typedAddress.trim() ? `${typedAddress}, ${autoLocation || 'India'}` : '');
     if (!finalAddress) { toast.error('Delivery address is required (House/Flat No.)'); return; }
     
+    if (!fullName || fullName.length < 3) { toast.error('Please enter a valid full name'); return; }
+    if (!phoneNumber || phoneNumber.length < 10) { toast.error('Please enter a valid 10-digit phone number'); return; }
+
     const currentCalculatedTotal = items.length > 0 
       ? (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge) 
       : 0;
@@ -245,8 +271,8 @@ export default function CheckoutPage() {
     try {
       const payload = {
         email: user?.email,
-        name: user?.name,
-        phone: user?.phone,
+        name: fullName || user?.name,
+        phone: phoneNumber || user?.phone,
         address: finalAddress,
         lat,
         lng,
@@ -606,24 +632,45 @@ export default function CheckoutPage() {
                   </div>
                   <input
                     className="w-full bg-black/50 text-white text-sm p-3 rounded-xl border border-white/10 outline-none focus:border-green-500 transition-colors"
-                    placeholder="House/Flat No., Building Name"
+                    placeholder="House/Flat No., Building Name *"
                     onChange={(e) => setTypedAddress(e.target.value)}
                     value={typedAddress}
+                    required
                   />
                 </div>
               )}
 
+              {/* Explicit Name & Phone Fields */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Delivery Name</p>
+                  <input
+                    className="w-full bg-black/50 text-white text-sm p-3 rounded-xl border border-white/10 outline-none focus:border-green-500 transition-colors"
+                    placeholder="Full Name *"
+                    value={fullName}
+                    onChange={e => setFullName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Phone Number</p>
+                  <input
+                    className="w-full bg-black/50 text-white text-sm p-3 rounded-xl border border-white/10 outline-none focus:border-green-500 transition-colors"
+                    placeholder="10-digit Mobile *"
+                    value={phoneNumber}
+                    onChange={e => setPhoneNumber(e.target.value)}
+                    type="tel"
+                    required
+                  />
+                </div>
+              </div>
+
               <input
                 className="w-full bg-transparent text-white text-xs border-b border-gray-700 pb-2 mb-4 outline-none placeholder:text-gray-500"
-                placeholder="Add instructions for delivery partner"
+                placeholder="Add instructions for delivery partner (optional)"
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
               />
-
-              <div className="flex justify-between items-center py-3 border-y border-white/5">
-                <span className="text-white text-sm font-semibold">{user?.name || 'Guest'}, {user?.phone || 'Add phone number'}</span>
-                <ChevronRight size={16} className="text-gray-500" />
-              </div>
             </div>
           </div>
         </section>
@@ -659,6 +706,11 @@ export default function CheckoutPage() {
             </div>
           </div>
         </section>
+
+        {/* Terms Agreement Text */}
+        <p className="text-[10px] text-gray-500 text-center px-4 py-2 font-medium">
+          By placing this order, you agree to QuickCombo's <Link href="/terms" className="text-green-500 underline">Terms & Conditions</Link> and <Link href="/privacy" className="text-green-500 underline">Privacy Policy</Link>.
+        </p>
       </div>
 
       {/* Floating Action Bar (Zomato Style) */}
@@ -686,20 +738,31 @@ export default function CheckoutPage() {
         </button>
 
         {/* Place Order Button */}
-        <motion.button
-          whileTap={{ scale: 0.96 }}
-          onClick={handlePlaceOrder}
-          disabled={loading || items.length === 0 || onlyEssentials}
-          className="bg-green-500 hover:bg-green-400 text-black rounded-[14px] px-6 py-3.5 flex items-center gap-3 min-w-[160px] shadow-[0_4px_16px_rgba(34,197,94,0.3)] disabled:opacity-50"
-        >
-          <div className="flex flex-col items-start border-r border-black/20 pr-3">
-            <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + deliveryFee + packingCharge) ? 0 : (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge)}</span>
-            <span className="text-[10px] font-bold text-black/70">TOTAL</span>
-          </div>
-          <div className="flex items-center font-black text-[15px]">
-            {payment === 'online' ? 'Pay Now' : 'Place Order'} <ChevronRight size={18} strokeWidth={3} className="ml-1" />
-          </div>
-        </motion.button>
+        <div className="flex-1 flex flex-col items-end gap-1">
+          {!ordersEnabled && (
+             <p className="text-[10px] text-red-500 font-black uppercase text-right leading-tight max-w-[150px]">
+               {ordersDisabledMessage || "Orders are currently paused"}
+             </p>
+          )}
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={handlePlaceOrder}
+            disabled={loading || items.length === 0 || onlyEssentials || !ordersEnabled}
+            className={`rounded-[14px] px-6 py-3.5 flex items-center gap-3 min-w-[160px] shadow-lg transition-all ${
+              !ordersEnabled 
+                ? 'bg-gray-800 text-gray-500 grayscale cursor-not-allowed' 
+                : 'bg-green-500 hover:bg-green-400 text-black shadow-green-500/20'
+            } disabled:opacity-50`}
+          >
+            <div className={`flex flex-col items-start border-r pr-3 ${!ordersEnabled ? 'border-gray-700' : 'border-black/20'}`}>
+              <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + deliveryFee + packingCharge) ? 0 : (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge)}</span>
+              <span className="text-[10px] font-bold opacity-70">TOTAL</span>
+            </div>
+            <div className="flex items-center font-black text-[15px]">
+              {!ordersEnabled ? 'Paused' : (payment === 'online' ? 'Pay Now' : 'Place Order')} <ChevronRight size={18} strokeWidth={3} className="ml-1" />
+            </div>
+          </motion.button>
+        </div>
       </div>
 
       <Script 

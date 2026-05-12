@@ -22,6 +22,7 @@ interface AuthContextType {
   setShowAuthModal: (show: boolean) => void;
   sendOtp: (email: string) => Promise<{success: boolean; error?: string}>;
   verifyOtp: (email: string, otp: string, name?: string, phone?: string) => Promise<{success: boolean; error?: string}>;
+  googleLogin: (token: string) => Promise<{success: boolean; error?: string}>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -67,10 +68,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const googleLogin = async (token: string): Promise<{success: boolean; error?: string}> => {
+    try {
+      const res = await axios.post(`${API}/api/auth/google/`, { token });
+      login(res.data.user);
+      return { success: true };
+    } catch (e: any) {
+      return { success: false, error: e.response?.data?.error || 'Google login failed' };
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user, login, logout, isLoggedIn: !!user,
-      showAuthModal, setShowAuthModal, sendOtp, verifyOtp
+      showAuthModal, setShowAuthModal, sendOtp, verifyOtp, googleLogin
     }}>
       {children}
     </AuthContext.Provider>

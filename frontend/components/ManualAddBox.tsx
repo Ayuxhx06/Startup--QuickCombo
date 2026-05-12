@@ -72,7 +72,7 @@ export default function ManualAddBox() {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') handleAdd(e as any); }}
-                    placeholder="E.g. 0.5L Milk, Cigarette, Medicine..."
+                    placeholder="E.g. 0.5L Milk, Snacks, Medicine..."
                     className="w-full bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-sm outline-none focus:border-green-500/50 transition-all font-medium placeholder:text-gray-600"
                 />
 

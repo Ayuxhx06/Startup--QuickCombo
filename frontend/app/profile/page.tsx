@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { User, Mail, Phone, MapPin, LogOut, Edit2, ShoppingBag, ShieldCheck } from 'lucide-react';
@@ -224,8 +225,12 @@ export default function ProfilePage() {
               </div>
 
               {/* Version Info */}
-              <div className="text-center py-4">
+              <div className="text-center py-8 space-y-3">
                  <p className="text-[10px] text-gray-600 font-bold tracking-widest uppercase">QuickCombo v2.4.1 Production</p>
+                 <div className="flex justify-center gap-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                    <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+                    <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                 </div>
               </div>
             </motion.div>
           </>

@@ -25,6 +25,8 @@ export default function PremiumAdmin() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
   
   // Entity Data
   const [stats, setStats] = useState<any>(null);
@@ -54,6 +56,9 @@ export default function PremiumAdmin() {
   const [isMenuDrilldown, setIsMenuDrilldown] = useState(false);
   const [siteOnline, setSiteOnline] = useState(true);
   const [isTogglingSite, setIsTogglingSite] = useState(false);
+  const [ordersEnabled, setOrdersEnabled] = useState(true);
+  const [ordersDisabledMessage, setOrdersDisabledMessage] = useState('');
+  const [isTogglingOrders, setIsTogglingOrders] = useState(false);
 
   // Auto-login check
   useEffect(() => {
@@ -140,6 +145,8 @@ export default function PremiumAdmin() {
       try {
           const configRes = await axios.get(`${base}/api/config/`);
           setSiteOnline(configRes.data.site_online);
+          setOrdersEnabled(configRes.data.orders_enabled !== false);
+          setOrdersDisabledMessage(configRes.data.orders_disabled_message || '');
       } catch (e) {}
       
     } catch (e: any) {
@@ -168,6 +175,39 @@ export default function PremiumAdmin() {
         toast.error('Failed to change site status');
     } finally {
         setIsTogglingSite(false);
+    }
+  };
+
+  const toggleOrders = async () => {
+    const newStatus = !ordersEnabled;
+    setIsTogglingOrders(true);
+    try {
+        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+        const res = await axios.post(`${base}/api/admin/toggle-site/`, { 
+          orders_enabled: newStatus,
+          orders_disabled_message: ordersDisabledMessage || "We are currently not accepting orders. Please try again later."
+        }, getHeaders());
+        
+        setOrdersEnabled(res.data.orders_enabled);
+        setOrdersDisabledMessage(res.data.orders_disabled_message);
+        toast.success(`Ordering ${newStatus ? 'ENABLED' : 'PAUSED'}`);
+    } catch (e) {
+        toast.error('Failed to update ordering status');
+    } finally {
+        setIsTogglingOrders(false);
+    }
+  };
+
+  const updateOrdersMessage = async (msg: string) => {
+    try {
+        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+        await axios.post(`${base}/api/admin/toggle-site/`, { 
+          orders_disabled_message: msg 
+        }, getHeaders());
+        setOrdersDisabledMessage(msg);
+        toast.success('Message updated');
+    } catch (e) {
+        toast.error('Failed to update message');
     }
   };
 
@@ -489,9 +529,36 @@ export default function PremiumAdmin() {
                             <div className={`absolute top-1 w-4 h-4 rounded-full transition-all ${siteOnline ? 'right-1 bg-emerald-500' : 'left-1 bg-red-500'}`} />
                           </button>
                       </div>
-                      <p className="text-[10px] text-gray-600 font-medium leading-tight">
-                          {siteOnline ? 'Site is active and accepting orders.' : 'Maintenance screen is active. Orders blocked.'}
+                      <p className="text-[10px] text-gray-600 font-medium leading-tight mb-4">
+                          {siteOnline ? 'Site is active and accessible.' : 'Maintenance screen is active.'}
                       </p>
+
+                      <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Order Button Control</p>
+                      <div className="flex justify-between items-center mb-3">
+                          <span className={`text-xs font-black uppercase italic ${ordersEnabled ? 'text-emerald-500' : 'text-orange-500'}`}>
+                              {ordersEnabled ? 'Accepting' : 'Paused'}
+                          </span>
+                          <button 
+                            onClick={toggleOrders}
+                            disabled={isTogglingOrders}
+                            className={`w-12 h-6 rounded-full transition-all relative ${ordersEnabled ? 'bg-emerald-500/20' : 'bg-orange-500/20'}`}
+                          >
+                            <div className={`absolute top-1 w-4 h-4 rounded-full transition-all ${ordersEnabled ? 'right-1 bg-emerald-500' : 'left-1 bg-orange-500'}`} />
+                          </button>
+                      </div>
+                      
+                      {!ordersEnabled && (
+                        <div className="space-y-2 mt-2">
+                           <input 
+                             className="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-[10px] text-white outline-none focus:border-emerald-500/50 transition-all"
+                             placeholder="Message for users..."
+                             value={ordersDisabledMessage}
+                             onChange={(e) => setOrdersDisabledMessage(e.target.value)}
+                             onBlur={(e) => updateOrdersMessage(e.target.value)}
+                           />
+                           <p className="text-[9px] text-gray-600 font-medium italic">Message updates automatically on blur</p>
+                        </div>
+                      )}
                   </div>
                    <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-4">
                       <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Master Environment</p>
@@ -541,8 +608,14 @@ export default function PremiumAdmin() {
           <div className="flex items-center gap-3">
             <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl px-4 lg:px-6 py-3 lg:py-4 flex items-center gap-4 flex-grow lg:min-w-[300px]">
                 <Search className="text-gray-600" size={18} />
-                <input placeholder="Search entities..." className="bg-transparent text-sm outline-none w-full" />
+                <input 
+                  placeholder="Search entities..." 
+                  className="bg-transparent text-sm outline-none w-full"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </div>
+
             <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-emerald-500 shrink-0">
                 <Settings size={22} />
             </div>
@@ -609,7 +682,12 @@ export default function PremiumAdmin() {
                 <div className="flex justify-between items-center mb-10">
                     <h3 className="text-2xl lg:text-3xl font-black">ORDERS HUB</h3>
                 </div>
-                <OrderList items={orders} onUpdate={updateOrderStatus} />
+                <OrderList items={orders.filter(o => 
+                  o.id.toString().includes(searchTerm) || 
+                  o.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  o.phone?.includes(searchTerm)
+                )} onUpdate={updateOrderStatus} />
+
               </motion.div>
             )}
 
@@ -670,7 +748,12 @@ export default function PremiumAdmin() {
                      </div>
                  </div>
                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
-                   {menuItems.map(item => (
+                    {menuItems.filter(i => 
+                      i.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      i.category_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      i.id.toString().includes(searchTerm)
+                    ).map(item => (
+
                      <div key={item.id} className="bg-white/5 rounded-3xl p-5 group hover:bg-white/10 transition-all border border-white/5 hover:border-emerald-500/20 relative">
                        <div className="aspect-video sm:aspect-square rounded-2xl overflow-hidden mb-5 relative">
                           <img src={!item.image_url ? 'https://via.placeholder.com/200' : (item.image_url.startsWith('http') ? item.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${item.image_url}`)} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
@@ -716,8 +799,12 @@ export default function PremiumAdmin() {
                     </button>
                  </div>
                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
-                   {menuItems.filter(item => item.category_name?.toLowerCase().includes('essential') || item.category_name?.toLowerCase().includes('grocery')).map(item => (
+                   {menuItems.filter(item => 
+                     (item.category_name?.toLowerCase().includes('essential') || item.category_name?.toLowerCase().includes('grocery')) &&
+                     (item.name?.toLowerCase().includes(searchTerm.toLowerCase()) || item.id.toString().includes(searchTerm))
+                   ).map(item => (
                      <div key={item.id} className="bg-white/5 rounded-3xl p-5 group hover:bg-white/10 transition-all border border-white/5 hover:border-emerald-500/20 relative">
+
                        <div className="aspect-video sm:aspect-square rounded-2xl overflow-hidden mb-5 relative">
                           <img src={!item.image_url ? 'https://via.placeholder.com/200' : (item.image_url.startsWith('http') ? item.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${item.image_url}`)} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                           <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black text-emerald-400 uppercase border border-white/10 italic">
@@ -1292,7 +1379,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                 >
                                     {formData.image_url ? (
                                         <>
-                                            <img src={formData.image_url.startsWith('http') ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                            <img src={(formData.image_url && formData.image_url.startsWith('http')) ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url || ''}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                 <span className="bg-black/60 px-4 py-2 rounded-xl text-[10px] font-black uppercase italic text-white backdrop-blur-md border border-white/10">Change Photo</span>
                                             </div>
@@ -1358,7 +1445,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                 >
                                     {formData.image_url ? (
                                         <>
-                                            <img src={formData.image_url.startsWith('http') ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                            <img src={(formData.image_url && formData.image_url.startsWith('http')) ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url || ''}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                 <span className="bg-black/60 px-4 py-2 rounded-xl text-[10px] font-black uppercase italic text-white backdrop-blur-md border border-white/10">Change Photo</span>
                                             </div>
@@ -1489,7 +1576,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                 >
                                     {formData.image_url ? (
                                         <>
-                                            <img src={formData.image_url.startsWith('http') ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
+                                            <img src={(formData.image_url && formData.image_url.startsWith('http')) ? formData.image_url : `${API.includes('quickcombo.in') ? LIVE_BACKEND : API}${formData.image_url || ''}`} alt="Preview" className="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity" />
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                 <span className="bg-black/60 px-4 py-2 rounded-xl text-[10px] font-black uppercase italic text-white backdrop-blur-md border border-white/10">Change Photo</span>
                                             </div>
@@ -1618,47 +1705,70 @@ function OrderList({ items, onUpdate, compact = false }: any) {
       <table className="w-full text-left border-separate border-spacing-y-4">
         <thead>
           <tr className="text-gray-600 text-[10px] font-black uppercase tracking-[0.3em] bg-transparent">
-            <th className="pb-2 px-6">Identity</th>
-            {!compact && <th className="pb-2 px-6">Customer Det</th>}
-            {!compact && <th className="pb-2 px-6">Subtotal</th>}
-            <th className="pb-2 px-6">Total Matrix</th>
-            <th className="pb-2 px-6">Protocol Status</th>
-            <th className="pb-2 px-6 text-right">System Action</th>
+            <th className="pb-2 px-6">Identity & Time</th>
+            {!compact && <th className="pb-2 px-6">Customer & Items</th>}
+            {!compact && <th className="pb-2 px-6">Notes</th>}
+            <th className="pb-2 px-6">Total</th>
+            <th className="pb-2 px-6">Status</th>
+            <th className="pb-2 px-6 text-right">Action</th>
           </tr>
         </thead>
         <tbody>
           {items.map((order: any) => (
             <tr key={order.id} className="bg-white/5 group transition-all relative">
-              <td className="py-6 px-6 rounded-l-[1.5rem] relative">
+              <td className="py-6 px-6 rounded-l-[1.5rem] relative align-top">
                   <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-emerald-500 rounded-r-lg opacity-0 group-hover:opacity-100 transition-all" />
                   <div className="font-black text-xl italic text-white/90">#QC{order.id.toString().padStart(4, '0')}</div>
-                  <div className="text-[10px] text-gray-500 font-bold mt-1">{new Date(order.created_at).toLocaleTimeString()}</div>
+                  <div className="text-[10px] text-gray-500 font-bold mt-1 uppercase tracking-tighter">
+                    {new Date(order.created_at).toLocaleDateString()} <br/>
+                    {new Date(order.created_at).toLocaleTimeString()}
+                  </div>
               </td>
               {!compact && (
-                  <td className="py-6 px-6">
-                    <div className="text-sm font-black uppercase italic">{order.user_name || 'GUEST_ENTITY'}</div>
-                    <div className="text-[10px] text-gray-500 font-mono">{order.user_email}</div>
+                  <td className="py-6 px-6 align-top max-w-[300px]">
+                    <div className="mb-4">
+                        <div className="text-sm font-black uppercase italic text-emerald-500">{order.user_name || 'GUEST'}</div>
+                        <div className="text-[10px] text-gray-400 font-mono">{order.user_phone}</div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Order Payload:</p>
+                        {order.items?.map((item: any, idx: number) => (
+                            <div key={idx} className="bg-white/5 p-2 rounded-lg border border-white/5">
+                                <div className="flex justify-between items-start gap-2">
+                                    <span className="text-[11px] font-bold text-white leading-tight">{item.quantity}x {item.name}</span>
+                                    <span className="text-[10px] font-black text-emerald-500/80 italic shrink-0">₹{item.price}</span>
+                                </div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase mt-1">📍 {item.restaurant_name}</div>
+                            </div>
+                        ))}
+                    </div>
                   </td>
               )}
               {!compact && (
-                  <td className="py-6 px-6 font-bold text-gray-400">₹{order.subtotal}</td>
+                  <td className="py-6 px-6 align-top max-w-[200px]">
+                    <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Instructions:</p>
+                    <div className="text-xs text-gray-400 leading-relaxed italic bg-white/5 p-3 rounded-xl border border-white/5 min-h-[60px]">
+                        {order.notes || 'No special requests provided.'}
+                    </div>
+                  </td>
               )}
-              <td className="py-6 px-6 font-black text-xl text-emerald-500 italic">₹{order.total}</td>
-              <td className="py-6 px-6">
-                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic ${
+              <td className="py-6 px-6 align-top font-black text-2xl text-emerald-500 italic">₹{order.total}</td>
+              <td className="py-6 px-6 align-top">
+                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic block text-center ${
                   order.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                  order.status === 'delivered' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_15px_#10b98122]' :
+                  order.status === 'delivered' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
                   order.status === 'cancelled' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
                   'bg-blue-500/10 text-blue-500 border-blue-500/20'
                 }`}>
                   {order.status.replace(/_/g, ' ')}
                 </span>
               </td>
-              <td className="py-6 px-6 rounded-r-[1.5rem] text-right">
+              <td className="py-6 px-6 rounded-r-[1.5rem] text-right align-top">
                 <select 
                   onChange={(e) => onUpdate(order.id, e.target.value)}
                   value={order.status}
-                  className="bg-black border-2 border-white/10 rounded-xl text-[10px] px-3 py-2 outline-none focus:border-emerald-500/50 transition-all cursor-pointer font-black uppercase italic"
+                  className="bg-black border-2 border-white/10 rounded-xl text-[10px] px-3 py-2 outline-none focus:border-emerald-500/50 transition-all cursor-pointer font-black uppercase italic w-full"
                 >
                   <option value="pending">PENDING</option>
                   <option value="confirmed">CONFIRMED</option>

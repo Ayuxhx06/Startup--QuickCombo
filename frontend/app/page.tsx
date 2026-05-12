@@ -146,7 +146,7 @@ export default function HomePage() {
                 <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
                 <input 
                   type="text"
-                  placeholder="Search for 'Pizza', 'Cigarettes', 'Milk'..."
+                  placeholder="Search for 'Pizza', 'Burgers', 'Milk'..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/5 transition-all font-medium placeholder:text-gray-600 shadow-xl"
@@ -221,11 +221,18 @@ export default function HomePage() {
 
       {/* Top Restaurants Section */}
       <section id="restaurants-section" className="px-4 mb-8 pt-4">
-        <h2 className="font-black text-xl mb-4">🌟 Top Restaurants</h2>
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+        <div className="flex items-center justify-between mb-4">
+           <h2 className="font-black text-xl">🌟 Top Restaurants</h2>
+           <Link href="/restaurants" className="text-green-500 text-sm font-semibold">See all</Link>
+        </div>
+        <div className="flex gap-4 pb-4 overflow-x-auto no-scrollbar scroll-smooth snap-x">
           {loading ? (
-            [...Array(3)].map((_, i) => (
-              <div key={i} className="min-w-[260px] h-[200px] rounded-2xl shimmer snap-center" />
+            [...Array(2)].map((_, groupIndex) => (
+              <div key={groupIndex} className="min-w-[85vw] sm:min-w-[320px] grid grid-cols-2 grid-rows-2 gap-3 snap-center shrink-0">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="w-full aspect-[4/3] rounded-[14px] shimmer" />
+                ))}
+              </div>
             ))
           ) : filteredRestaurants.length === 0 ? (
             <div className="w-full py-10 text-center flex flex-col items-center gap-3">
@@ -234,45 +241,49 @@ export default function HomePage() {
                <button onClick={() => setSearch('')} className="text-green-500 text-xs font-black uppercase">Clear Search</button>
             </div>
           ) : (
-            filteredRestaurants.map((rest, i) => (
-              <motion.div
-                key={rest.id}
-                onClick={() => router.push(`/menu?restaurant=${rest.id}`)}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="min-w-[280px] sm:min-w-[320px] rounded-3xl overflow-hidden glass hover:border-green-500/40 transition-all snap-center group cursor-pointer"
-              >
-                <div className="h-[140px] relative overflow-hidden">
-                  <Image 
-                    src={rest.image_url.startsWith('http') ? rest.image_url : `${API}${rest.image_url}`} 
-                    alt={rest.name} 
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110" 
-                    sizes="(max-width: 768px) 100vw, 320px"
-                  />
-                  <div className="absolute top-0 right-0 p-3">
-                    <div className="glass px-2.5 py-1 rounded-full text-xs font-black flex items-center gap-1">
-                      <Star size={12} className="text-green-400 fill-green-400" /> {rest.rating}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 relative">
-                  <h3 className="font-bold text-lg leading-tight mb-1 truncate">{rest.name}</h3>
-                  <p className="text-gray-400 text-xs truncate mb-2">{rest.cuisines}</p>
-                  <div className="flex items-center gap-3 text-xs font-semibold text-gray-300">
-                    <span className="flex items-center gap-1"><Clock size={12} className="text-green-400" /> {rest.delivery_time} min</span>
-                  </div>
-                  
-                  {/* Menu Button Overlay */}
-                  <button 
-                    onClick={(e) => handleOpenMenu(e, rest)}
-                    className="absolute bottom-4 right-4 bg-green-500 text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-green-400 transition-all shadow-lg z-20"
+            Array.from({ length: Math.ceil(filteredRestaurants.length / 4) }, (_, i) => 
+              filteredRestaurants.slice(i * 4, i * 4 + 4)
+            ).map((group, groupIndex) => (
+              <div key={groupIndex} className="min-w-[85vw] sm:min-w-[320px] grid grid-cols-2 grid-rows-2 gap-3 snap-center shrink-0">
+                {group.map((rest, i) => (
+                  <motion.div
+                    key={rest.id}
+                    whileTap={{ scale: 0.96 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: (groupIndex * 4 + i) * 0.05 }}
+                    onClick={() => router.push(`/menu?restaurant=${rest.id}`)}
+                    className="w-full bg-[#1a1a1a] rounded-[14px] overflow-hidden shadow-sm transition-all cursor-pointer group flex flex-col"
                   >
-                    VIEW MENU
-                  </button>
-                </div>
-              </motion.div>
+                    <div className="relative h-[100px] w-full overflow-hidden">
+                      <Image 
+                        src={(rest.image_url && rest.image_url.startsWith('http')) ? rest.image_url : `${API}${rest.image_url || ''}`} 
+                        alt={rest.name} 
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                        sizes="(max-width: 768px) 50vw, 300px"
+                      />
+                      {/* Overlay for readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#121212]/90 via-transparent to-transparent pointer-events-none" />
+
+                      {/* Rating Badge (Bottom Left) */}
+                      <div className="absolute bottom-2 left-2 bg-green-600/95 backdrop-blur-sm text-white px-1.5 py-0.5 rounded-full text-[10px] font-black flex items-center gap-0.5 shadow-sm">
+                        <Star size={10} className="fill-white" /> {rest.rating}
+                      </div>
+                    </div>
+                    
+                    <div className="p-2.5 flex flex-col gap-0.5">
+                      <h3 className="font-bold text-[13px] leading-tight text-white truncate">{rest.name}</h3>
+                      <p className="text-[#9ca3af] text-[10px] truncate">{rest.cuisines}</p>
+                      <div className="flex items-center gap-1 mt-0.5 text-[#9ca3af] text-[10px] font-medium">
+                        <span>⏱ {rest.delivery_time}–{rest.delivery_time + 5} min</span>
+                        <span className="mx-0.5">•</span>
+                        <span>1.2 km</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             ))
           )}
         </div>
@@ -335,7 +346,7 @@ export default function HomePage() {
             <div className="flex items-center gap-4">
               <div className="text-3xl">🛒</div>
               <div>
-                <div className="font-bold">Cigarettes, Chips, Drinks</div>
+                <div className="font-bold">Chips, Drinks, Snacks</div>
                 <div className="text-gray-500 text-sm">Daily essentials delivered fast</div>
               </div>
             </div>

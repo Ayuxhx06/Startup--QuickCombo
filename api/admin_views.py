@@ -460,8 +460,8 @@ def admin_bulk_import(request):
 
         with transaction.atomic():
             for row in reader:
-                # Normalize headers: lowcase everything and strip junk
-                raw_row = {str(k).lower().strip(): str(v).strip() for k, v in row.items() if k}
+                # Normalize headers: lowcase everything and strip junk. Handle None values from DictReader.
+                raw_row = {str(k).lower().strip(): str(v or '').strip() for k, v in row.items() if k}
                 
                 # Apply Aliases & Fuzzy Matching
                 clean_row = {}
@@ -499,7 +499,7 @@ def admin_bulk_import(request):
                                 'rating': float(clean_row.get('rating', 4.0) or 4.0),
                                 'delivery_time': int(clean_row.get('delivery_time', 30) or 30),
                                 'cuisines': clean_row.get('cuisines', 'Various') or 'Various',
-                                'image_url': clean_row.get('image_url', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'),
+                                'image_url': clean_row.get('image_url', '') or 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
                                 'is_featured': str(clean_row.get('is_featured', 'false')).lower() == 'true',
                             }
                         )
@@ -560,20 +560,29 @@ def admin_bulk_import(request):
                         except:
                             price_val = 0.0
 
+                        # Use a more specific filter to avoid updating items with same name in different restaurants
+                        # We also include category_id in the lookup to be even more specific if provided
+                        lookup_params = {
+                            'name': item_name,
+                            'restaurant_id': int(r_id) if r_id else None
+                        }
+                        
+                        defaults_params = {
+                            'description': description,
+                            'price': price_val,
+                            'image_url': clean_row.get('image_url', '') or '',
+                            'is_veg': str(clean_row.get('is_veg', 'true')).lower() not in ['false', '0', 'no', 'non-veg', 'nv'],
+                            'rating': float(clean_row.get('rating', 4.5) or 4.5),
+                            'prep_time': int(clean_row.get('prep_time', 25) or 25),
+                            'category_id': int(c_id),
+                            'is_featured': str(clean_row.get('is_featured', 'false')).lower() == 'true',
+                            'is_available': str(clean_row.get('is_available', 'true')).lower() not in ['false', '0', 'no'],
+                        }
+
+                        # Atomic update_or_create to handle potential race conditions or duplicates
                         _, created = MenuItem.objects.update_or_create(
-                            name=item_name,
-                            defaults={
-                                'description': description,
-                                'price': price_val,
-                                'image_url': clean_row.get('image_url', ''),
-                                'is_veg': str(clean_row.get('is_veg', 'true')).lower() not in ['false', '0', 'no', 'non-veg', 'nv'],
-                                'rating': float(clean_row.get('rating', 4.5) or 4.5),
-                                'prep_time': int(clean_row.get('prep_time', 25) or 25),
-                                'category_id': int(c_id),
-                                'restaurant_id': int(r_id) if r_id else None,
-                                'is_featured': str(clean_row.get('is_featured', 'false')).lower() == 'true',
-                                'is_available': str(clean_row.get('is_available', 'true')).lower() not in ['false', '0', 'no'],
-                            }
+                            **lookup_params,
+                            defaults=defaults_params
                         )
                         if created:
                             created_count += 1
@@ -622,16 +631,41 @@ def admin_version(request):
 
 @api_view(['POST'])
 def admin_toggle_site(request):
-    """Update global site operational status."""
+    """Update global site operational status and ordering status."""
     if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
         return Response({'error': 'Unauthorized'}, status=401)
     
-    status_val = request.data.get('online', True)
-    config, _ = GlobalConfig.objects.get_or_create(key='site_online', defaults={'value': 'true'})
-    config.value = 'true' if status_val else 'false'
-    config.save()
+    # Toggle Site Online
+    if 'online' in request.data:
+        status_val = request.data.get('online', True)
+        config, _ = GlobalConfig.objects.get_or_create(key='site_online', defaults={'value': 'true'})
+        config.value = 'true' if status_val else 'false'
+        config.save()
     
-    return Response({'online': config.value == 'true'})
+    # Toggle Orders Enabled
+    if 'orders_enabled' in request.data:
+        orders_val = request.data.get('orders_enabled', True)
+        config, _ = GlobalConfig.objects.get_or_create(key='orders_enabled', defaults={'value': 'true'})
+        config.value = 'true' if orders_val else 'false'
+        config.save()
+
+    # Update Orders Disabled Message
+    if 'orders_disabled_message' in request.data:
+        msg_val = request.data.get('orders_disabled_message', '')
+        config, _ = GlobalConfig.objects.get_or_create(key='orders_disabled_message', defaults={'value': 'We are currently not accepting orders. Please try again later.'})
+        config.value = msg_val
+        config.save()
+    
+    # Return full current config
+    site_online = GlobalConfig.objects.filter(key='site_online').first()
+    orders_enabled = GlobalConfig.objects.filter(key='orders_enabled').first()
+    orders_disabled_message = GlobalConfig.objects.filter(key='orders_disabled_message').first()
+
+    return Response({
+        'online': site_online.value == 'true' if site_online else True,
+        'orders_enabled': orders_enabled.value == 'true' if orders_enabled else True,
+        'orders_disabled_message': orders_disabled_message.value if orders_disabled_message else "We are currently not accepting orders. Please try again later."
+    })
 
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def admin_combos(request):

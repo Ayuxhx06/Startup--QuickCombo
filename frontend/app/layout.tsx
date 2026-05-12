@@ -46,35 +46,41 @@ export const metadata: Metadata = {
   },
 };
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "732009088656-32g92jcl20iubm821262d1u5053n96m2.apps.googleusercontent.com"; // Placeholder
+
   return (
     <html lang="en" className={jakarta.variable} data-scroll-behavior="smooth">
       <body className="bg-black text-white min-h-screen font-jakarta antialiased">
-        <AuthProvider>
-          <CartProvider>
-            <Navbar />
-            <MaintenanceGuard>
-              <main className="pb-20 min-h-screen">{children}</main>
-            </MaintenanceGuard>
-            <BottomNav />
-            <StickyCart />
-            <FloatingTracker />
-            <Toaster
-              position="top-center"
-              toastOptions={{
-                style: {
-                  background: '#111',
-                  color: '#fff',
-                  border: '1px solid #22c55e33',
-                  borderRadius: '12px',
-                  fontFamily: 'var(--font-jakarta)',
-                },
-                success: { iconTheme: { primary: '#22c55e', secondary: '#000' } },
-                error: { iconTheme: { primary: '#ef4444', secondary: '#000' } },
-              }}
-            />
-          </CartProvider>
-        </AuthProvider>
+        <GoogleOAuthProvider clientId={googleClientId}>
+          <AuthProvider>
+            <CartProvider>
+              <Navbar />
+              <MaintenanceGuard>
+                <main className="pb-20 min-h-screen">{children}</main>
+              </MaintenanceGuard>
+              <BottomNav />
+              <StickyCart />
+              <FloatingTracker />
+              <Toaster
+                position="top-center"
+                toastOptions={{
+                  style: {
+                    background: '#111',
+                    color: '#fff',
+                    border: '1px solid #22c55e33',
+                    borderRadius: '12px',
+                    fontFamily: 'var(--font-jakarta)',
+                  },
+                  success: { iconTheme: { primary: '#22c55e', secondary: '#000' } },
+                  error: { iconTheme: { primary: '#ef4444', secondary: '#000' } },
+                }}
+              />
+            </CartProvider>
+          </AuthProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

@@ -47,7 +47,8 @@ function LocationMarker({ lat, lng, onSelect }: ManualMapProps) {
 }
 
 export default function ManualMap({ lat, lng, onSelect }: ManualMapProps) {
-  const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_KEY || '';
+  const tileUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${mapboxToken}`;
   
   return (
     <div className="w-full h-full">

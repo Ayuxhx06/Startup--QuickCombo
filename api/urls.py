@@ -22,6 +22,7 @@ urlpatterns = [
     # Auth
     path('auth/send-otp/', views.send_otp),
     path('auth/verify-otp/', views.verify_otp),
+    path('auth/google/', views.google_login),
 
     # User
     path('user/profile/', views.user_profile),
@@ -44,6 +45,7 @@ urlpatterns = [
     path('orders/place/', views.place_order),
     path('orders/<int:order_id>/', views.order_detail),
     path('orders/<int:order_id>/tracking/', views.order_tracking),
+    path('orders/<int:order_id>/update-location/', views.update_rider_location),
     path('debug-db/', views.debug_db),
     path('check-config/', views.check_config),
     path('config/', views.get_site_config),

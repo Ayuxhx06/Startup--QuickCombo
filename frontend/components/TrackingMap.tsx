@@ -1,26 +1,27 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { useEffect, useState, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix typical Leaflet icon issues in Next.js
+// Premium Icons
 const iconRider = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3202/3202926.png', // Rider icon
-  iconSize: [40, 40],
-  iconAnchor: [20, 20],
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448601.png', // Delivery bike icon
+  iconSize: [45, 45],
+  iconAnchor: [22, 22],
   popupAnchor: [0, -20],
+  className: 'rider-marker'
 });
 
 const iconHome = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/2619/2619089.png', // Home/Location icon
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1239/1239525.png', // Modern home icon
   iconSize: [36, 36],
   iconAnchor: [18, 36],
   popupAnchor: [0, -36],
 });
 
 const iconShop = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3081/3081840.png', // Shop icon
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3144/3144467.png', // Modern shop icon
   iconSize: [40, 40],
   iconAnchor: [20, 40],
   popupAnchor: [0, -40],
@@ -39,13 +40,44 @@ interface TrackingMapProps {
 function MapUpdater({ bounds }: { bounds: L.LatLngBounds }) {
   const map = useMap();
   useEffect(() => {
-    map.fitBounds(bounds, { padding: [40, 40], animate: true, duration: 1 });
+    map.fitBounds(bounds, { padding: [80, 80], animate: true, duration: 1.5 });
   }, [map, bounds]);
   return null;
 }
 
 export default function TrackingMap({ riderLat, riderLng, deliveryLat, deliveryLng, restaurantLat, restaurantLng }: TrackingMapProps) {
   const [bounds, setBounds] = useState<L.LatLngBounds | null>(null);
+  const [animatedPos, setAnimatedPos] = useState<L.LatLngTuple>([riderLat, riderLng]);
+  const prevPosRef = useRef<L.LatLngTuple>([riderLat, riderLng]);
+
+  // Smooth Interpolation Logic
+  useEffect(() => {
+    const startPos = prevPosRef.current;
+    const endPos: L.LatLngTuple = [riderLat, riderLng];
+    
+    if (startPos[0] === endPos[0] && startPos[1] === endPos[1]) return;
+
+    let startTime: number | null = null;
+    const duration = 2000; // 2 seconds for smooth slide
+
+    const animate = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        
+        const lat = startPos[0] + (endPos[0] - startPos[0]) * progress;
+        const lng = startPos[1] + (endPos[1] - startPos[1]) * progress;
+        
+        setAnimatedPos([lat, lng]);
+        
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            prevPosRef.current = endPos;
+        }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [riderLat, riderLng]);
 
   useEffect(() => {
     if (riderLat && riderLng && deliveryLat && deliveryLng) {
@@ -59,9 +91,9 @@ export default function TrackingMap({ riderLat, riderLng, deliveryLat, deliveryL
     }
   }, [riderLat, riderLng, deliveryLat, deliveryLng, restaurantLat, restaurantLng]);
 
-  // Dark mode map tiles
-  const tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-  const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_KEY || '';
+  const tileUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/256/{z}/{x}/{y}@2x?access_token=${mapboxToken}`;
+  const attribution = 'Map data &copy; <a href="https://www.mapbox.com/">Mapbox</a>';
 
   if (!bounds) return null;
 
@@ -71,38 +103,56 @@ export default function TrackingMap({ riderLat, riderLng, deliveryLat, deliveryL
         bounds={bounds} 
         zoomControl={false}
         className="w-full h-full"
-        style={{ background: '#0a0a0a' }}
+        style={{ background: '#f8f8f8' }}
       >
         <TileLayer url={tileUrl} attribution={attribution} />
         
-        <Marker position={[deliveryLat, deliveryLng]} icon={iconHome}>
-          <Popup className="qc-popup">Delivery Location</Popup>
-        </Marker>
+        <Marker position={[deliveryLat, deliveryLng]} icon={iconHome} />
         
         {restaurantLat && restaurantLng && (
-          <Marker position={[restaurantLat, restaurantLng]} icon={iconShop}>
-            <Popup className="qc-popup">Restaurant</Popup>
-          </Marker>
+          <Marker position={[restaurantLat, restaurantLng]} icon={iconShop} />
         )}
         
         {/* Animated Rider Marker */}
-        <Marker position={[riderLat, riderLng]} icon={iconRider}>
-          <Popup className="qc-popup">Rider is here</Popup>
+        <Marker position={animatedPos} icon={iconRider}>
+          <Popup className="qc-popup">Dinesh is here</Popup>
         </Marker>
+
+        {/* Route Lines */}
+        {restaurantLat && restaurantLng && (
+          <>
+            <Polyline 
+              positions={[[restaurantLat, restaurantLng], [deliveryLat, deliveryLng]]} 
+              pathOptions={{ color: '#27A152', weight: 4, dashArray: '10, 15', opacity: 0.2 }} 
+            />
+            <Polyline 
+              positions={[[restaurantLat, restaurantLng], animatedPos]} 
+              pathOptions={{ color: '#27A152', weight: 6, opacity: 0.8 }} 
+            />
+          </>
+        )}
         
         <MapUpdater bounds={bounds} />
       </MapContainer>
       
-      {/* CSS overrides for dark mode map popups */}
       <style jsx global>{`
-        .leaflet-popup-content-wrapper { background: #1a1a1a; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; }
-        .leaflet-popup-tip { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); }
-        .leaflet-container a { color: #22c55e; }
-        .leaflet-control-attribution { background: rgba(0,0,0,0.5) !important; color: #666 !important; }
-        
-        /* Pulse animation for rider */
-        .leaflet-marker-icon[src*="Rider"] {
-          filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
+        .leaflet-container { font-family: inherit; }
+        .rider-marker {
+            filter: drop-shadow(0 0 10px rgba(39, 161, 82, 0.4));
+            transition: transform 0.2s linear;
+        }
+        .rider-marker:after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(39, 161, 82, 0.2);
+            border-radius: 50%;
+            animation: pulse-marker 2s infinite;
+        }
+        @keyframes pulse-marker {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
         }
       `}</style>
     </div>

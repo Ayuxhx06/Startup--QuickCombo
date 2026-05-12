@@ -1,0 +1,714 @@
+ID,Name,Price,Category,Restaurant,Is Veg,Description,Rating,Prep Time
+5342,Pepper Chicken,170.00,Chinese,CHETTINAD,No,,4.5,25
+4720,Muskmelon Milkshake,95.00,Beverages,Coffee House,Yes,,4.5,25
+4198,Daal Fry,150.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5246,Paneer Tikka,200.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5108,Chicken Sandwich Combo,150.00,Chinese,QUALITY,No,,4.5,25
+4676,Paneer Porotta Roll,105.00,Veg,Coffee House,Yes,,4.5,25
+5148,Veg Pan Fried Momos,110.00,Chinese,QUALITY,Yes,,4.5,25
+5173,Samosa Chat,90.00,Fast-Food,QUALITY,Yes,,4.5,25
+5267,Garlic Chicken,180.00,Chinese,CHETTINAD,No,,4.5,25
+4204,Paneer Kolhapuri,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5112,Veg Burger Double Decker,160.00,Fast-Food,QUALITY,Yes,,4.5,25
+5577,Coke,20.00,Essentials,N/A,Yes,,4.2,0
+5443,Stuffed Naan (Non Veg),100.00,North-Indian,CHETTINAD,No,,4.5,25
+5077,Egg Bhurji,90.00,Other,CHETTINAD,No,,4.5,25
+5076,Egg Masala,140.00,Other,CHETTINAD,No,,4.5,25
+5164,Paneer 65,160.00,Chinese,CHETTINAD,Yes,,4.5,25
+5427,Malabar Fish Curry,210.00,South-Indian,CHETTINAD,No,,4.5,25
+5463,Chicken 65 (Boneless),170.00,Chinese,CHETTINAD,No,,4.5,25
+5465,Chicken Drumstick (5 pcs),170.00,North-Indian,CHETTINAD,No,,4.5,25
+5425,Kadai Fish,210.00,North-Indian,CHETTINAD,No,,4.5,25
+5068,Mushroom Pepper,210.00,Fast-Food,QUALITY,Yes,,4.5,25
+4666,Smiley Fries (6pcs),90.00,Others,Coffee House,Yes,,4.5,25
+5189,Chicken Cutlet (1 plate 2pcs),110.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5124,Egg Maggi,80.00,Chinese,QUALITY,No,,4.5,25
+5201,Papaya Juice,90.00,Beverages,QUALITY,Yes,,4.5,25
+5070,Baigan Fry,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+4657,Chees Toast,65.00,Veg,Coffee House,Yes,,4.5,25
+5208,Strawberry Milk Shake,90.00,Beverages,QUALITY,Yes,,4.5,25
+4203,Paneer Dopyaza,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5106,Veg Sandwich Combo,130.00,Chinese,QUALITY,Yes,,4.5,25
+5213,Papaya Milk Shake,90.00,Beverages,QUALITY,Yes,,4.5,25
+5336,Chicken Choupsey,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4126,Lolipop Chicken Biryani,230.00,Non-Veg Biryani,Blueberry Resturant,No,,4.5,25
+5471,Chettinad Spl Chicken Biryani,180.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5143,Chilly Chicken Roll,110.00,Italian,QUALITY,No,,4.5,25
+4742,Kit Kat Milkshake,125.00,Beverages,Coffee House,Yes,,4.5,25
+5130,Quality Special Lassi,110.00,Beverages,QUALITY,Yes,,4.5,25
+4696,Badam Milk,65.00,Beverages,Coffee House,Yes,,4.5,25
+4730,Avocado Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+4131,Sez. Chicken Momo,140.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+4121,Hydrabadi Kuska,130.00,Non-Veg Biryani,Blueberry Resturant,Yes,,4.5,25
+4133,Chilli Veg Momo,130.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4672,Veg Maggi,85.00,Veg,Coffee House,Yes,,4.5,25
+5062,Paneer Masala,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+4716,Mango Lime,55.00,Beverages,Coffee House,Yes,,4.5,25
+4719,Chikku Milkshake,95.00,Beverages,Coffee House,Yes,,4.5,25
+5263,Crispy Fish Finger (3pcs),230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5276,Ladybird Chicken,300.00,Chinese,QUALITY,No,,4.5,25
+5606,Butter Naan,55.00,Others,Blueberry Resturant,Yes,,4.2,10
+5450,Tandoori Chicken Half,240.00,North-Indian,CHETTINAD,No,,4.5,25
+5423,Steam Rice,100.00,Biryani,CHETTINAD,Yes,,4.5,25
+5381,Chettinad Chicken,170.00,South-Indian,CHETTINAD,No,,4.5,25
+5459,Reshmi Kabab (6 pcs),200.00,North-Indian,CHETTINAD,Yes,,4.5,25
+4715,Grape Lime,55.00,Beverages,Coffee House,Yes,,4.5,25
+4145,Ginger Paneer,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5150,Paneer Steam Momos,120.00,Chinese,QUALITY,Yes,,4.5,25
+5058,Aloo Dum,140.00,North-Indian,CHETTINAD,Yes,,4.5,25
+4025,TANDOORI CHICKEN QARTER,160.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+4771,Mixed Juice,95.00,Beverages,Coffee House,Yes,,4.5,25
+5439,Pudina Paratha,65.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5440,Lachha Paratha,70.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5334,Chicken Chattinad Boneless,240.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4712,Jaljeera Lime,55.00,Beverages,Coffee House,Yes,,4.5,25
+5436,Masala Kulcha,70.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5462,Chicken 65 (Bone),160.00,Chinese,CHETTINAD,No,,4.5,25
+5467,Prawn 65,210.00,Chinese,CHETTINAD,No,,4.5,25
+5119,Plain Maggi,70.00,Biryani,QUALITY,Yes,,4.5,25
+5853,Nutella Brownie,120.00,Desserts,ZEEZA,Yes,,4.5,25
+5291,Prawn Chopsuey,230.00,Chinese,QUALITY,No,,4.5,25
+5371,Dal Tadka,120.00,North-Indian,CHETTINAD,Yes,,4.5,25
+4705,Mint Soda,65.00,Beverages,Coffee House,Yes,,4.5,25
+5270,Sesame Chicken,230.00,Chinese,QUALITY,No,,4.5,25
+5207,Fruit Lime,70.00,Beverages,QUALITY,Yes,,4.5,25
+4710,Fresh Lime,45.00,Beverages,Coffee House,Yes,,4.5,25
+5580,winkies Marble cake (purple),30.00,Essentials,N/A,Yes,,4.2,20
+5205,Pineapple Lime,70.00,Beverages,QUALITY,Yes,,4.5,25
+5421,Mushroom Pulao,130.00,Biryani,CHETTINAD,Yes,,4.5,25
+5432,Butter Roti,60.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5451,Tandoori Chicken Quarter,150.00,North-Indian,CHETTINAD,No,,4.5,25
+5282,Ginger Mushroom,160.00,Chinese,CHETTINAD,Yes,,4.5,25
+5410,Veg Rice/Noodles,120.00,Biryani,CHETTINAD,Yes,,4.5,25
+5413,Veg Pulao,140.00,Biryani,CHETTINAD,Yes,,4.5,25
+4189,Veg Kolhapuri,140.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5360,Chicken Cheese Roll,110.00,Fast-Food,CHETTINAD,No,,4.5,25
+5385,Chicken Handi,170.00,North-Indian,CHETTINAD,No,,4.5,25
+5418,Cashew Nut Pulao,140.00,Biryani,CHETTINAD,Yes,,4.5,25
+5098,Veg Corn Club Sandwich,120.00,Fast-Food,QUALITY,Yes,,4.5,25
+5466,Andhra Chicken 65,180.00,Chinese,CHETTINAD,No,,4.5,25
+5346,Chicken Bhurji,220.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5454,Tangdi Kabab (2 pcs),200.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5442,Garlic Naan,70.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5163,Veg Nuggets,120.00,Fast-Food,QUALITY,Yes,,4.5,25
+4784,Butter Scotch Shake,115.00,Beverages,Coffee House,Yes,,4.5,25
+4723,Guava Milkshake,95.00,Beverages,Coffee House,Yes,,4.5,25
+5838,Hot Chocolate,130.00,Desserts,ZEEZA,Yes,,4.5,25
+5420,Gobi Pulao,130.00,Biryani,CHETTINAD,Yes,,4.5,25
+5343,Chicken 65,220.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5084,Sweet Corn Chicken Soup,110.00,Chinese,QUALITY,No,,4.5,25
+4684,White Sauce Chicken Pasta,205.00,Non-Veg,Coffee House,No,,4.5,25
+5121,Mushroom Maggi,90.00,Biryani,QUALITY,Yes,,4.5,25
+4141,Chilli Paneer,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5171,Chicken Lolly Pop (4pcs),160.00,North-Indian,QUALITY,No,,4.5,25
+5204,Strawberry Lime,70.00,Beverages,QUALITY,Yes,,4.5,25
+5560,Lays (Wafer Chips),20.00,Essentials,N/A,Yes,,4.2,20
+5407,Mixed Szechuan Rice,220.00,Chinese,CHETTINAD,Yes,,4.5,25
+4748,Jack Fruit Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+5072,Mix Veg,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+4191,Veg Kurma,140.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5126,Sp Chicken Maggi,100.00,Chinese,QUALITY,No,,4.5,25
+5457,Chicken Tikka (6 pcs),180.00,North-Indian,CHETTINAD,No,,4.5,25
+5337,Chicken Kolhapuri,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5384,Chicken Punjabi,180.00,North-Indian,CHETTINAD,No,,4.5,25
+5593,RED BULL YELLOW EDITION,125.00,Essentials,N/A,Yes,,4.2,20
+4735,Sharjah Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+5109,Chicken Corn Egg Jumbo,170.00,Chinese,QUALITY,No,,4.5,25
+4728,Strawberry Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+5133,Complan / Horlicks,50.00,Chinese,QUALITY,Yes,,4.5,25
+5460,Fish Tikka,220.00,North-Indian,CHETTINAD,No,,4.5,25
+4700,Orange Mojito,85.00,Beverages,Coffee House,Yes,,4.5,25
+4682,Red Sauce Chicken Pastha,225.00,Non-Veg,Coffee House,No,,4.5,25
+4655,Chees Bread Omlet,85.00,Non-Veg,Coffee House,Yes,,4.5,25
+5216,Vanilla Milk Shake,100.00,Beverages,QUALITY,Yes,,4.5,25
+5178,Kallal Chat,100.00,Others,QUALITY,Yes,,4.5,25
+5430,Prawn Chettinad,210.00,South-Indian,CHETTINAD,No,,4.5,25
+4138,Honey Chilli Veg Momo,130.00,Chinese,Blueberry Resturant,Yes,,4.5,25
+4673,Cheese Maggi,85.00,Veg,Coffee House,Yes,,4.5,25
+4128,Chicken Manchurian Momo,140.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5469,Gobi 65,140.00,Chinese,CHETTINAD,Yes,,4.5,25
+4200,Matar Paneer,140.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5194,Mango Juice,100.00,Beverages,QUALITY,Yes,,4.5,25
+4733,Kiwi Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+4744,Brownie Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+5550,Uncle Chipps (spicy treat),48.00,Essentials,N/A,Yes,,4.2,20
+5146,Chicken Kabab Roll,120.00,Chinese,QUALITY,No,,4.5,25
+4662,White Sauce Pastha,155.00,Veg,Coffee House,Yes,,4.5,25
+4667,French Fries (L),115.00,Others,Coffee House,Yes,,4.5,25
+4718,Pappaya Milkshake,95.00,Beverages,Coffee House,Yes,,4.5,25
+5242,Ajwain Chicken (Quarter),160.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5257,890 Chicken (Half),270.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5265,Fish with Lemon Butter Sauce (4pcs),330.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5203,Ginger Lime,70.00,Beverages,QUALITY,Yes,,4.5,25
+5252,Sp. Shawarma Plate,230.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5470,Mushroom 65,150.00,Chinese,CHETTINAD,Yes,,4.5,25
+5317,Sz Gold Fried Rice / Noodles,200.00,Chinese,QUALITY,Yes,,4.5,25
+5229,Lollipop Chicken Biryani,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5149,Veg Szechwan Momos,120.00,Chinese,QUALITY,Yes,,4.5,25
+5586,Croissant Vanilla creme,20.00,Essentials,N/A,Yes,,4.2,0
+5100,Mushroom Paneer Club Sandwich,130.00,Fast-Food,QUALITY,Yes,,4.5,25
+5180,Tikka Chat,110.00,Others,QUALITY,Yes,,4.5,25
+4193,Aloo Jeera Fry,140.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4207,Paneer Bhurji,170.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4134,Veg Manchurian Momo,130.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4679,Chicken Sandwich,100.00,Non-Veg,Coffee House,No,,4.5,25
+4738,Water Melon Milkshake,85.00,Beverages,Coffee House,Yes,,4.5,25
+4747,Tender Coconut Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+5105,Chicken Paneer Corn Egg Club Sandwich,150.00,Chinese,QUALITY,No,,4.5,25
+4726,Banana Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+5101,Aloo Paneer Club Sandwich,130.00,Fast-Food,QUALITY,Yes,,4.5,25
+5309,Sz Chicken Fried Rice / Noodles,190.00,Chinese,QUALITY,No,,4.5,25
+5315,Shanghai Chicken Fried Rice,230.00,Chinese,QUALITY,No,,4.5,25
+5303,Sz Egg Fried Rice / Noodles,170.00,Chinese,QUALITY,No,,4.5,25
+5488,CHICKEN NOODLES,200.00,Chinese,TIBETAN,No,,4.2,25
+4699,Blue Curacao Mojito,85.00,Beverages,Coffee House,Yes,,4.5,25
+4195,Green Peas Masala,130.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5367,Veg Szechuan Chopsey,150.00,Other,CHETTINAD,Yes,,4.5,25
+4129,Garlic Chicken Momo,140.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+4143,Dragon Paneer,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5859,Ultimate Burger Combo,299.00,Combos,N/A,No,Double cheese burger + Large fries + Coke,4.8,20
+5860,Veggie Supreme Pizza,349.00,Food,N/A,Yes,"Loaded with mushrooms, olives, bell peppers and extra cheese",4.6,25
+5861,Spicy Chicken Wings,199.00,Snacks,N/A,No,6 pieces of hot wings with blue cheese dip,4.7,15
+5862,Classic Cold Coffee,149.00,Beverages,N/A,Yes,Thick and creamy cold coffee with ice cream,4.9,10
+5863,Lays Magic Masala,40.00,Essentials,N/A,Yes,Big pack,4.5,5
+5864,Margherita Pizza Combo,249.00,Combos,N/A,Yes,Classic margherita + Garlic Bread + Pepsi,4.5,20
+5865,Dark Chocolate Shake,169.00,Beverages,N/A,Yes,Rich Belgian dark chocolate shake,4.8,10
+5610,Non Veg Rice Combo,250.00,Chinese,TIBETAN,Yes,,4.2,20
+5858,Blueberry Cheesecake,240.00,Desserts,ZEEZA,Yes,,4.5,25
+5428,Prawn Pepper Masala,210.00,Other,CHETTINAD,No,,4.5,25
+5378,Kadai Veg,140.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5447,Egg Fry,140.00,Other,CHETTINAD,No,,4.5,25
+4707,SP Lime Soda,65.00,Beverages,Coffee House,Yes,,4.5,25
+4156,Chilli Potato,150.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5296,Chicken 65 Boneless (6pcs),220.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5568,cornitos nacho (korean chilli),35.00,Essentials,N/A,Yes,,4.2,20
+5845,Rosemilk Tresleches,200.00,Desserts,ZEEZA,Yes,,4.5,25
+5286,Prawn Masala,200.00,Other,CHETTINAD,No,,4.5,25
+5411,Paneer Rice/Noodles,140.00,Biryani,CHETTINAD,Yes,,4.5,25
+5364,Chicken American Chopsey,160.00,North-Indian,CHETTINAD,No,,4.5,25
+5456,Badami Kabab,200.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5446,Egg Chettinad,150.00,South-Indian,CHETTINAD,No,,4.5,25
+5347,Lemon Chicken,220.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4706,Grape Soda,65.00,Beverages,Coffee House,Yes,,4.5,25
+5566,Paper Boat swing Zesty Pomegranate juice,20.00,Essentials,N/A,Yes,,4.2,0
+5595,red bull red edition,125.00,Essentials,N/A,Yes,,4.2,20
+5415,Veg Pulao Special,140.00,Biryani,CHETTINAD,Yes,,4.5,25
+5576,Winkies Love Bite Cake,20.00,Essentials,N/A,Yes,,4.2,20
+5841,Authentic Tiramisu,220.00,Desserts,ZEEZA,Yes,,4.5,25
+5372,Dal B Fry,120.00,North-Indian,CHETTINAD,Yes,,4.5,25
+4148,Mushroom Manchurian,170.00,Chinese,CHETTINAD,Yes,,4.5,25
+5239,Afghani Chicken (Quarter),160.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5266,Chilly Chicken,220.00,Chinese,QUALITY,No,,4.5,25
+5211,Apple Milk Shake,90.00,Beverages,QUALITY,Yes,,4.5,25
+5383,Chicken Hyderabadi,170.00,Biryani,CHETTINAD,No,,4.5,25
+5605,Chicken Burger,130.00,Fast-Food,Coffee House,Yes,,4.2,15
+4397,Chennai 65 Biryani,180.00,Non-Veg Biryani,Blueberry Resturant,Yes,,4.5,25
+5104,Quality Paneer Club Sandwich,140.00,Chinese,QUALITY,Yes,,4.5,25
+4675,Paneer Chapathi Roll,95.00,Veg,Coffee House,Yes,,4.5,25
+5200,Guava Juice,90.00,Beverages,QUALITY,Yes,,4.5,25
+5117,Chicken Burger Combo,190.00,Fast-Food,QUALITY,No,,4.5,25
+5493,CHILLI POTATO,180.00,Chinese,TIBETAN,Yes,,4.2,25
+4722,Apple Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+4776,Dry Fruit Falooda,195.00,Desserts,Coffee House,Yes,,4.5,25
+5142,Chicken Manchurian Roll,110.00,Chinese,QUALITY,No,,4.5,25
+5132,Coffee,40.00,Beverages,QUALITY,Yes,,4.5,25
+4188,Mix Veg Curry,140.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5261,Fish Sizzler,330.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4698,Choco Milk,65.00,Beverages,Coffee House,Yes,,4.5,25
+5587,Croissant cocoa creame,20.00,Essentials,N/A,Yes,,4.2,20
+5601,sting red,20.00,Essentials,N/A,Yes,,4.2,20
+5064,Paneer Chattinad,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+4763,Banana Juice,95.00,Beverages,Coffee House,Yes,,4.5,25
+5232,Banjari Till,200.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5301,Sz Veg Fried Rice / Noodles,160.00,Chinese,QUALITY,Yes,,4.5,25
+5111,Paneer Burger,130.00,Fast-Food,QUALITY,Yes,,4.5,25
+5086,Chicken Manchow Soup,110.00,Chinese,QUALITY,No,,4.5,25
+5325,Fish Pasta,190.00,Others,QUALITY,No,,4.5,25
+5322,Sz Egg Pasta,170.00,Others,QUALITY,No,,4.5,25
+5570,cornitos nacho cheese and herbs,35.00,Essentials,N/A,Yes,,4.2,20
+5598,minute maid pulpy orange,20.00,Essentials,N/A,Yes,,4.2,20
+5405,Egg Szechuan Rice,140.00,Chinese,CHETTINAD,No,,4.5,25
+5837,Biscoff Shake,170.00,Desserts,ZEEZA,Yes,,4.5,25
+5197,Orange Juice,100.00,Beverages,QUALITY,Yes,,4.5,25
+4772,ABC Juice,105.00,Beverages,Coffee House,Yes,,4.5,25
+5145,Aloo Tikka Roll,100.00,Chinese,QUALITY,Yes,,4.5,25
+5434,Butter Naan,60.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5141,Chicken Roll,100.00,Fast-Food,CHETTINAD,No,,4.5,25
+5494,CHICKEN DRAGON MOMO,200.00,Chinese,TIBETAN,No,,4.2,25
+4689,Chicken Porotta Roll,130.00,Non-Veg,Coffee House,No,,4.5,25
+5556,Cavin's Strawberry Milkshake,40.00,Essentials,N/A,Yes,,4.2,0
+5549,Smoodh Chocolate Dairy,20.00,Essentials,N/A,Yes,,4.2,0
+5563,Bingo (Red),20.00,Essentials,N/A,Yes,,4.2,20
+4752,Muskmelon Juice,85.00,Beverages,Coffee House,Yes,,4.5,25
+5392,Chicken Rajoli,170.00,North-Indian,CHETTINAD,No,,4.5,25
+5192,Pineapple Juice,90.00,Beverages,QUALITY,Yes,,4.5,25
+5118,Chicken Combo Double Decker,210.00,Biryani,QUALITY,No,,4.5,25
+5389,Pepper Chicken Masala,170.00,North-Indian,CHETTINAD,No,,4.5,25
+4743,Diary Milk Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+5092,Paneer Sandwich,100.00,Fast-Food,QUALITY,Yes,,4.5,25
+4149,Dragon Mushroom,150.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4697,Pistha Milk,65.00,Beverages,Coffee House,Yes,,4.5,25
+5281,Butter Pepper Mushroom,300.00,Chinese,QUALITY,Yes,,4.5,25
+5348,Chicken Hydrabadi,220.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5851,Fudgy Brownie,120.00,Desserts,ZEEZA,Yes,,4.5,25
+5850,Choco Burger,290.00,Desserts,ZEEZA,Yes,,4.5,25
+5844,Butterscotch Tresleches,200.00,Desserts,ZEEZA,Yes,,4.5,25
+5094,Cheese Sandwich,90.00,Fast-Food,QUALITY,Yes,,4.5,25
+4210,Kadai Mushroom,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5401,Mixed Rice/Noodles,210.00,Chinese,CHETTINAD,Yes,,4.5,25
+5233,Punjabi Tikka,160.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5404,Szechuan Chicken Rice,190.00,Chinese,CHETTINAD,No,,4.5,25
+5458,Malai Kabab (6 pcs),190.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5433,Naan,55.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5354,Masala Tomato Omelette,100.00,Others,QUALITY,Yes,,4.5,25
+5340,Chicken Bhunai,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5608,Shawarma Plate,199.00,Non-Veg,Blueberry Resturant,Yes,,4.2,10
+4037,Chicken Steam Momo,110.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5484,VEG FRY MOMO,170.00,Chinese,TIBETAN,Yes,,4.2,25
+5553,Cavin's Vanilla Milkshake,40.00,Essentials,N/A,Yes,,4.2,0
+5397,Chilli Chicken,170.00,Chinese,CHETTINAD,No,,4.5,25
+5368,Chinese Veg Chopsey,150.00,Chinese,CHETTINAD,Yes,,4.5,25
+5492,VEG COMBO,240.00,Chinese,TIBETAN,Yes,,4.2,25
+5288,Veg Chopsuey,200.00,Chinese,QUALITY,Yes,,4.5,25
+5165,Pasta,130.00,Italian,QUALITY,Yes,,4.5,25
+5438,Aloo Paratha,80.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5330,Red Sauce with Cheese Pasta,180.00,Others,QUALITY,Yes,,4.5,25
+5295,Fish Chattinad,260.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4040,Veg fried Momo,110.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5569,Winkin Cow Vanilla Milkshake,40.00,Essentials,N/A,Yes,,4.2,0
+5597,mountain dew,20.00,Essentials,N/A,Yes,,4.2,0
+5391,Chicken Do Pyaza,180.00,North-Indian,CHETTINAD,No,,4.5,25
+5103,Mexican Paneer Club Sandwich,140.00,Chinese,QUALITY,Yes,,4.5,25
+5274,Honey Chilly Chicken,300.00,Chinese,QUALITY,No,,4.5,25
+4147,Chilli Mushroom,150.00,Chinese,CHETTINAD,Yes,,4.5,25
+5452,Afghani Chicken Full,460.00,North-Indian,CHETTINAD,No,,4.5,25
+5179,Manchurian Chat,110.00,Others,QUALITY,Yes,,4.5,25
+5555,Blue Lays,30.00,Essentials,N/A,Yes,,4.2,20
+5210,Chikku Milk Shake,90.00,Beverages,QUALITY,Yes,,4.5,25
+5107,Paneer Mushroom Aloo Jumbo,150.00,Chinese,QUALITY,Yes,,4.5,25
+5358,Chicken Tikka Roll,120.00,Fast-Food,CHETTINAD,No,,4.5,25
+5089,Chicken Pepper Soup,150.00,Chinese,QUALITY,No,,4.5,25
+4775,Royal Falooda,175.00,Desserts,Coffee House,Yes,,4.5,25
+5253,Alien Chicken (Full),460.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5217,Butterscotch Milk Shake,100.00,Beverages,QUALITY,Yes,,4.5,25
+4704,Lime Soda,55.00,Beverages,Coffee House,Yes,,4.5,25
+4120,Hydrabadi Egg Biryani,150.00,Non-Veg Biryani,Blueberry Resturant,No,,4.5,25
+5588,Fanta,20.00,Essentials,N/A,Yes,,4.2,0
+4201,Kadai Paneer,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4135,Garlic Veg Momo,130.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4741,Snickers Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+4005,Hydrabadi Chicken Biryani,190.00,Non-Veg Biryani,Blueberry Resturant,No,,4.5,25
+5491,VEG FRIED RICE,180.00,Chinese,TIBETAN,Yes,,4.2,25
+5314,Mutton Fried Rice / Noodles,220.00,Chinese,QUALITY,No,,4.5,25
+5353,Mushroom Omelette,110.00,Others,QUALITY,Yes,,4.5,25
+5081,Veg Manchow Soup,100.00,Chinese,QUALITY,Yes,,4.5,25
+5313,Sz Prawn Fried Rice / Noodles,230.00,Chinese,QUALITY,No,,4.5,25
+5125,Chicken Maggi,100.00,Chinese,QUALITY,No,,4.5,25
+4754,Fig Juice,85.00,Beverages,Coffee House,Yes,,4.5,25
+5481,Plain Biryani,120.00,Non-Veg Biryani,CHETTINAD,Yes,,4.5,25
+4779,Dry Fruit Sundae,135.00,Desserts,Coffee House,Yes,,4.5,25
+5195,Strawberry Juice,100.00,Beverages,QUALITY,Yes,,4.5,25
+5215,Chocolate Milk Shake,100.00,Beverages,QUALITY,Yes,,4.5,25
+5258,890 Chicken (Quarter),160.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5373,Aloo Methi,130.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5294,Prawn Chattinad,260.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5356,Boiled Rice,160.00,Rice & Pulao,QUALITY,Yes,,4.5,25
+5063,Paneer Punjabi,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+5305,Sz Paneer Fried Rice / Noodles,190.00,Chinese,QUALITY,Yes,,4.5,25
+5311,Sz Fish Fried Rice / Noodles,210.00,Chinese,QUALITY,No,,4.5,25
+5190,Chicken Wraps,110.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5476,Chicken Hyderabadi Biryani,180.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+4122,HYD CHICKEN 65 BIRYANI,235.00,Non-Veg Biryani,Blueberry Resturant,No,,4.5,25
+4123,Alfam Chicken Biryani,230.00,Non-Veg Biryani,Blueberry Resturant,No,,4.5,25
+5321,Egg Pasta,160.00,Others,QUALITY,No,,4.5,25
+5326,Sz Fish Pasta,200.00,Others,QUALITY,No,,4.5,25
+5390,Chicken Fry,160.00,North-Indian,CHETTINAD,No,,4.5,25
+5399,Egg Rice/Noodles,130.00,Chinese,CHETTINAD,No,,4.5,25
+5306,Mushroom Fried Rice / Noodles,190.00,Chinese,QUALITY,Yes,,4.5,25
+5066,Paneer Tikka Masala,250.00,Fast-Food,QUALITY,Yes,,4.5,25
+5154,Chicken Steam Momos,130.00,Chinese,QUALITY,No,,4.5,25
+5408,Fish Szechuan Rice,190.00,Chinese,CHETTINAD,No,,4.5,25
+5386,Chicken Chanjata,170.00,North-Indian,CHETTINAD,No,,4.5,25
+4677,Chicken Bread Omlet,95.00,Non-Veg,Coffee House,No,,4.5,25
+5102,Chicken Egg Club Sandwich,140.00,Fast-Food,QUALITY,No,,4.5,25
+4023,TANDOORI CHICKEN FULL,530.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5144,Double Cheese Chicken Roll,130.00,Fast-Food,QUALITY,No,,4.5,25
+5312,Prawn Fried Rice / Noodles,220.00,Chinese,QUALITY,No,,4.5,25
+4139,Chicken Tikka,170.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5357,Double Chicken Roll,120.00,Fast-Food,CHETTINAD,No,,4.5,25
+5609,Veg Rice Combo,250.00,Chinese,TIBETAN,Yes,,4.2,20
+5573,Lays indian magic masala,20.00,Essentials,N/A,Yes,,4.2,20
+5558,bingo,20.00,Essentials,N/A,Yes,,4.2,20
+5268,Chicken Manchurian,190.00,Chinese,CHETTINAD,No,,4.5,25
+5116,Veg Paneer Burger Combo,170.00,Fast-Food,QUALITY,Yes,,4.5,25
+4768,Avocado Juice,105.00,Beverages,Coffee House,Yes,,4.5,25
+4783,Pistha Shake,115.00,Desserts,Coffee House,Yes,,4.5,25
+5604,Veg Burger,115.00,Fast-Food,Coffee House,Yes,,4.2,15
+5087,Hot & Sour Chicken Soup,120.00,Chinese,QUALITY,No,,4.5,25
+5600,Coke,40.00,Essentials,N/A,Yes,,4.2,0
+4695,Rose Milk,65.00,Beverages,Coffee House,Yes,,4.5,25
+5181,Aloo Tikka Chat,100.00,Others,QUALITY,Yes,,4.5,25
+5572,Kurkure Puffcorn,20.00,Essentials,N/A,Yes,,4.2,20
+5174,Panipuri,60.00,North-Indian,QUALITY,Yes,,4.5,25
+5468,Fish 65,200.00,Chinese,CHETTINAD,No,,4.5,25
+5571,Winkin Cow Bourbon Shake,40.00,Essentials,N/A,Yes,,4.2,0
+4773,Fruit Salad,105.00,Desserts,Coffee House,Yes,,4.5,25
+5444,Stuffed Naan (Veg),90.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5424,Fish Masala,200.00,Other,CHETTINAD,No,,4.5,25
+4044,GINGER CHICKEN,180.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5394,Chicken Cheese,160.00,Chinese,CHETTINAD,No,,4.5,25
+5271,Dragon Chicken,180.00,Chinese,CHETTINAD,No,,4.5,25
+5562,Paper boat swing Mixed fruit,20.00,Essentials,N/A,Yes,,4.2,0
+5110,Veg Burger,110.00,Fast-Food,QUALITY,Yes,,4.5,25
+4212,Mushroom Punjabi,160.00,North-Indian,Blueberry Resturant,Yes,,4.5,25
+5564,Kurkure orange,20.00,Essentials,N/A,Yes,,4.2,20
+5594,Appy Fizz,20.00,Essentials,N/A,Yes,,4.2,0
+4670,Nuggets Veg (6pcs),100.00,Veg,Coffee House,Yes,,4.5,25
+5475,Chicken 65 Biryani,170.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5327,Prawn Pasta,180.00,Italian,CHETTINAD,No,,4.5,25
+5057,Dal Makhani,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+5431,Roti,55.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5455,Lasooni Kabab,190.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5375,Mutter Masala,140.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5554,Green Lays,30.00,Essentials,N/A,Yes,,4.2,20
+4777,Mango Mastani,135.00,Desserts,Coffee House,Yes,,4.5,25
+5366,Szechuan Chicken Chopsey,160.00,North-Indian,CHETTINAD,No,,4.5,25
+4725,Dates Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+4157,Dragon Potato,150.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5426,Fish Chettinad,210.00,South-Indian,CHETTINAD,No,,4.5,25
+4654,Bread Omlet,65.00,Non-Veg,Coffee House,Yes,,4.5,25
+5435,Kulcha,60.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5396,Szechuan Mushroom,170.00,Chinese,CHETTINAD,Yes,,4.5,25
+5409,Prawn Szechuan Rice,190.00,Chinese,CHETTINAD,No,,4.5,25
+4152,Sezwan Mushroom,150.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5129,Strawberry Lassi,100.00,Beverages,QUALITY,Yes,,4.5,25
+5285,Ginger Prawn,250.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5547,Smoodh Toffee Caramel,20.00,Essentials,N/A,Yes,,4.2,0
+5565,Kurkure green chutney,20.00,Essentials,N/A,Yes,,4.2,20
+5402,Fish Rice/Noodles,190.00,Chinese,CHETTINAD,No,,4.5,25
+4721,Pomegranate Milkshake,95.00,Beverages,Coffee House,Yes,,4.5,25
+5480,Prawn Biryani,220.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5065,Paneer Butter Masala,210.00,Fast-Food,QUALITY,Yes,,4.5,25
+5441,Phulka,55.00,North-Indian,CHETTINAD,Yes,,4.5,25
+4663,Red Sauce Pastha,145.00,Veg,Coffee House,Yes,,4.5,25
+4154,Gobi Manchurian,140.00,Chinese,CHETTINAD,Yes,,4.5,25
+5078,Chilli Egg (2pcs),180.00,Chinese,QUALITY,No,,4.5,25
+5147,Veg Steam Momos,110.00,Chinese,QUALITY,Yes,,4.5,25
+5183,Chinese Samosa,80.00,Others,QUALITY,Yes,,4.5,25
+5359,Chicken Tikka Cheese Roll,130.00,Fast-Food,CHETTINAD,No,,4.5,25
+5074,Aloo Dal Masala,130.00,North-Indian,QUALITY,Yes,,4.5,25
+5429,Kadai Prawn,210.00,North-Indian,CHETTINAD,No,,4.5,25
+5228,Egg Biryani,140.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5602,Maaza,40.00,Essentials,N/A,Yes,,4.2,0
+5398,Chicken Rice/Noodles,140.00,Chinese,CHETTINAD,No,,4.5,25
+5191,Watermelon Juice,80.00,Beverages,QUALITY,Yes,,4.5,25
+4668,Peri Peri Fries (L),150.00,Others,Coffee House,Yes,,4.5,25
+5082,Veg Clear Soup,100.00,Chinese,QUALITY,Yes,,4.5,25
+5188,Hashworm Wraps,100.00,Others,QUALITY,Yes,,4.5,25
+5485,VEG DRAGON MOMO,200.00,Chinese,TIBETAN,Yes,,4.2,25
+5214,Dry Fruit Milk Shake,110.00,Beverages,QUALITY,Yes,,4.5,25
+5578,Paper Boat Mixed berries Juice,40.00,Essentials,N/A,Yes,,4.2,0
+5247,Malai Kabab (6pcs),230.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5419,Paneer Pulao,150.00,Biryani,CHETTINAD,Yes,,4.5,25
+5856,Burnt Basque Cheesecake,240.00,Desserts,ZEEZA,Yes,,4.5,25
+5855,Lotus Biscoff Cheesecake,240.00,Desserts,ZEEZA,Yes,,4.5,25
+5328,Sz Prawn Pasta,220.00,Others,QUALITY,No,,4.5,25
+5854,Brownie with Ice Cream,150.00,Desserts,ZEEZA,Yes,,4.5,25
+5363,Paneer Tikka Roll,110.00,Fast-Food,CHETTINAD,Yes,,4.5,25
+4709,Lemon Dew,70.00,Beverages,Coffee House,Yes,,4.5,25
+4746,Choco Chikku Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+5177,Sev Puri,70.00,Others,QUALITY,Yes,,4.5,25
+5355,Chinese Dressed Omelette,110.00,Others,QUALITY,Yes,,4.5,25
+4196,Aloo Gobi Masala,130.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5260,Chicken Sizzler,330.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5264,Fish with Lemon Butter Sauce (2pcs),250.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5332,Gold Pasta,200.00,Others,QUALITY,Yes,,4.5,25
+5581,Paper Boat NaTa Mango Juice,40.00,Essentials,N/A,Yes,,4.2,0
+5584,swiss Roll,85.00,Essentials,N/A,Yes,,4.2,20
+5422,Peas Pulao,130.00,Biryani,CHETTINAD,Yes,,4.5,25
+4745,Choco Banana Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+5209,Mango Milk Shake,90.00,Beverages,QUALITY,Yes,,4.5,25
+5238,Afghani Chicken (Half),230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5339,Chicken Rajasthani,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5318,Veg Pasta,130.00,Italian,CHETTINAD,Yes,,4.5,25
+5483,VEG STEAM MOMO,150.00,Chinese,TIBETAN,Yes,,4.2,25
+5168,Chicken Nuggets,120.00,Fast-Food,QUALITY,No,,4.5,25
+5388,Chicken Bharta,180.00,Chinese,CHETTINAD,No,,4.5,25
+5842,Blueberry Tiramisu,220.00,Desserts,ZEEZA,Yes,,4.5,25
+5840,Tiramisu Hot Chocolate,170.00,Desserts,ZEEZA,Yes,,4.5,25
+5479,Mutton Biryani,260.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5155,Chicken Fry Momos,130.00,Chinese,QUALITY,No,,4.5,25
+5156,Chicken Szechwan Momos,140.00,Chinese,QUALITY,No,,4.5,25
+5412,Mushroom Rice/Noodles,140.00,Biryani,CHETTINAD,Yes,,4.5,25
+4729,Custard Apple Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+5852,Oreo Brownie,120.00,Desserts,ZEEZA,Yes,,4.5,25
+5849,Koshari,290.00,Desserts,ZEEZA,Yes,,4.5,25
+5847,Kunafa Chocolate,490.00,Desserts,ZEEZA,Yes,,4.5,25
+5846,Mango Misu,240.00,Desserts,ZEEZA,Yes,,4.5,25
+5843,Triple Chocolate Cake,220.00,Desserts,ZEEZA,Yes,,4.5,25
+4144,Garlic Paneer,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5250,Shawarma Plate,200.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5487,VEG NOODLES,160.00,Chinese,TIBETAN,Yes,,4.2,25
+4659,Chilly Chees Sandwich,95.00,Veg,Coffee House,Yes,,4.5,25
+4136,Dragon Veg Momo,130.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5575,Winkin Cow,40.00,Essentials,N/A,Yes,,4.2,0
+5302,Egg Fried Rice / Noodles,160.00,Chinese,QUALITY,No,,4.5,25
+5283,Garlic Mushroom,300.00,Chinese,QUALITY,Yes,,4.5,25
+5193,Chikku Juice,100.00,Beverages,QUALITY,Yes,,4.5,25
+4042,Chicker Manchurian,180.00,Non-Veg,Blueberry Resturant,Yes,,4.5,25
+5153,Egg Fry Momos,120.00,Chinese,QUALITY,No,,4.5,25
+4692,Grape Lassi,70.00,Beverages,Coffee House,Yes,,4.5,25
+5437,Paneer Kulcha,75.00,North-Indian,CHETTINAD,Yes,,4.5,25
+4208,Mushroom Butter Masala,170.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4683,Cheesy Creamy Chicken Pastha,225.00,Non-Veg,Coffee House,No,,4.5,25
+5075,Egg Domino Masala,220.00,Fast-Food,QUALITY,No,,4.5,25
+4669,Cheesy Fries (L),170.00,Others,Coffee House,Yes,,4.5,25
+5161,Salsa,110.00,North-Indian,QUALITY,Yes,,4.5,25
+5836,Milo Shake,160.00,Desserts,ZEEZA,Yes,,4.5,25
+5835,Korean Cheese Bun,180.00,Desserts,ZEEZA,Yes,,4.5,25
+4780,Chocolate Shake,120.00,Desserts,Coffee House,Yes,,4.5,25
+4731,Mango Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+4137,Sez. Veg Momo,130.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5139,Egg Roll,90.00,Fast-Food,CHETTINAD,No,,4.5,25
+4690,Lassi,55.00,Beverages,Coffee House,Yes,,4.5,25
+4778,Spanish Delight,155.00,Desserts,Coffee House,Yes,,4.5,25
+5172,Chicken Lolly Pop (6pcs),210.00,North-Indian,QUALITY,No,,4.5,25
+5113,Paneer Burger Double Decker,160.00,Fast-Food,QUALITY,Yes,,4.5,25
+5245,Chicken Tikka (Quarter),160.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5234,Tandoori Chicken (Full),430.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5131,Tea,40.00,Chinese,QUALITY,Yes,,4.5,25
+5160,Aloo Tikka,110.00,North-Indian,QUALITY,Yes,,4.5,25
+4039,Veg Steam Momo,100.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4211,Mushroom Dopyaza,160.00,North-Indian,Blueberry Resturant,Yes,,4.5,25
+4734,Dragon Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+4736,Mixed Fruit Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+4749,Water Melon Juice,70.00,Beverages,Coffee House,Yes,,4.5,25
+5088,Cream of Mushroom Soup,120.00,Chinese,QUALITY,Yes,,4.5,25
+4770,Beetroot Juice,95.00,Beverages,Coffee House,Yes,,4.5,25
+5090,Veg Sandwich,90.00,Fast-Food,QUALITY,Yes,,4.5,25
+5198,Pomegranate Juice,110.00,Beverages,QUALITY,Yes,,4.5,25
+5202,Lime Juice,60.00,Beverages,QUALITY,Yes,,4.5,25
+5212,Pineapple Milk Shake,100.00,Beverages,QUALITY,Yes,,4.5,25
+5248,Tangdi Kabab (2pcs),230.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5251,Sp. Shawarma Roll,210.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5241,Ajwain Chicken (Half),270.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5361,Paneer Cheese Roll,110.00,Fast-Food,CHETTINAD,Yes,,4.5,25
+5298,Chicken Lollipop (4pcs),230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5351,Paneer Omelette,100.00,Others,QUALITY,Yes,,4.5,25
+5344,Chilly Chicken Gravy,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5287,Prawn Manchurian,250.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4708,Masala Cola,70.00,Beverages,Coffee House,Yes,,4.5,25
+5461,Haryali Kabab,190.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5400,Mutton Rice/Noodles,200.00,Chinese,CHETTINAD,No,,4.5,25
+5406,Mutton Szechuan Rice,210.00,Chinese,CHETTINAD,No,,4.5,25
+5365,Veg American Chopsey,150.00,Other,CHETTINAD,Yes,,4.5,25
+5376,Mixed Veg Masala,140.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5379,Veg Handi,140.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5310,Fish Fried Rice / Noodles,200.00,Chinese,QUALITY,No,,4.5,25
+5159,Afghani Chicken Momos,150.00,Chinese,QUALITY,No,,4.5,25
+5138,Aloo Paneer Roll,110.00,Fast-Food,QUALITY,Yes,,4.5,25
+5136,Paneer Roll,100.00,Fast-Food,CHETTINAD,Yes,,4.5,25
+4781,Strawberry Shake,115.00,Desserts,Coffee House,Yes,,4.5,25
+5227,Fish Biryani,220.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5231,Plain Biryani (Kuska),160.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5477,Mushroom Biryani,150.00,Non-Veg Biryani,CHETTINAD,Yes,,4.5,25
+5220,Tamilnadu Chicken Biryani,180.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4124,Tandoori Chicken Biryani,220.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5166,Paneer Pasta,150.00,Italian,CHETTINAD,Yes,,4.5,25
+5329,Mix Veg Pasta,150.00,Others,QUALITY,Yes,,4.5,25
+5320,Sz Paneer Pasta,180.00,Others,QUALITY,Yes,,4.5,25
+5308,Chicken Fried Rice / Noodles,180.00,Chinese,QUALITY,No,,4.5,25
+5243,Chicken Tikka (Full),430.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4024,TANDOORI CHICKEN HALF,290.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5135,Veg Roll,90.00,Fast-Food,CHETTINAD,Yes,,4.5,25
+5249,Shawarma Roll,160.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5240,Ajwain Chicken (Full),430.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5255,Alien Chicken (Quarter),160.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5273,Ginger Chicken,230.00,Chinese,QUALITY,No,,4.5,25
+5262,Fish & Chips,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5278,Paneer Manchurian,220.00,Chinese,QUALITY,Yes,,4.5,25
+5290,Chinese Chopsuey,210.00,Chinese,QUALITY,Yes,,4.5,25
+5293,Paneer 65 Starter,220.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5299,Chicken Lollipop (6pcs),240.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5349,Plain Omelette,80.00,Others,QUALITY,Yes,,4.5,25
+4767,Kiwi Juice,95.00,Beverages,Coffee House,Yes,,4.5,25
+5218,Oreo Milk Shake,100.00,Beverages,QUALITY,Yes,,4.5,25
+5152,Egg Steam Momos,120.00,Chinese,QUALITY,No,,4.5,25
+5335,Butter Chicken Masala,240.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5324,Sz Chicken Pasta,190.00,Others,QUALITY,No,,4.5,25
+5331,White Sauce Pasta,190.00,Others,QUALITY,Yes,,4.5,25
+4146,Sezhwan Paneer,160.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5120,Paneer Maggi,90.00,Biryani,QUALITY,Yes,,4.5,25
+4153,Chilli Gobi,150.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4685,Nuggets Chicken (6pcs),115.00,Non-Veg,Coffee House,No,,4.5,25
+5236,Tandoori Chicken (Quarter),160.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5857,Chocolate Cheesecake,240.00,Desserts,ZEEZA,Yes,,4.5,25
+5382,Chicken Masala,160.00,North-Indian,CHETTINAD,No,,4.5,25
+5284,Chilly Prawn,250.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5272,Coriander Chicken,230.00,Chinese,QUALITY,No,,4.5,25
+5122,Hindustan Maggi,90.00,Biryani,QUALITY,Yes,,4.5,25
+5115,Chicken Burger Double Decker,160.00,Fast-Food,QUALITY,No,,4.5,25
+5352,Italian Masala Omelette,110.00,Others,QUALITY,Yes,,4.5,25
+5221,Hyderabadi Chicken Biryani,200.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5222,Quality Special Biryani,230.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5097,Egg Sandwich,90.00,Fast-Food,QUALITY,No,,4.5,25
+5395,Babycorn Manchurian,190.00,Chinese,CHETTINAD,Yes,,4.5,25
+5187,Mushroom Wraps,100.00,Others,QUALITY,Yes,,4.5,25
+4125,Chicken Tikka Biryani,200.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+4206,Shahi Paneer,170.00,Veg,Blueberry Resturant,Yes,,4.5,25
+4127,Chilli Chicken Momo,140.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+4681,Chicken Rose Pastha,225.00,Non-Veg,Coffee House,No,,4.5,25
+4732,Mango SP Milkshake,115.00,Beverages,Coffee House,Yes,,4.5,25
+5362,Paneer Tikka Cheese Roll,120.00,Fast-Food,CHETTINAD,Yes,,4.5,25
+4041,CHILLI CHICKEN,180.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5316,Gold Fried Rice / Noodles,190.00,Chinese,QUALITY,Yes,,4.5,25
+5380,Butter Chicken,160.00,North-Indian,CHETTINAD,No,,4.5,25
+4387,Chennai Kuska,130.00,Non-Veg Biryani,Blueberry Resturant,Yes,,4.5,25
+5223,Boneless Chicken Biryani,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5474,Chilli Chicken Biryani,190.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5083,Sweet Corn Veg Soup,100.00,Chinese,QUALITY,Yes,,4.5,25
+5186,Samosa (1 plate 2pcs),70.00,Others,QUALITY,Yes,,4.5,25
+4664,Cheesy Creamy Pastha,165.00,Veg,Coffee House,Yes,,4.5,25
+5338,Kadai Chicken,170.00,North-Indian,CHETTINAD,No,,4.5,25
+5099,Paneer Club Sandwich,130.00,Fast-Food,QUALITY,Yes,,4.5,25
+5607,Shawarma Roll,130.00,Non-Veg,Blueberry Resturant,Yes,,4.2,10
+5323,Chicken Pasta,140.00,Italian,CHETTINAD,No,,4.5,25
+4194,Chana Masala,130.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5235,Tandoori Chicken (Half),230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5060,Aloo Jeera,130.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5254,Alien Chicken (Half),270.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5269,Orange Chicken,230.00,Chinese,QUALITY,No,,4.5,25
+5277,Chilly Paneer,220.00,Chinese,QUALITY,Yes,,4.5,25
+5275,Cashew Chicken,300.00,Chinese,QUALITY,No,,4.5,25
+5289,Chicken Chopsuey,210.00,Chinese,QUALITY,No,,4.5,25
+5350,Masala Omelette,90.00,Others,QUALITY,Yes,,4.5,25
+5061,Aloo Matar,160.00,Other,QUALITY,Yes,,4.5,25
+5175,Dahi Puri,80.00,North-Indian,QUALITY,Yes,,4.5,25
+5403,Prawn Rice/Noodles,190.00,Chinese,CHETTINAD,No,,4.5,25
+5591,Sprite,20.00,Essentials,N/A,Yes,,4.2,0
+4701,Green Apple Mojito,85.00,Beverages,Coffee House,Yes,,4.5,25
+5585,Monster Zero Sugar (White),120.00,Essentials,N/A,Yes,,4.2,0
+4727,Carrot Milkshake,105.00,Beverages,Coffee House,Yes,,4.5,25
+5612,Diet Coke,40.00,Essentials,N/A,Yes,,4.2,0
+5280,Baby Corn Manchurian,300.00,Chinese,QUALITY,Yes,,4.5,25
+5599,Sprite,40.00,Essentials,N/A,Yes,,4.2,0
+5603,limca,20.00,Essentials,N/A,Yes,,4.2,20
+5224,Tandoori Biryani,240.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+4199,Daal Tarka,130.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5279,Chilly Baby Corn,300.00,Chinese,QUALITY,Yes,,4.5,25
+5489,VEG THUKPA,200.00,Chinese,TIBETAN,Yes,,4.2,25
+5377,Veg Kolapuri,140.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5449,Tandoori Chicken Full,440.00,North-Indian,CHETTINAD,No,,4.5,25
+5472,Chicken Biryani,150.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5319,Sz Veg Pasta,160.00,Others,QUALITY,Yes,,4.5,25
+5839,Whipped Hot Chocolate,140.00,Desserts,ZEEZA,Yes,,4.5,25
+5369,Chinese Chicken Chopsey,160.00,Chinese,CHETTINAD,No,,4.5,25
+5414,Baby Corn Rice,150.00,Biryani,CHETTINAD,Yes,,4.5,25
+5341,Chicken Tikka Masala,180.00,North-Indian,CHETTINAD,No,,4.5,25
+4038,Chicken Fried Momo,120.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+4703,Green Mint Mojito,85.00,Beverages,Coffee House,Yes,,4.5,25
+5582,winkies Pineapple cake,30.00,Essentials,N/A,Yes,,4.2,20
+5583,Winkies Nut-Raisin Cake,30.00,Essentials,N/A,Yes,,4.2,20
+5162,Fresh Fries,110.00,Fast-Food,QUALITY,Yes,,4.5,25
+5490,VEG MOMO IN SOUP,220.00,Chinese,TIBETAN,Yes,,4.2,25
+5182,American Chat,80.00,Others,QUALITY,Yes,,4.5,25
+5134,Boost / Badam Milk,50.00,Beverages,QUALITY,Yes,,4.5,25
+5848,Chocolate Tub,290.00,Desserts,ZEEZA,Yes,,4.5,25
+5611,Cold Coffee,140.00,Desserts,ZEEZA,Yes,,4.5,25
+5307,Sz Mushroom Fried Rice / Noodles,200.00,Chinese,QUALITY,Yes,,4.5,25
+5416,Jeera Rice,120.00,Biryani,CHETTINAD,Yes,,4.5,25
+5297,Chicken 65 Boneless (8pcs),240.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5219,KitKat Milk Shake,100.00,Beverages,QUALITY,Yes,,4.5,25
+5557,yellow Lays,20.00,Essentials,N/A,Yes,,4.2,20
+5567,Paper Boat Swing Slupry Mango,20.00,Essentials,N/A,Yes,,4.2,0
+4765,Custard Apple Juice,95.00,Beverages,Coffee House,Yes,,4.5,25
+5244,Chicken Tikka (Half),230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5592,Red bull Energy Drink,125.00,Essentials,N/A,Yes,,4.2,20
+5170,Fish Finger,150.00,Fast-Food,QUALITY,No,,4.5,25
+5128,Bengali Lassi,100.00,Chinese,QUALITY,Yes,,4.5,25
+5206,Mint Lime,70.00,Beverages,QUALITY,Yes,,4.5,25
+4155,Dragon Gobi,150.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5486,CHICKEN COMBO,250.00,Chinese,TIBETAN,No,,4.2,25
+5259,Prawn Sizzler,350.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5184,Kachori (1 plate 2pcs),90.00,Others,QUALITY,Yes,,4.5,25
+5185,Kachori (1 plate 4pcs),110.00,Others,QUALITY,Yes,,4.5,25
+5056,Dal Fry,110.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5374,Mushroom Pepper Fry,140.00,North-Indian,CHETTINAD,Yes,,4.5,25
+4737,Dry Fruit Milkshake,135.00,Beverages,Coffee House,Yes,,4.5,25
+4785,Black Current Shake,120.00,Desserts,Coffee House,Yes,,4.5,25
+4758,Cucumber Juice,85.00,Beverages,Coffee House,Yes,,4.5,25
+4774,Classic Falooda,145.00,Desserts,Coffee House,Yes,,4.5,25
+5551,Smoodh Chocolate Hazelnut,20.00,Essentials,N/A,Yes,,4.2,0
+4192,Aloo Jeera Masala,150.00,Veg,Blueberry Resturant,Yes,,4.5,25
+5079,Tomato Soup,100.00,Chinese,QUALITY,Yes,,4.5,25
+4132,Honey Chilli Chicken Momo,140.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+4656,Paneer Bread Omlet,90.00,Veg,Coffee House,Yes,,4.5,25
+4130,Dragon Chicken Momo,140.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5085,Chicken Clear Soup,110.00,Chinese,QUALITY,No,,4.5,25
+5095,Double Cheese Sandwich,100.00,Fast-Food,QUALITY,Yes,,4.5,25
+5069,Baigan Masala,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+5114,Chicken Burger,150.00,Fast-Food,QUALITY,No,,4.5,25
+5123,Bengali Maggi,100.00,Fast-Food,QUALITY,Yes,,4.5,25
+4043,DRAGON CHICKEN,180.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+4757,Pappaya Juice,85.00,Beverages,Coffee House,Yes,,4.5,25
+5387,Chicken Keema Masala,180.00,North-Indian,CHETTINAD,No,,4.5,25
+5473,Moghlai Chicken Biryani,170.00,Non-Veg Biryani,CHETTINAD,No,,4.5,25
+5226,Hyderabadi Mutton Biryani,240.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5393,Chicken Rogan Josh,200.00,North-Indian,CHETTINAD,No,,4.5,25
+5225,Afghani Biryani,240.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5417,Ghee Rice,130.00,Biryani,CHETTINAD,Yes,,4.5,25
+5137,Mushroom Roll,90.00,Fast-Food,QUALITY,Yes,,4.5,25
+4045,SEZWAN CHICKEN,180.00,Non-Veg,Blueberry Resturant,No,,4.5,25
+5196,Apple Juice,100.00,Beverages,QUALITY,Yes,,4.5,25
+5292,Paneer Chattinad Starter,250.00,Non-Veg Biryani,QUALITY,Yes,,4.5,25
+5574,Winkin Cow Strawberry Milkshake,40.00,Essentials,N/A,Yes,,4.2,0
+5559,Frooti,20.00,Essentials,N/A,Yes,,4.2,0
+4739,Pineapple Milkshake,95.00,Beverages,Coffee House,Yes,,4.5,25
+5464,Chicken Lollipop (5 pcs),180.00,Chinese,CHETTINAD,No,,4.5,25
+4691,Pine Lassi,70.00,Beverages,Coffee House,Yes,,4.5,25
+5071,Baigan Pepper Fry,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+5140,Double Egg Roll,110.00,Fast-Food,CHETTINAD,No,,4.5,25
+5059,Aloo Fry,130.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5237,Afghani Chicken (Full),430.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+4653,Omlet,55.00,Non-Veg,Coffee House,Yes,,4.5,25
+5080,Hot Dog Veg Soup,100.00,Chinese,QUALITY,Yes,,4.5,25
+5256,890 Chicken (Full),470.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5199,Grape Juice,90.00,Beverages,QUALITY,Yes,,4.5,25
+5230,Veg Biryani,140.00,Non-Veg Biryani,CHETTINAD,Yes,,4.5,25
+4740,Oreo Milkshake,100.00,Beverages,Coffee House,Yes,,4.5,25
+5579,Paper Boat NaTa De coco lychee Juice,40.00,Essentials,N/A,Yes,,4.2,0
+4769,Dragon Juice,95.00,Beverages,Coffee House,Yes,,4.5,25
+4751,Mosambi Juice,80.00,Beverages,Coffee House,Yes,,4.5,25
+4764,Carrot Juice,95.00,Beverages,Coffee House,Yes,,4.5,25
+4782,Vanila Shake,105.00,Desserts,Coffee House,Yes,,4.5,25
+5091,Corn Sandwich,90.00,Fast-Food,QUALITY,Yes,,4.5,25
+4008,Chennai Chicken Biryani,150.00,Non-Veg Biryani,Blueberry Resturant,No,,4.5,25
+4385,Chennai Egg Biryani,140.00,Non-Veg Biryani,Blueberry Resturant,No,,4.5,25
+5345,Chicken Masala Chattinad,230.00,Non-Veg Biryani,QUALITY,No,,4.5,25
+5333,Maharaja Pasta,220.00,Others,QUALITY,Yes,,4.5,25
+5151,Paneer Manchurian Momos,130.00,Chinese,QUALITY,Yes,,4.5,25
+4688,Chicken Chapathi Roll,120.00,Non-Veg,Coffee House,No,,4.5,25
+5445,Egg Keema Masala,150.00,Other,CHETTINAD,No,,4.5,25
+5167,French Fry,130.00,Other,CHETTINAD,Yes,,4.5,25
+5453,Afghani Chicken Half,250.00,North-Indian,CHETTINAD,No,,4.5,25
+4724,Fig Milkshake,95.00,Beverages,Coffee House,Yes,,4.5,25
+4671,Maggi,70.00,Veg,Coffee House,Yes,,4.5,25
+5169,Chicken Popcorn,120.00,Fast-Food,QUALITY,No,,4.5,25
+4665,Rose Pastha,175.00,Veg,Coffee House,Yes,,4.5,25
+5073,Beans Masala,180.00,Fast-Food,QUALITY,Yes,,4.5,25
+5158,Chicken Garlic Momos,150.00,Chinese,QUALITY,No,,4.5,25
+5127,Mango Lassi,100.00,Chinese,QUALITY,Yes,,4.5,25
+5561,Doritos,20.00,Essentials,N/A,Yes,,4.2,20
+5552,Uncle Chipps (plain salted),48.00,Essentials,N/A,Yes,,4.2,20
+5176,Hahi Puri,80.00,North-Indian,QUALITY,Yes,,4.5,25
+5067,Mushroom Masala,210.00,Other,QUALITY,Yes,,4.5,25
+5370,Mutton Pasta,190.00,Italian,CHETTINAD,No,,4.5,25
+4197,Gobi Masala,130.00,North-Indian,CHETTINAD,Yes,,4.5,25
+5300,Veg Fried Rice / Noodles,150.00,Chinese,QUALITY,Yes,,4.5,25
+5304,Paneer Fried Rice / Noodles,180.00,Chinese,QUALITY,Yes,,4.5,25
+5478,Paneer Biryani,160.00,Non-Veg Biryani,CHETTINAD,Yes,,4.5,25
+5157,Chicken Dragon Momos,140.00,Chinese,QUALITY,No,,4.5,25
+5589,munch max,20.00,Essentials,N/A,Yes,,4.2,20
+4702,Passion Fruit Mojito,85.00,Beverages,Coffee House,Yes,,4.5,25
+5096,Chilli Cheese Corn Sandwich,100.00,Chinese,QUALITY,Yes,,4.5,25
+5093,Aloo Sandwich,80.00,Fast-Food,QUALITY,Yes,,4.5,25

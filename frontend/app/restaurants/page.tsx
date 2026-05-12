@@ -35,45 +35,58 @@ export default function RestaurantsPage() {
         </div>
       </div>
 
-      <div className="p-4 flex flex-col gap-4 pb-20 mt-4">
+      <div className="grid grid-cols-2 gap-3 p-4 pb-20 mt-4">
         {loading ? (
-          [...Array(2)].map((_, i) => (
-            <div key={i} className="w-full h-[240px] rounded-3xl shimmer" />
+          [...Array(6)].map((_, i) => (
+            <div key={i} className="w-full aspect-[4/3] rounded-[16px] shimmer" />
           ))
         ) : restaurants.length === 0 ? (
-          <div className="py-20 text-center text-gray-500 font-medium">No restaurants found</div>
+          <div className="col-span-2 py-20 text-center text-gray-500 font-medium">No restaurants found</div>
         ) : (
           restaurants.map((rest, i) => (
             <Link key={rest.id} href={`/menu?restaurant=${rest.id}`}>
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                whileTap={{ scale: 0.96 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="w-full rounded-3xl overflow-hidden glass hover:border-green-500/40 transition-all cursor-pointer group"
+                transition={{ delay: i * 0.05 }}
+                className="w-full bg-[#1a1a1a] rounded-[16px] overflow-hidden shadow-sm transition-all cursor-pointer group flex flex-col"
               >
-                <div className="h-[180px] relative overflow-hidden">
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <Image 
-                    src={rest.image_url.startsWith('http') ? rest.image_url : `${API}${rest.image_url}`} 
+                    src={(rest.image_url && rest.image_url.startsWith('http')) ? rest.image_url : `${API}${rest.image_url || ''}`} 
                     alt={rest.name} 
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105" 
-                    sizes="(max-width: 768px) 100vw, 800px"
+                    sizes="(max-width: 768px) 50vw, 300px"
                   />
-                  <div className="absolute top-0 right-0 p-3">
-                    <div className="glass px-3 py-1.5 rounded-full text-sm font-black flex items-center gap-1.5">
-                      <Star size={14} className="text-green-400 fill-green-400" /> {rest.rating}
+                  {/* Overlay for readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
+                  
+                  {/* Offer Badge (Top Left) */}
+                  {rest.is_featured ? (
+                    <div className="absolute top-2 left-2 bg-blue-600/95 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+                      PROMOTED
                     </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-                    <h3 className="font-black text-2xl text-white drop-shadow-md">{rest.name}</h3>
+                  ) : (
+                    <div className="absolute top-2 left-2 bg-rose-600/95 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+                      50% OFF
+                    </div>
+                  )}
+
+                  {/* Rating Badge (Bottom Left) */}
+                  <div className="absolute bottom-2 left-2 bg-green-600/95 backdrop-blur-sm text-white px-1.5 py-0.5 rounded text-[10px] font-black flex items-center gap-0.5 shadow-sm">
+                    <Star size={10} className="fill-white" /> {rest.rating}
                   </div>
                 </div>
-                <div className="p-4 bg-white/[0.03]">
-                  <p className="text-gray-400 text-sm mb-3">{rest.cuisines}</p>
-                  <div className="flex items-center gap-4 text-sm font-bold text-gray-300">
-                    <span className="flex items-center gap-1.5 bg-green-500/10 text-green-400 px-3 py-1 rounded-lg">
-                      <Clock size={14} /> {rest.delivery_time} min
-                    </span>
+                
+                <div className="p-2.5 flex flex-col gap-0.5">
+                  <h3 className="font-bold text-[14px] leading-tight text-white truncate">{rest.name}</h3>
+                  <p className="text-[#9ca3af] text-[11px] truncate">{rest.cuisines}</p>
+                  <div className="flex items-center gap-1 mt-0.5 text-[#9ca3af] text-[11px] font-medium">
+                    <span>⏱ {rest.delivery_time}–{rest.delivery_time + 5} min</span>
+                    <span className="mx-0.5">•</span>
+                    <span>1.2 km</span>
                   </div>
                 </div>
               </motion.div>

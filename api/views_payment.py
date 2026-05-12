@@ -68,14 +68,31 @@ def create_payment_session(request):
         packing_fee = 10
         total = (subtotal - float(discount_amount)) + delivery_fee + packing_fee
 
+        lat = float(data.get('lat') or 12.8231)
+        lng = float(data.get('lng') or 80.0453)
+
+        # 0. Validate Delivery Radius (8km from SRM Kattankulathur)
+        import math
+        def haversine(lat1, lon1, lat2, lon2):
+            R = 6371.0  # Earth radius in kilometers
+            dlat = math.radians(lat2 - lat1)
+            dlon = math.radians(lon2 - lon1)
+            a = math.sin(dlat / 2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2)**2
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+            return R * c
+
+        distance = haversine(12.8231, 80.0453, lat, lng)
+        if distance > 8.0:
+            return Response({'error': 'This is not deliverable at your location for now. We currently serve only within an 8km radius of SRM Kattankulathur.'}, status=400)
+
         # 3. Create Django Order (Pending Payment)
         order = Order.objects.create(
             user_email=email,
             user_name=data.get('name', ''),
             user_phone=data.get('phone', ''),
             delivery_address=data.get('address', ''),
-            delivery_lat=data.get('lat') or 12.8231,
-            delivery_lng=data.get('lng') or 80.0453,
+            delivery_lat=lat,
+            delivery_lng=lng,
             payment_method='cashfree', 
             payment_status='pending',
             subtotal=subtotal,

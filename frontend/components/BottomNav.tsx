@@ -34,6 +34,8 @@ export default function BottomNav() {
             if (href === '/profile' && !isLoggedIn) {
               e.preventDefault();
               setShowAuthModal(true);
+            } else {
+              setShowAuthModal(false);
             }
           };
 

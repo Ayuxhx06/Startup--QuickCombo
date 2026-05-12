@@ -31,9 +31,16 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    restaurant_name = serializers.SerializerMethodField()
+
     class Meta:
         model = OrderItem
-        fields = ['id', 'name', 'price', 'quantity', 'subtotal', 'unit']
+        fields = ['id', 'name', 'price', 'quantity', 'subtotal', 'unit', 'restaurant_name']
+
+    def get_restaurant_name(self, obj):
+        if obj.menu_item and obj.menu_item.restaurant:
+            return obj.menu_item.restaurant.name
+        return "QuickCombo Store"
 
 
 class OrderSerializer(serializers.ModelSerializer):

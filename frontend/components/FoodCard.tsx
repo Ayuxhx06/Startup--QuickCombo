@@ -39,55 +39,67 @@ export default function FoodCard({ item }: { item: MenuItem }) {
   };
 
   return (
-    <div className="flex justify-between items-start p-4 border-b border-white/5 bg-black/40 hover:bg-white/[0.02] transition-colors group">
+    <div className="flex justify-between items-start p-5 border-b border-white/5 bg-black/40 hover:bg-white/[0.03] transition-all group relative">
       {/* Content Left */}
-      <div className="flex-1 min-w-0 pr-4">
-        <div className="flex items-center gap-2 mb-1">
-          <div className={`veg-badge ${item.is_veg ? 'veg' : 'non-veg'} scale-75 -ml-1`} />
-          <h3 className="font-extrabold text-[16px] text-white leading-tight group-hover:text-green-500 transition-colors">
-            {item.name}
-          </h3>
+      <div className="flex-1 min-w-0 pr-6">
+        <div className="flex items-center gap-2 mb-2">
+          <div className={`veg-badge ${item.is_veg ? 'veg' : 'non-veg'} scale-[0.8] -ml-1`} />
+          {item.is_featured && (
+            <span className="flex items-center gap-1 text-[10px] font-black text-amber-500 uppercase tracking-tighter bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+              <Star size={10} fill="currentColor" /> Bestseller
+            </span>
+          )}
         </div>
         
-        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-          <span className="font-black text-sm text-white/90 tracking-tight">₹{item.price}</span>
+        <h3 className="font-extrabold text-[17px] text-white leading-tight mb-1 group-hover:text-green-500 transition-colors">
+          {item.name}
+        </h3>
+        
+        <div className="flex items-center gap-2 mb-2">
+          <span className="font-black text-[15px] text-white/90 tracking-tight italic">₹{item.price}</span>
         </div>
         
-        {(item.description || !item.category_name?.toLowerCase().includes('essential')) && (
-          <p className="text-[#808080] text-[12.5px] leading-relaxed line-clamp-1 group-hover:line-clamp-none transition-all">
-            {item.description || 'Deliciously prepared with fresh ingredients.'}
-          </p>
-        )}
+        <p className="text-[#909090] text-[13px] leading-relaxed line-clamp-2 font-medium">
+          {item.description || 'Deliciously prepared with fresh ingredients and authentic flavors.'}
+        </p>
       </div>
 
       {/* Image & Action Right */}
-      <div className="flex flex-col items-center gap-3 shrink-0">
-        {item.image_url && (
-            <div className="w-[100px] h-[100px] relative rounded-2xl overflow-hidden border border-white/5 shadow-inner">
+      <div className="relative shrink-0 flex flex-col items-center">
+        {item.image_url ? (
+            <div className="w-[120px] h-[120px] relative rounded-2xl overflow-hidden shadow-2xl border border-white/5 group-hover:border-green-500/30 transition-all">
                 <img 
-                    src={item.image_url.startsWith('http') ? item.image_url : `${API}${item.image_url}`} 
+                    src={(item.image_url && item.image_url.startsWith('http')) ? item.image_url : `${API}${item.image_url || ''}`} 
                     alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+        ) : (
+            <div className="w-[120px] h-[120px] rounded-2xl bg-white/5 flex items-center justify-center border border-dashed border-white/10">
+                <Zap size={24} className="text-white/10" />
             </div>
         )}
-        <div className="flex flex-col items-center gap-1 pt-0.5">
+
+        {/* Overlapping ADD Button */}
+        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[90%]">
           {qty > 0 ? (
-            <div className="flex items-center justify-between bg-green-500/10 border border-green-500/40 rounded-xl px-2 py-1.5 w-[90px] shadow-lg backdrop-blur-md">
-              <button onClick={handleRemove} className="text-green-500 font-black px-1.5 hover:scale-125 transition-transform"><Minus size={14} strokeWidth={3} /></button>
-              <span className="text-white text-sm font-bold">{qty}</span>
-              <button onClick={handleAdd} className="text-green-500 font-black px-1.5 hover:scale-125 transition-transform"><Plus size={14} strokeWidth={3} /></button>
+            <div className="flex items-center justify-between bg-[#111] border border-green-500/40 rounded-xl px-2 py-2 shadow-[0_8px_16px_rgba(0,0,0,0.5)] backdrop-blur-md">
+              <button onClick={handleRemove} className="text-green-500 font-black px-1.5 hover:scale-125 transition-transform"><Minus size={14} strokeWidth={4} /></button>
+              <span className="text-green-500 text-sm font-black">{qty}</span>
+              <button onClick={handleAdd} className="text-green-500 font-black px-1.5 hover:scale-125 transition-transform"><Plus size={14} strokeWidth={4} /></button>
             </div>
           ) : (
             <button
               onClick={handleAdd}
-              className="bg-white/5 hover:bg-green-500/10 border border-white/10 hover:border-green-500/50 text-white hover:text-green-500 font-black text-xs px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 min-w-[80px]"
+              className="bg-white text-green-600 hover:bg-green-50 hover:text-green-700 font-black text-sm px-4 py-2.5 rounded-xl transition-all shadow-[0_8px_16px_rgba(0,0,0,0.4)] border border-green-200/50 flex items-center justify-center gap-1.5 w-full uppercase tracking-tighter"
             >
-              ADD <Plus size={14} strokeWidth={3} />
+              ADD
             </button>
           )}
         </div>
       </div>
     </div>
+
   );
 }
