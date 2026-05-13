@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, ShoppingBag, Utensils, Settings, 
@@ -89,8 +89,26 @@ export default function PremiumAdmin() {
     headers: { 'X-Admin-Password': adminPassword }
   });
 
-  const fetchData = async () => {
-    setLoading(true);
+    // Avoid redundant fetches if data already exists for the active tab
+    const hasData = {
+        dashboard: !!stats,
+        orders: orders.length > 0,
+        menu: menuItems.length > 0,
+        categories: categories.length > 0,
+        restaurants: restaurants.length > 0,
+        users: users.length > 0,
+        promos: coupons.length > 0,
+        combos: combos.length > 0
+    }[activeTab as keyof typeof hasData];
+
+    // If we're not on dashboard and already have data, don't show full screen loader
+    if (activeTab !== 'dashboard' && hasData) {
+        // We'll still fetch in background but not block the UI
+        setLoading(false);
+    } else {
+        setLoading(true);
+    }
+
     const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
     
     // Helper to fetch without crashing the whole loop
@@ -109,7 +127,7 @@ export default function PremiumAdmin() {
       if (activeTab === 'dashboard') {
         await safeFetch(`${base}/api/admin/stats/`, setStats);
         const ordersRes = await axios.get(`${base}/api/admin/orders/`, getHeaders());
-        setOrders(ordersRes.data.slice(0, 5));
+        setOrders(ordersRes.data.slice(0, 10)); // Top 10 for dashboard
       } else if (activeTab === 'orders') {
         await safeFetch(`${base}/api/admin/orders/`, setOrders);
       } else if (activeTab === 'menu') {
@@ -127,27 +145,25 @@ export default function PremiumAdmin() {
         await safeFetch(`${base}/api/admin/menu/`, setMenuItems);
       }
 
-      // GLOBAL REFRESH (Individual safe fetches)
-      await safeFetch(`${base}/api/admin/categories/`, setCategories);
-      await safeFetch(`${base}/api/admin/restaurants/`, setRestaurants);
+      // GLOBAL REFRESH (Only if empty to save bandwidth/latency)
+      if (categories.length === 0) await safeFetch(`${base}/api/admin/categories/`, setCategories);
+      if (restaurants.length === 0) await safeFetch(`${base}/api/admin/restaurants/`, setRestaurants);
       
-      // Check Version
-      try {
-          const vRes = await axios.get(`${base}/api/admin/version/`);
-          setServerVersion(vRes.data.version);
-          if (vRes.data.version !== '1.2.7') setOutOfSync(true);
-      } catch (e) {
-          // If version endpoint exists but fails preflight, it's definitely out of sync
-          setOutOfSync(true);
+      // Check Version & Config (Only once on initial load or dashboard)
+      if (activeTab === 'dashboard' || !serverVersion) {
+        try {
+            const vRes = await axios.get(`${base}/api/admin/version/`);
+            setServerVersion(vRes.data.version);
+            if (vRes.data.version !== '1.2.7') setOutOfSync(true);
+        } catch (e) { setOutOfSync(true); }
+
+        try {
+            const configRes = await axios.get(`${base}/api/config/`);
+            setSiteOnline(configRes.data.site_online);
+            setOrdersEnabled(configRes.data.orders_enabled !== false);
+            setOrdersDisabledMessage(configRes.data.orders_disabled_message || '');
+        } catch (e) {}
       }
-      
-      // Fetch site status
-      try {
-          const configRes = await axios.get(`${base}/api/config/`);
-          setSiteOnline(configRes.data.site_online);
-          setOrdersEnabled(configRes.data.orders_enabled !== false);
-          setOrdersDisabledMessage(configRes.data.orders_disabled_message || '');
-      } catch (e) {}
       
     } catch (e: any) {
       if (e.response?.status === 401) {
@@ -1667,7 +1683,7 @@ function FormInput({ label, onChange, type, options, ...props }: any) {
     );
 }
 
-function StatCard({ label, value, icon: Icon, trend, color }: any) {
+const StatCard = memo(({ label, value, icon: Icon, trend, color }: any) => {
   const colors: any = {
     emerald: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/5',
     blue: 'text-blue-500 bg-blue-500/10 border-blue-500/20 shadow-blue-500/5',
@@ -1688,18 +1704,18 @@ function StatCard({ label, value, icon: Icon, trend, color }: any) {
       </div>
     </div>
   );
-}
+});
 
-function HealthRow({ label, status, color }: any) {
+const HealthRow = memo(({ label, status, color }: any) => {
     return (
         <div className="flex justify-between items-center group">
             <span className="text-sm font-bold text-gray-500 transition-colors group-hover:text-gray-300">{label}</span>
             <span className={`text-[10px] font-black uppercase tracking-widest ${color}`}>{status}</span>
         </div>
     )
-}
+});
 
-function OrderList({ items, onUpdate, compact = false }: any) {
+const OrderList = memo(({ items, onUpdate, compact = false }: any) => {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-separate border-spacing-y-4">
@@ -1788,4 +1804,4 @@ function OrderList({ items, onUpdate, compact = false }: any) {
       </table>
     </div>
   );
-}
+});

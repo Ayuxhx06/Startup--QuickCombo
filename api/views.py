@@ -685,6 +685,13 @@ def place_order(request):
         # 6. Send Confirmation
         send_order_confirmation_email(order)
 
+        # 7. Update Google Sheets
+        try:
+            from .utils_sheets import append_order_to_sheet
+            append_order_to_sheet(order)
+        except Exception as sheet_err:
+            print(f"Sheet update skipped/failed: {sheet_err}")
+
         return Response({'order_id': order.id, 'total': float(total), 'status': 'out_for_delivery'}, status=201)
 
     except Exception as e:

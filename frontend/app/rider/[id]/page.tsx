@@ -139,6 +139,51 @@ export default function RiderTrackingPage() {
           </div>
         </div>
       </motion.div>
+      
+      {/* Order Contents Card */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="glass rounded-[32px] p-6 mb-4 border border-white/5"
+      >
+        <h3 className="text-gray-500 text-xs font-black uppercase tracking-widest mb-4 text-center">Order Contents</h3>
+        
+        <div className="space-y-3 mb-6">
+          {order.items?.map((item: any, idx: number) => (
+            <div key={idx} className="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center text-green-500 font-black text-sm">
+                  {item.quantity}
+                </div>
+                <span className="font-bold text-gray-200">{item.name}</span>
+              </div>
+              <span className="text-xs font-black text-gray-500 italic">x{item.quantity}</span>
+            </div>
+          ))}
+        </div>
+
+        {order.notes && (
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 mb-4">
+            <div className="flex items-center gap-2 mb-2 text-amber-500">
+               <AlertTriangle size={14} />
+               <span className="text-[10px] font-black uppercase tracking-widest text-center">Special Request / Notes</span>
+            </div>
+            <p className="text-sm text-amber-200/80 font-medium italic text-center">"{order.notes}"</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-3 mt-4">
+            <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex flex-col justify-center">
+                <p className="text-[9px] text-gray-500 font-bold uppercase mb-1 text-center">Customer</p>
+                <p className="text-xs font-black text-white text-center truncate">{order.user_name || 'Guest'}</p>
+            </div>
+            <a href={`tel:${order.user_phone}`} className="bg-green-500/10 p-4 rounded-2xl border border-green-500/20 flex flex-col justify-center">
+                <p className="text-[9px] text-green-500/70 font-bold uppercase mb-1 text-center">Contact</p>
+                <p className="text-xs font-black text-green-500 text-center">{order.user_phone}</p>
+            </a>
+        </div>
+      </motion.div>
 
       {/* Tracking Controls */}
       <div className="grid grid-cols-1 gap-4">

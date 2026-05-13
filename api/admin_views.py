@@ -65,12 +65,15 @@ def admin_stats(request):
     if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
         return Response({'error': 'Unauthorized'}, status=401)
 
-    # Sales & Orders
-    delivered_orders = Order.objects.filter(status='delivered')
-    total_sales = delivered_orders.aggregate(Sum('total'))['total__sum'] or 0
-    total_orders = Order.objects.count()
-    pending_orders = Order.objects.filter(status='pending').count()
-    active_orders = Order.objects.exclude(status__in=['delivered', 'cancelled']).count()
+    # Sales & Orders using optimized conditional aggregation (Single Query)
+    from django.db.models import Q, Case, When, FloatField
+    
+    order_metrics = Order.objects.aggregate(
+        total_sales=Sum(Case(When(status='delivered', then='total'), default=0, output_field=FloatField())),
+        total_orders=Count('id'),
+        pending_orders=Count(Case(When(status='pending', then=1))),
+        active_orders=Count(Case(When(~Q(status__in=['delivered', 'cancelled']), then=1)))
+    )
     
     # Inventory & Users
     total_items = MenuItem.objects.count()
@@ -78,10 +81,10 @@ def admin_stats(request):
     total_restaurants = Restaurant.objects.count()
     
     return Response({
-        'total_sales': float(total_sales),
-        'total_orders': int(total_orders),
-        'pending_orders': int(pending_orders),
-        'active_orders': int(active_orders),
+        'total_sales': float(order_metrics['total_sales'] or 0),
+        'total_orders': int(order_metrics['total_orders'] or 0),
+        'pending_orders': int(order_metrics['pending_orders'] or 0),
+        'active_orders': int(order_metrics['active_orders'] or 0),
         'total_items': int(total_items),
         'total_users': int(total_users),
         'total_restaurants': int(total_restaurants),
@@ -93,7 +96,14 @@ def admin_orders(request):
         return Response({'error': 'Unauthorized'}, status=401)
 
     if request.method == 'GET':
-        orders = Order.objects.all().order_by('-created_at')
+        # Optimize with prefetch_related to avoid N+1 queries
+        # items__menu_item__restaurant is needed for the serializer's restaurant_name method
+        orders = Order.objects.all().prefetch_related(
+            'items', 
+            'items__menu_item', 
+            'items__menu_item__restaurant'
+        ).order_by('-created_at')[:50] # Limit to latest 50 for performance
+        
         return Response(OrderSerializer(orders, many=True).data)
     
     elif request.method == 'PATCH':
