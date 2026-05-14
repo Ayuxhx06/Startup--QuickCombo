@@ -89,6 +89,7 @@ export default function PremiumAdmin() {
     headers: { 'X-Admin-Password': adminPassword }
   });
 
+  const fetchData = async () => {
     // Avoid redundant fetches if data already exists for the active tab
     const hasData = {
         dashboard: !!stats,
