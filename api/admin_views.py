@@ -109,9 +109,13 @@ def admin_orders(request):
     elif request.method == 'PATCH':
         order_id = request.data.get('order_id')
         new_status = request.data.get('status')
+        new_total = request.data.get('total')
         try:
             order = Order.objects.get(pk=order_id)
-            order.status = new_status
+            if new_status is not None:
+                order.status = new_status
+            if new_total is not None:
+                order.total = new_total
             order.save()
             return Response(OrderSerializer(order).data)
         except Order.DoesNotExist:

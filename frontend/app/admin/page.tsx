@@ -7,7 +7,7 @@ import {
   Plus, Edit2, Trash2, ChevronRight, LogOut, Loader2, 
   Lock, Users, BarChart3, Layers, Store, ShieldCheck,
   AlertCircle, ArrowUpRight, DollarSign, PieChart, Menu, X,
-  FileUp, Download, Ticket, Power
+  FileUp, Download, Ticket, Power, Bike
 } from 'lucide-react';
 import { useRef } from 'react';
 import axios from 'axios';
@@ -94,6 +94,7 @@ export default function PremiumAdmin() {
     const hasData = {
         dashboard: !!stats,
         orders: orders.length > 0,
+        delivery_partner: orders.length > 0,
         menu: menuItems.length > 0,
         categories: categories.length > 0,
         restaurants: restaurants.length > 0,
@@ -129,7 +130,7 @@ export default function PremiumAdmin() {
         await safeFetch(`${base}/api/admin/stats/`, setStats);
         const ordersRes = await axios.get(`${base}/api/admin/orders/`, getHeaders());
         setOrders(ordersRes.data.slice(0, 10)); // Top 10 for dashboard
-      } else if (activeTab === 'orders') {
+      } else if (activeTab === 'orders' || activeTab === 'delivery_partner') {
         await safeFetch(`${base}/api/admin/orders/`, setOrders);
       } else if (activeTab === 'menu') {
         await safeFetch(`${base}/api/admin/menu/`, setMenuItems);
@@ -505,6 +506,7 @@ export default function PremiumAdmin() {
                 {[
                   { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
                   { id: 'orders', label: 'Orders Hub', icon: ShoppingBag },
+                  { id: 'delivery_partner', label: 'Delivery Partner', icon: Bike },
                   { id: 'menu', label: 'Food Items', icon: Utensils },
                   { id: 'combos', label: 'Combos', icon: Package },
                   { id: 'essentials', label: 'Essentials', icon: Package },
@@ -705,6 +707,31 @@ export default function PremiumAdmin() {
                   o.phone?.includes(searchTerm)
                 )} onUpdate={updateOrderStatus} />
 
+              </motion.div>
+            )}
+
+            {activeTab === 'delivery_partner' && (
+              <motion.div 
+                key="delivery_partner" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+                className="bg-[#080808] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-x-auto"
+              >
+                <div className="flex justify-between items-center mb-10">
+                    <h3 className="text-2xl lg:text-3xl font-black">DELIVERY PARTNER</h3>
+                </div>
+                <DeliveryPartnerList items={orders.filter(o => 
+                  o.id.toString().includes(searchTerm) || 
+                  o.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  o.phone?.includes(searchTerm)
+                )} onUpdateTotal={async (orderId, newTotal) => {
+                    try {
+                        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+                        await axios.patch(`${base}/api/admin/orders/`, { order_id: orderId, total: newTotal }, getHeaders());
+                        toast.success('Total updated successfully');
+                        fetchData(); // Refresh orders
+                    } catch(e) {
+                        toast.error('Failed to update total');
+                    }
+                }} />
               </motion.div>
             )}
 
@@ -1800,6 +1827,85 @@ const OrderList = memo(({ items, onUpdate, compact = false }: any) => {
           ))}
           {items.length === 0 && (
             <tr><td colSpan={6} className="text-center py-20 text-gray-600 font-black uppercase tracking-widest italic">No Data Streams Found</td></tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+});
+
+const DeliveryPartnerRow = memo(({ order, onUpdateTotal }: { order: any, onUpdateTotal: (id: number, newTotal: string) => void }) => {
+    const [editTotal, setEditTotal] = useState(order.total);
+    return (
+        <tr className="bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-white/10 group">
+          <td className="py-6 px-6 rounded-l-[1.5rem] align-middle">
+            <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-black/50 rounded-2xl flex items-center justify-center font-black text-white italic border border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]">
+                    #{order.id}
+                </div>
+            </div>
+          </td>
+          <td className="py-6 px-6 align-middle">
+            <div className="font-black text-white mb-1 uppercase tracking-wider">{order.user_name || 'Guest'}</div>
+            <div className="text-[10px] text-gray-400 font-mono">{order.user_phone}</div>
+          </td>
+          <td className="py-6 px-6 align-middle">
+             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic inline-block text-center ${
+              order.payment_method === 'cod' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+            }`}>
+              {order.payment_method === 'cod' ? 'CASH' : 'ONLINE'}
+            </span>
+          </td>
+          <td className="py-6 px-6 align-middle">
+            <div className="text-[10px] text-gray-400">
+               Subtotal: ₹{order.subtotal} | Fee: ₹{order.delivery_fee} {parseFloat(order.discount_amount) > 0 ? `| Disc: -₹${order.discount_amount}` : ''}
+            </div>
+          </td>
+          <td className="py-6 px-6 align-middle text-right">
+            <div className="flex justify-end items-center gap-2">
+                <span className="text-gray-500 font-black">₹</span>
+                <input 
+                    type="number" 
+                    step="0.01"
+                    value={editTotal}
+                    onChange={(e) => setEditTotal(e.target.value)}
+                    className="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-emerald-500 font-black italic text-xl w-28 text-right outline-none focus:border-emerald-500/50"
+                />
+            </div>
+          </td>
+          <td className="py-6 px-6 rounded-r-[1.5rem] align-middle text-right">
+            <button 
+              onClick={() => onUpdateTotal(order.id, editTotal)}
+              disabled={editTotal == order.total}
+              className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-800 disabled:text-gray-500 text-black font-black uppercase text-[10px] px-6 py-3 rounded-xl transition-all"
+            >
+              SAVE
+            </button>
+          </td>
+        </tr>
+    );
+});
+
+const DeliveryPartnerList = memo(({ items, onUpdateTotal }: { items: any[], onUpdateTotal: (id: number, newTotal: string) => void }) => {
+  return (
+    <div className="w-full">
+      <table className="w-full text-left border-separate border-spacing-y-4">
+        <thead>
+          <tr className="text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-white/5">
+            <th className="pb-4 font-bold">Order ID</th>
+            <th className="pb-4 font-bold">Customer</th>
+            <th className="pb-4 font-bold">Payment Method</th>
+            <th className="pb-4 font-bold">Order Details</th>
+            <th className="pb-4 font-bold text-right">To Collect (Total)</th>
+            <th className="pb-4 font-bold text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody className="text-sm">
+          {items.map((order) => (
+            <DeliveryPartnerRow key={order.id} order={order} onUpdateTotal={onUpdateTotal} />
+          ))}
+          {items.length === 0 && (
+            <tr><td colSpan={6} className="text-center py-20 text-gray-600 font-black uppercase tracking-widest italic">No Active Orders</td></tr>
           )}
         </tbody>
       </table>
