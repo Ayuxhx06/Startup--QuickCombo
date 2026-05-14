@@ -147,43 +147,113 @@ export default function RiderTrackingPage() {
         transition={{ delay: 0.1 }}
         className="glass rounded-[32px] p-6 mb-4 border border-white/5"
       >
-        <h3 className="text-gray-500 text-xs font-black uppercase tracking-widest mb-4 text-center">Order Contents</h3>
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-gray-500 text-xs font-black uppercase tracking-widest">Order Contents</h3>
+          <div className="bg-white/10 px-3 py-1 rounded-full text-[10px] font-black uppercase text-gray-400 border border-white/5">
+            {order.items?.length || 0} {order.items?.length === 1 ? 'Item' : 'Items'}
+          </div>
+        </div>
         
         <div className="space-y-3 mb-6">
           {order.items?.map((item: any, idx: number) => (
-            <div key={idx} className="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center text-green-500 font-black text-sm">
-                  {item.quantity}
+            <div key={idx} className="flex flex-col bg-white/5 p-4 rounded-2xl border border-white/5">
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center text-green-500 font-black text-sm">
+                    {item.quantity}
+                  </div>
+                  <div>
+                    <span className="font-bold text-gray-200 block">{item.name}</span>
+                    <span className="text-[10px] text-gray-500 font-bold uppercase">📍 {item.restaurant_name}</span>
+                  </div>
                 </div>
-                <span className="font-bold text-gray-200">{item.name}</span>
+                <div className="text-right">
+                  <span className="text-xs font-black text-emerald-500 italic block">₹{item.price * item.quantity}</span>
+                  <span className="text-[9px] text-gray-600 font-bold uppercase">₹{item.price} ea</span>
+                </div>
               </div>
-              <span className="text-xs font-black text-gray-500 italic">x{item.quantity}</span>
             </div>
           ))}
         </div>
 
         {order.notes && (
-          <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 mb-4">
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 mb-6">
             <div className="flex items-center gap-2 mb-2 text-amber-500">
                <AlertTriangle size={14} />
-               <span className="text-[10px] font-black uppercase tracking-widest text-center">Special Request / Notes</span>
+               <span className="text-[10px] font-black uppercase tracking-widest">Special Request</span>
             </div>
-            <p className="text-sm text-amber-200/80 font-medium italic text-center">"{order.notes}"</p>
+            <p className="text-sm text-amber-200/80 font-medium italic">"{order.notes}"</p>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3 mt-4">
+        {/* Payment Summary */}
+        <div className="border-t border-white/5 pt-6 space-y-3 mb-6">
+           <div className="flex justify-between items-center text-xs">
+              <span className="text-gray-500 font-bold uppercase tracking-tighter">Item Total</span>
+              <span className="font-mono text-gray-300">₹{order.subtotal}</span>
+           </div>
+           <div className="flex justify-between items-center text-xs">
+              <span className="text-gray-500 font-bold uppercase tracking-tighter">Delivery Partner Fee</span>
+              <span className="font-mono text-gray-300">₹{order.delivery_fee}</span>
+           </div>
+           
+           {/* Dynamic Calculation for Packing/Taxes/Adjustments to ensure math adds up for the rider */}
+           {(() => {
+             const sub = parseFloat(order.subtotal) || 0;
+             const del = parseFloat(order.delivery_fee) || 0;
+             const disc = parseFloat(order.discount_amount) || 0;
+             const total = parseFloat(order.total) || 0;
+             const other = total - (sub + del - disc);
+             
+             if (Math.abs(other) > 0.01) {
+               return (
+                 <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-500 font-bold uppercase tracking-tighter">
+                      {other > 0 ? 'Packing & Taxes' : 'Adjustments'}
+                    </span>
+                    <span className={`font-mono ${other > 0 ? 'text-gray-300' : 'text-green-500'}`}>
+                      {other > 0 ? '' : '-' }₹{Math.abs(other).toFixed(2)}
+                    </span>
+                 </div>
+               );
+             }
+             return null;
+           })()}
+
+           {parseFloat(order.discount_amount) > 0 && (
+             <div className="flex justify-between items-center text-xs">
+                <span className="text-emerald-500/80 font-bold uppercase tracking-tighter">Coupon Discount</span>
+                <span className="font-mono text-emerald-500">-₹{order.discount_amount}</span>
+             </div>
+           )}
+           
+           <div className="flex justify-between items-center pt-4 border-t border-white/5">
+              <div>
+                <span className="text-lg font-black uppercase italic text-white block leading-none">To Collect</span>
+                <p className={`text-[10px] font-black uppercase tracking-widest mt-2 px-2 py-0.5 rounded-md inline-block ${order.payment_method === 'cod' ? 'bg-amber-500/20 text-amber-500' : 'bg-blue-500/20 text-blue-500'}`}>
+                  {order.payment_method === 'cod' ? '💵 Cash on Delivery' : '📱 Paid Online'}
+                </p>
+              </div>
+              <div className="text-right">
+                <span className="text-3xl font-black text-emerald-500 italic leading-none">₹{order.total}</span>
+                <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">Final Invoice Value</p>
+              </div>
+           </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
             <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex flex-col justify-center">
                 <p className="text-[9px] text-gray-500 font-bold uppercase mb-1 text-center">Customer</p>
                 <p className="text-xs font-black text-white text-center truncate">{order.user_name || 'Guest'}</p>
             </div>
             <a href={`tel:${order.user_phone}`} className="bg-green-500/10 p-4 rounded-2xl border border-green-500/20 flex flex-col justify-center">
-                <p className="text-[9px] text-green-500/70 font-bold uppercase mb-1 text-center">Contact</p>
+                <p className="text-[9px] text-green-500/70 font-bold uppercase mb-1 text-center">Call Now</p>
                 <p className="text-xs font-black text-green-500 text-center">{order.user_phone}</p>
             </a>
         </div>
       </motion.div>
+
+
 
       {/* Tracking Controls */}
       <div className="grid grid-cols-1 gap-4">

@@ -745,7 +745,9 @@ def order_detail(request, order_id):
             order.save()
             return Response(OrderSerializer(order).data)
 
-    return Response(OrderSerializer(order).data)
+    data = OrderSerializer(order).data
+    data['debug_info'] = "API_VERSION_MAY14_0050"
+    return Response(data)
 
 
 @api_view(['GET'])
