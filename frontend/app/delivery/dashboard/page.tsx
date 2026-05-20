@@ -51,6 +51,12 @@ export default function RiderDashboard() {
   }, []);
 
   const triggerNotification = (orderId: number, restaurant: string) => {
+    // Attempt standard Audio Context play on trigger
+    if (soundEnabled) {
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+      audio.play().catch(e => console.log('Autoplay sound failed:', e));
+    }
+
     if ('Notification' in window && Notification.permission === 'granted') {
       const title = 'New QuickCombo Order! 🛵';
       const options = {
@@ -141,15 +147,19 @@ export default function RiderDashboard() {
       
       // Play sound and trigger browser notification if a new latest order arrived
       const latestOrder = newOrders[0];
-      if (isPolling && latestOrder && latestOrder.id !== prevLatestOrderId.current) {
-        if (soundEnabled && audioRef.current) {
-          audioRef.current.play().catch(e => console.log('Audio play blocked', e));
+      if (latestOrder) {
+        if (isPolling && latestOrder.id !== prevLatestOrderId.current) {
+          if (soundEnabled && audioRef.current) {
+            audioRef.current.play().catch(e => console.log('Audio play blocked', e));
+          }
+          
+          const restaurantName = latestOrder.items?.[0]?.restaurant_name || 'Store';
+          triggerNotification(latestOrder.id, restaurantName);
         }
-        
-        const restaurantName = latestOrder.items?.[0]?.restaurant_name || 'Store';
-        triggerNotification(latestOrder.id, restaurantName);
+        prevLatestOrderId.current = latestOrder.id;
+      } else {
+        prevLatestOrderId.current = null;
       }
-      prevLatestOrderId.current = latestOrder ? latestOrder.id : null;
       
     } catch (err: any) {
       if (err.response?.status === 401) {
