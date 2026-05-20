@@ -41,19 +41,43 @@ export default function RiderDashboard() {
         });
       }
     }
+
+    // Register service worker for system notifications (needed for Android and iOS)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('SW Registered', reg))
+        .catch(err => console.log('SW Registration failed', err));
+    }
   }, []);
 
   const triggerNotification = (orderId: number, restaurant: string) => {
     if ('Notification' in window && Notification.permission === 'granted') {
-      try {
-        new Notification('New QuickCombo Order! 🛵', {
-          body: `Order #${orderId} is ready from ${restaurant}. Tap to view.`,
-          icon: '/favicon.ico',
-          tag: 'new-order',
-          requireInteraction: true
+      const title = 'New QuickCombo Order! 🛵';
+      const options = {
+        body: `Order #${orderId} is ready from ${restaurant}. Tap to view.`,
+        icon: '/favicon.ico',
+        tag: 'new-order',
+        requireInteraction: true
+      };
+
+      // Try service worker first (crucial for Chrome Android and Safari iOS)
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(registration => {
+          registration.showNotification(title, options);
+        }).catch(err => {
+          console.error('SW notification failed, trying fallback:', err);
+          try {
+            new Notification(title, options);
+          } catch (e) {
+            console.error('Fallback notification failed:', e);
+          }
         });
-      } catch (e) {
-        console.error('Notification trigger failed:', e);
+      } else {
+        try {
+          new Notification(title, options);
+        } catch (e) {
+          console.error('Fallback notification failed:', e);
+        }
       }
     }
   };
