@@ -841,11 +841,11 @@ export default function PremiumAdmin() {
                     <h3 className="text-2xl lg:text-3xl font-black">DELIVERY PARTNERS</h3>
                 </div>
                 <DeliveryPartnerList 
-                  items={deliveryPartners.filter(p => 
-                    p.id.toString().includes(searchTerm) || 
-                    p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    p.phone?.includes(searchTerm) ||
-                    p.email?.toLowerCase().includes(searchTerm.toLowerCase())
+                  items={(Array.isArray(deliveryPartners) ? deliveryPartners : []).filter(p => 
+                    p?.id?.toString().includes(searchTerm) || 
+                    p?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    p?.phone?.includes(searchTerm) ||
+                    p?.email?.toLowerCase().includes(searchTerm.toLowerCase())
                   )}
                   onVerifyPartner={verifyPartner}
                 />
