@@ -27,28 +27,8 @@ export default function RiderDashboard() {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const prevLatestOrderId = useRef<number | null>(null);
-
-  useEffect(() => {
-    // Check current permission
-    if ('Notification' in window) {
-      setNotificationPermission(Notification.permission);
-      
-      // Auto-request permission on mount
-      if (Notification.permission === 'default') {
-        Notification.requestPermission().then(perm => {
-          setNotificationPermission(perm);
-          if (perm === 'granted') toast.success('Notifications enabled!');
-        });
-      }
-    }
-
-    // Register service worker for system notifications (needed for Android and iOS)
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('SW Registered', reg))
-        .catch(err => console.log('SW Registration failed', err));
-    }
-  }, []);
+  const isFirstFetch = useRef<boolean>(true);
+  const [lastSyncTime, setLastSyncTime] = useState<string>('Never');
 
   const triggerNotification = (orderId: number, restaurant: string) => {
     // Play the audioRef sound (which has been preloaded & pre-unlocked)
@@ -115,7 +95,13 @@ export default function RiderDashboard() {
     // 1. Initialize audio with the real notification sound
     audioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
 
-    // 2. Check current notification permission
+    // 2. Initialize last seen order ID from localStorage
+    const lastSeen = localStorage.getItem('rider_last_seen_order_id');
+    if (lastSeen) {
+      prevLatestOrderId.current = parseInt(lastSeen, 10);
+    }
+
+    // 3. Check current notification permission
     if ('Notification' in window) {
       setNotificationPermission(Notification.permission);
       
@@ -128,14 +114,14 @@ export default function RiderDashboard() {
       }
     }
 
-    // 3. Register service worker for system notifications
+    // 4. Register service worker for system notifications
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then(reg => console.log('SW Registered', reg))
         .catch(err => console.log('SW Registration failed', err));
     }
 
-    // 4. Unlock audio autoplay on first user interaction
+    // 5. Unlock audio autoplay on first user interaction
     const unlockAudio = () => {
       if (audioRef.current) {
         audioRef.current.play().then(() => {
@@ -198,6 +184,7 @@ export default function RiderDashboard() {
 
   const fetchDashboardData = async (t: string, isPolling = false) => {
     if (!isPolling) setLoading(true);
+    setLastSyncTime(new Date().toLocaleTimeString());
     try {
       const res = await axios.get(`${API}/api/rider/orders/available/`, getHeaders(t));
       setActiveOrder(res.data.active_order);
@@ -208,14 +195,21 @@ export default function RiderDashboard() {
       // Play sound and trigger browser notification if a new latest order arrived
       const latestOrder = newOrders[0];
       if (latestOrder) {
-        if (isPolling && latestOrder.id !== prevLatestOrderId.current) {
+        const lastSeenId = prevLatestOrderId.current;
+        
+        // Notify ONLY if:
+        // - It is not the very first load/refresh of the page
+        // - AND the new order's ID is strictly greater than the last order we saw/notified
+        if (!isFirstFetch.current && latestOrder.id > (lastSeenId || 0)) {
           const restaurantName = latestOrder.items?.[0]?.restaurant_name || 'Store';
           triggerNotification(latestOrder.id, restaurantName);
         }
+        
         prevLatestOrderId.current = latestOrder.id;
-      } else {
-        prevLatestOrderId.current = null;
+        localStorage.setItem('rider_last_seen_order_id', latestOrder.id.toString());
       }
+      
+      isFirstFetch.current = false;
       
     } catch (err: any) {
       if (err.response?.status === 401) {
@@ -229,6 +223,7 @@ export default function RiderDashboard() {
   const handleLogout = () => {
     localStorage.removeItem('rider_token');
     localStorage.removeItem('rider_user');
+    localStorage.removeItem('rider_last_seen_order_id');
     router.push('/delivery/login');
   };
 
@@ -320,7 +315,15 @@ export default function RiderDashboard() {
             <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Rider Portal</p>
             <h1 className="text-sm font-black">{user?.name}</h1>
          </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-emerald-500/10 px-2.5 py-1.5 rounded-lg border border-emerald-500/20">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="text-[9px] text-emerald-400 font-black uppercase tracking-wider">Sync: {lastSyncTime}</span>
+            </div>
+            
             <button onClick={testNotification} className="text-emerald-500/80 hover:text-emerald-400 text-xs font-bold px-2.5 py-1.5 bg-emerald-500/10 rounded-lg">
               Test Alert
             </button>
