@@ -771,8 +771,28 @@ def admin_delivery_partners(request):
             'email': rider.email,
             'phone': rider.phone,
             'name': rider.name or 'Unnamed Partner',
+            'vehicle_number': rider.vehicle_number,
+            'driving_license': rider.driving_license,
+            'upi_id': rider.upi_id,
+            'rider_verified': rider.rider_verified,
             'completed_rides': completed_rides,
             'active_rides': active_rides,
             'date_joined': rider.date_joined.strftime('%Y-%m-%d %H:%M:%S') if rider.date_joined else 'N/A'
         })
     return Response(data)
+
+
+@api_view(['POST'])
+def admin_verify_rider(request):
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    rider_id = request.data.get('rider_id')
+    verified = request.data.get('verified', True)
+    try:
+        rider = User.objects.get(id=rider_id, is_rider=True)
+        rider.rider_verified = verified
+        rider.save()
+        return Response({'message': 'Rider verification status updated', 'rider_verified': rider.rider_verified})
+    except User.DoesNotExist:
+        return Response({'error': 'Rider not found'}, status=404)

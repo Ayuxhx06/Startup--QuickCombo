@@ -4,7 +4,10 @@ from .models import User, Category, MenuItem, Restaurant, Order, OrderItem, Addr
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'phone', 'name', 'is_staff', 'date_joined']
+        fields = [
+            'id', 'email', 'phone', 'name', 'is_staff', 'is_rider',
+            'vehicle_number', 'driving_license', 'upi_id', 'rider_verified', 'date_joined'
+        ]
 
 
 class RestaurantSerializer(serializers.ModelSerializer):

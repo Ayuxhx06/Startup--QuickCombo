@@ -22,8 +22,12 @@ export default function RiderDashboard() {
   
   // Profile completion state
   const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const [isUnverified, setIsUnverified] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [vehicleNumber, setVehicleNumber] = useState('');
+  const [drivingLicense, setDrivingLicense] = useState('');
+  const [upiId, setUpiId] = useState('');
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const prevLatestOrderId = useRef<number | null>(null);
@@ -210,11 +214,21 @@ export default function RiderDashboard() {
     const parsedUser = JSON.parse(storedUser);
     setUser(parsedUser);
 
-    if (!parsedUser.name || !parsedUser.phone) {
+    setName(parsedUser.name || '');
+    setPhone(parsedUser.phone || '');
+    setVehicleNumber(parsedUser.vehicle_number || '');
+    setDrivingLicense(parsedUser.driving_license || '');
+    setUpiId(parsedUser.upi_id || '');
+
+    if (!parsedUser.name || !parsedUser.phone || !parsedUser.vehicle_number || !parsedUser.driving_license || !parsedUser.upi_id) {
       setShowProfileSetup(true);
+      setLoading(false);
+    } else if (!parsedUser.rider_verified) {
+      setIsUnverified(true);
       setLoading(false);
     } else {
       setShowProfileSetup(false);
+      setIsUnverified(false);
     }
 
     if ('serviceWorker' in navigator) {
@@ -226,7 +240,7 @@ export default function RiderDashboard() {
 
   // Robust automatic polling whenever token is set and profile setup is done
   useEffect(() => {
-    if (!token || showProfileSetup) return;
+    if (!token || showProfileSetup || isUnverified) return;
 
     // Fetch immediately on load or profile completion
     fetchDashboardData(token, false);
@@ -237,11 +251,29 @@ export default function RiderDashboard() {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [token, showProfileSetup]);
+  }, [token, showProfileSetup, isUnverified]);
 
   const getHeaders = (t: string) => ({
     headers: { Authorization: `Bearer ${t}` }
   });
+
+  const checkVerificationStatus = async () => {
+    try {
+      const res = await axios.get(`${API}/api/rider/profile/`, getHeaders(token!));
+      const freshUser = res.data.user;
+      localStorage.setItem('rider_user', JSON.stringify(freshUser));
+      setUser(freshUser);
+      if (freshUser.rider_verified) {
+        setIsUnverified(false);
+        toast.success('Your account is verified! Access granted.');
+        fetchDashboardData(token!);
+      } else {
+        toast.error('Verification is still pending approval.');
+      }
+    } catch (e) {
+      toast.error('Failed to refresh status');
+    }
+  };
 
   const fetchDashboardData = async (t: string, isPolling = false) => {
     if (!isPolling) setLoading(true);
@@ -274,6 +306,8 @@ export default function RiderDashboard() {
     } catch (err: any) {
       if (err.response?.status === 401) {
         handleLogout();
+      } else if (err.response?.status === 403 && err.response?.data?.unverified) {
+        setIsUnverified(true);
       }
     } finally {
       if (!isPolling) setLoading(false);
@@ -289,14 +323,29 @@ export default function RiderDashboard() {
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) return toast.error('Name and Phone are required');
+    if (!name || !phone || !vehicleNumber || !drivingLicense || !upiId) {
+      return toast.error('All verification fields are required');
+    }
     try {
-      const res = await axios.post(`${API}/api/rider/profile/`, { name, phone }, getHeaders(token!));
+      const res = await axios.post(`${API}/api/rider/profile/`, {
+        name,
+        phone,
+        vehicle_number: vehicleNumber,
+        driving_license: drivingLicense,
+        upi_id: upiId
+      }, getHeaders(token!));
       localStorage.setItem('rider_user', JSON.stringify(res.data.user));
       setUser(res.data.user);
       setShowProfileSetup(false);
-      toast.success('Profile saved!');
-      fetchDashboardData(token!);
+      
+      if (!res.data.user.rider_verified) {
+        setIsUnverified(true);
+        toast.success('Details submitted! Account pending verification approval.');
+      } else {
+        setIsUnverified(false);
+        toast.success('Verification complete!');
+        fetchDashboardData(token!);
+      }
     } catch (err) {
       toast.error('Failed to save profile');
     }
@@ -349,19 +398,122 @@ export default function RiderDashboard() {
     </div>
   );
 
-  // Profile Setup Screen
+  // Profile Setup Screen (Collect Name, Phone, Vehicle, DL, UPI)
   if (showProfileSetup) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white p-6 flex flex-col justify-center">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full mx-auto">
-           <h1 className="text-3xl font-black mb-2">Complete Profile</h1>
-           <p className="text-gray-400 mb-8">We need your details so customers can contact you.</p>
+      <div className="min-h-screen bg-[#0a0a0a] text-white p-6 flex flex-col justify-center relative overflow-hidden">
+        {/* Background ambient glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full mx-auto bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative z-10">
+           <div className="text-center mb-8">
+             <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-400">
+               <User size={32} />
+             </div>
+             <h1 className="text-3xl font-black italic tracking-tight">RIDER PROFILE</h1>
+             <p className="text-gray-400 text-sm mt-1">Complete verification to start accepting deliveries</p>
+           </div>
            
            <form onSubmit={handleSaveProfile} className="space-y-4">
-             <input type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder-gray-500 focus:border-emerald-500/50 outline-none" required />
-             <input type="tel" placeholder="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white placeholder-gray-500 focus:border-emerald-500/50 outline-none" required />
-             <button type="submit" className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest py-4 rounded-2xl mt-4">Save & Continue</button>
+             <div>
+               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5 ml-1">Full Name</label>
+               <input type="text" placeholder="John Doe" value={name} onChange={e => setName(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-4 text-white placeholder-gray-600 focus:border-emerald-500/50 outline-none transition" required />
+             </div>
+
+             <div>
+               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5 ml-1">Phone Number</label>
+               <input type="tel" placeholder="+91 98765 43210" value={phone} onChange={e => setPhone(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-4 text-white placeholder-gray-600 focus:border-emerald-500/50 outline-none transition" required />
+             </div>
+
+             <div>
+               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5 ml-1">Vehicle Number Plate</label>
+               <input type="text" placeholder="DL 3C AB 1234" value={vehicleNumber} onChange={e => setVehicleNumber(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-4 text-white placeholder-gray-600 focus:border-emerald-500/50 outline-none transition" required />
+             </div>
+
+             <div>
+               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5 ml-1">Driving License Number</label>
+               <input type="text" placeholder="DL-1234567890123" value={drivingLicense} onChange={e => setDrivingLicense(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-4 text-white placeholder-gray-600 focus:border-emerald-500/50 outline-none transition" required />
+             </div>
+
+             <div>
+               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5 ml-1">UPI ID for Payouts</label>
+               <input type="text" placeholder="rider@upi" value={upiId} onChange={e => setUpiId(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-4 text-white placeholder-gray-600 focus:border-emerald-500/50 outline-none transition" required />
+             </div>
+
+             <button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-black uppercase tracking-widest py-4 rounded-2xl mt-6 transition shadow-lg shadow-emerald-500/20 active:scale-[0.98]">
+               Submit Verification Details
+             </button>
            </form>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Pending Verification Screen
+  if (isUnverified) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white p-6 flex flex-col justify-center relative overflow-hidden">
+        {/* Background ambient glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-md w-full mx-auto bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative z-10">
+           <div className="text-center mb-8">
+             <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-amber-400 animate-pulse">
+               <Package size={32} className="animate-bounce" style={{ animationDuration: '3s' }} />
+             </div>
+             <div className="inline-flex items-center gap-1.5 bg-amber-500/15 border border-amber-500/35 px-3 py-1 rounded-full text-[10px] text-amber-400 font-black uppercase tracking-wider mb-3">
+               <span className="relative flex h-1.5 w-1.5">
+                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+               </span>
+               Pending Verification
+             </div>
+             <h1 className="text-3xl font-black italic tracking-tight">UNDER REVIEW</h1>
+             <p className="text-gray-400 text-sm mt-2 leading-relaxed">
+               QuickCombo Admins are reviewing your documents. You'll gain dashboard access immediately upon approval.
+             </p>
+           </div>
+
+           {/* Submitted Details Review */}
+           <div className="bg-white/5 border border-white/5 rounded-2xl p-5 mb-6 space-y-3">
+             <h3 className="text-xs font-black tracking-widest text-gray-500 uppercase border-b border-white/5 pb-2">Submitted Details</h3>
+             
+             <div className="flex justify-between items-center text-sm">
+               <span className="text-gray-400">Name</span>
+               <span className="font-bold">{user?.name}</span>
+             </div>
+             
+             <div className="flex justify-between items-center text-sm">
+               <span className="text-gray-400">Phone</span>
+               <span className="font-bold">{user?.phone}</span>
+             </div>
+
+             <div className="flex justify-between items-center text-sm">
+               <span className="text-gray-400">Vehicle plate</span>
+               <span className="font-bold uppercase">{user?.vehicle_number}</span>
+             </div>
+
+             <div className="flex justify-between items-center text-sm">
+               <span className="text-gray-400">License No</span>
+               <span className="font-bold uppercase">{user?.driving_license}</span>
+             </div>
+
+             <div className="flex justify-between items-center text-sm">
+               <span className="text-gray-400">UPI ID</span>
+               <span className="font-bold text-emerald-400">{user?.upi_id}</span>
+             </div>
+           </div>
+           
+           <div className="space-y-3">
+             <button onClick={checkVerificationStatus} className="w-full bg-amber-500 hover:bg-amber-400 text-black font-black uppercase tracking-widest py-4 rounded-2xl transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/10 active:scale-[0.98]">
+               <RefreshCw size={18} className="animate-spin" style={{ animationDuration: '4s' }} />
+               Refresh Status
+             </button>
+             
+             <button onClick={handleLogout} className="w-full bg-white/5 hover:bg-white/10 text-red-400 hover:text-red-300 font-black uppercase tracking-widest py-3.5 rounded-2xl border border-white/5 transition active:scale-[0.98]">
+               Sign Out
+             </button>
+           </div>
         </motion.div>
       </div>
     );
@@ -374,6 +526,7 @@ export default function RiderDashboard() {
          <div>
             <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Rider Portal</p>
             <h1 className="text-sm font-black">{user?.name}</h1>
+            <p className="text-[10px] text-gray-400 mt-1">{user?.phone} &bull; {user?.email}</p>
          </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 bg-emerald-500/10 px-2.5 py-1.5 rounded-lg border border-emerald-500/20">

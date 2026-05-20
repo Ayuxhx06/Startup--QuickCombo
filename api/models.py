@@ -33,6 +33,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_rider = models.BooleanField(default=False)
+    vehicle_number = models.CharField(max_length=50, blank=True)
+    driving_license = models.CharField(max_length=50, blank=True)
+    upi_id = models.CharField(max_length=100, blank=True)
+    rider_verified = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'email'

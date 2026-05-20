@@ -63,7 +63,7 @@ export default function PremiumAdmin() {
 
   // Auto-login check
   useEffect(() => {
-    const savedPass = sessionStorage.getItem('QC_MASTER_PASS');
+    const savedPass = localStorage.getItem('QC_MASTER_PASS');
     if (savedPass) setAdminPassword(savedPass);
     setIsChecking(false);
   }, []);
@@ -164,12 +164,12 @@ export default function PremiumAdmin() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputPassword.trim()) return;
-    sessionStorage.setItem('QC_MASTER_PASS', inputPassword);
+    localStorage.setItem('QC_MASTER_PASS', inputPassword);
     setAdminPassword(inputPassword);
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('QC_MASTER_PASS');
+    localStorage.removeItem('QC_MASTER_PASS');
     setAdminPassword('');
     setStats(null);
   };
@@ -220,7 +220,7 @@ export default function PremiumAdmin() {
         await safeFetch(`${base}/api/admin/stats/`, setStats);
         const ordersRes = await axios.get(`${base}/api/admin/orders/`, getHeaders());
         setOrders(ordersRes.data.slice(0, 10)); // Top 10 for dashboard
-      } else if (activeTab === 'orders') {
+      } else if (activeTab === 'orders' || activeTab === 'price_adjust') {
         await safeFetch(`${base}/api/admin/orders/`, setOrders);
       } else if (activeTab === 'delivery_partner') {
         await safeFetch(`${base}/api/admin/delivery-partners/`, setDeliveryPartners);
@@ -285,6 +285,35 @@ export default function PremiumAdmin() {
         toast.error('Failed to change site status');
     } finally {
         setIsTogglingSite(false);
+    }
+  };
+
+  const verifyPartner = async (riderId: number, verify: boolean) => {
+    try {
+      const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+      const res = await axios.post(`${base}/api/admin/delivery-partners/verify/`, {
+        rider_id: riderId,
+        verified: verify
+      }, getHeaders());
+      toast.success(res.data.message || 'Status updated!');
+      // reload delivery partners
+      const ridersRes = await axios.get(`${base}/api/admin/delivery-partners/`, getHeaders());
+      setDeliveryPartners(ridersRes.data);
+    } catch (e) {
+      toast.error('Failed to update verification status');
+    }
+  };
+
+  const updateOrderPrice = async (orderId: number, total: number) => {
+    try {
+      const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+      await axios.patch(`${base}/api/admin/orders/`, { order_id: orderId, total }, getHeaders());
+      toast.success(`Order #${orderId} price updated to ₹${total}`);
+      // Refresh order list
+      const ordersRes = await axios.get(`${base}/api/admin/orders/`, getHeaders());
+      setOrders(ordersRes.data);
+    } catch (e: any) {
+      toast.error(e.response?.data?.error || 'Failed to update order price');
     }
   };
 
@@ -598,6 +627,7 @@ export default function PremiumAdmin() {
                 {[
                   { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
                   { id: 'orders', label: 'Orders Hub', icon: ShoppingBag },
+                  { id: 'price_adjust', label: 'Price Adjust', icon: DollarSign },
                   { id: 'delivery_partner', label: 'Delivery Partner', icon: Bike },
                   { id: 'menu', label: 'Food Items', icon: Utensils },
                   { id: 'combos', label: 'Combos', icon: Package },
@@ -810,13 +840,53 @@ export default function PremiumAdmin() {
                 <div className="flex justify-between items-center mb-10">
                     <h3 className="text-2xl lg:text-3xl font-black">DELIVERY PARTNERS</h3>
                 </div>
-                <DeliveryPartnerList items={deliveryPartners.filter(p => 
-                  p.id.toString().includes(searchTerm) || 
-                  p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  p.phone?.includes(searchTerm) ||
-                  p.email?.toLowerCase().includes(searchTerm.toLowerCase())
-                )} 
+                <DeliveryPartnerList 
+                  items={deliveryPartners.filter(p => 
+                    p.id.toString().includes(searchTerm) || 
+                    p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    p.phone?.includes(searchTerm) ||
+                    p.email?.toLowerCase().includes(searchTerm.toLowerCase())
+                  )}
+                  onVerifyPartner={verifyPartner}
                 />
+              </motion.div>
+            )}
+
+            {activeTab === 'price_adjust' && (
+              <motion.div 
+                key="price_adjust" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+                className="space-y-8"
+              >
+                <div className="bg-[#080808] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl">
+                  <div className="mb-8">
+                      <h3 className="text-2xl lg:text-3xl font-black italic">MANUAL PRICE ADJUSTMENT</h3>
+                      <p className="text-gray-500 text-sm mt-1">Directly adjust order totals for custom menu requests. Price changes will be reflected in the rider app immediately.</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {orders
+                      .filter(o => o.status !== 'delivered' && o.status !== 'cancelled')
+                      .filter(o => 
+                        o.id.toString().includes(searchTerm) || 
+                        o.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        o.user_phone?.includes(searchTerm) ||
+                        o.notes?.toLowerCase().includes(searchTerm.toLowerCase())
+                      )
+                      .map(order => (
+                        <PriceAdjustCard 
+                          key={order.id} 
+                          order={order} 
+                          onUpdatePrice={updateOrderPrice} 
+                        />
+                      ))
+                    }
+                    {orders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length === 0 && (
+                      <div className="col-span-full text-center py-20 text-gray-600 font-black uppercase tracking-widest italic">
+                        No In-Flight Orders Awaiting Price Adjustments
+                      </div>
+                    )}
+                  </div>
+                </div>
               </motion.div>
             )}
 
@@ -1919,18 +1989,19 @@ const OrderList = memo(({ items, onUpdate, compact = false }: any) => {
   );
 });
 
-const DeliveryPartnerList = memo(({ items }: { items: any[] }) => {
+const DeliveryPartnerList = memo(({ items, onVerifyPartner }: { items: any[], onVerifyPartner: (riderId: number, verify: boolean) => void }) => {
   return (
-    <div className="w-full">
-      <table className="w-full text-left border-separate border-spacing-y-4">
+    <div className="w-full overflow-x-auto">
+      <table className="w-full text-left border-separate border-spacing-y-4 min-w-[900px]">
         <thead>
           <tr className="text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-white/5">
             <th className="pb-4 font-bold">Partner ID</th>
             <th className="pb-4 font-bold">Name</th>
             <th className="pb-4 font-bold">Contact Details</th>
+            <th className="pb-4 font-bold">Verification Info</th>
             <th className="pb-4 font-bold text-center">Rides Completed</th>
             <th className="pb-4 font-bold text-center">Active Rides</th>
-            <th className="pb-4 font-bold text-right">Joined Date</th>
+            <th className="pb-4 font-bold text-right">Verification Status / Action</th>
           </tr>
         </thead>
         <tbody className="text-sm">
@@ -1950,6 +2021,20 @@ const DeliveryPartnerList = memo(({ items }: { items: any[] }) => {
                 <div className="font-mono text-xs text-gray-300">{partner.phone || 'No phone'}</div>
                 <div className="text-[10px] text-gray-500 font-mono mt-1">{partner.email}</div>
               </td>
+              <td className="py-6 px-6 align-middle">
+                <div className="text-xs text-gray-300">
+                  <span className="text-gray-500 font-bold uppercase text-[9px] mr-1.5">Vehicle:</span>
+                  <span className="font-mono uppercase font-bold text-amber-500">{partner.vehicle_number || 'N/A'}</span>
+                </div>
+                <div className="text-xs text-gray-300 mt-1">
+                  <span className="text-gray-500 font-bold uppercase text-[9px] mr-1.5">License:</span>
+                  <span className="font-mono uppercase">{partner.driving_license || 'N/A'}</span>
+                </div>
+                <div className="text-xs text-gray-300 mt-1">
+                  <span className="text-gray-500 font-bold uppercase text-[9px] mr-1.5">UPI ID:</span>
+                  <span className="font-mono text-emerald-400">{partner.upi_id || 'N/A'}</span>
+                </div>
+              </td>
               <td className="py-6 px-6 align-middle text-center">
                 <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-4 py-1.5 rounded-full text-xs font-black italic inline-block">
                   {partner.completed_rides} RIDES
@@ -1964,16 +2049,147 @@ const DeliveryPartnerList = memo(({ items }: { items: any[] }) => {
                   {partner.active_rides} ACTIVE
                 </span>
               </td>
-              <td className="py-6 px-6 rounded-r-[1.5rem] align-middle text-right text-xs font-mono text-gray-400">
-                {partner.date_joined}
+              <td className="py-6 px-6 rounded-r-[1.5rem] align-middle text-right">
+                <div className="flex flex-col items-end gap-2">
+                  {partner.rider_verified ? (
+                    <>
+                      <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider">
+                        Verified Partner
+                      </span>
+                      <button
+                        onClick={() => onVerifyPartner(partner.id, false)}
+                        className="text-[10px] text-red-400 hover:text-red-300 font-bold hover:underline uppercase tracking-widest mt-1 mr-2"
+                      >
+                        Revoke Approval
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider animate-pulse">
+                        Pending Verification
+                      </span>
+                      <button
+                        onClick={() => onVerifyPartner(partner.id, true)}
+                        className="bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black uppercase tracking-widest px-4 py-2 rounded-xl mt-1 shadow-md shadow-emerald-500/10 active:scale-[0.98] transition-all"
+                      >
+                        Approve Partner
+                      </button>
+                    </>
+                  )}
+                </div>
               </td>
             </tr>
           ))}
           {items.length === 0 && (
-            <tr><td colSpan={6} className="text-center py-20 text-gray-600 font-black uppercase tracking-widest italic">No Registered Delivery Partners</td></tr>
+            <tr><td colSpan={7} className="text-center py-20 text-gray-600 font-black uppercase tracking-widest italic">No Registered Delivery Partners</td></tr>
           )}
         </tbody>
       </table>
     </div>
   );
 });
+
+const PriceAdjustCard = ({ order, onUpdatePrice }: { order: any, onUpdatePrice: (id: number, total: number) => Promise<void> }) => {
+  const [newPrice, setNewPrice] = useState(order.total);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isNaN(Number(newPrice)) || Number(newPrice) < 0) {
+      toast.error('Invalid price');
+      return;
+    }
+    setIsUpdating(true);
+    await onUpdatePrice(order.id, Number(newPrice));
+    setIsUpdating(false);
+  };
+
+  useEffect(() => {
+    setNewPrice(order.total);
+  }, [order.total]);
+
+  const hasSpecialRequest = order.notes && order.notes.trim().length > 0;
+
+  return (
+    <div className={`bg-white/5 border rounded-[2rem] p-6 transition-all ${
+      hasSpecialRequest ? 'border-amber-500/30 bg-amber-500/[0.02]' : 'border-white/5'
+    }`}>
+      {/* Header */}
+      <div className="flex justify-between items-start gap-4 mb-4">
+        <div>
+          <div className="font-black text-xl italic text-white">#QC{order.id.toString().padStart(4, '0')}</div>
+          <div className="text-[10px] text-gray-500 font-bold uppercase mt-0.5">
+            {new Date(order.created_at).toLocaleString()}
+          </div>
+        </div>
+        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase italic border ${
+          order.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+          order.status === 'confirmed' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+          order.status === 'preparing' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' :
+          'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+        }`}>
+          {order.status}
+        </span>
+      </div>
+
+      {/* Customer Info */}
+      <div className="mb-4">
+        <div className="text-sm font-black text-white uppercase italic">{order.user_name || 'GUEST'}</div>
+        <div className="text-xs text-gray-400 font-mono mt-0.5">{order.user_phone}</div>
+        <div className="text-xs text-gray-500 mt-1 max-w-sm line-clamp-1">📍 {order.delivery_address}</div>
+      </div>
+
+      {/* Items */}
+      <div className="space-y-1.5 mb-4">
+        {order.items?.map((item: any, idx: number) => (
+          <div key={idx} className="flex justify-between items-center text-xs text-gray-400">
+            <span>{item.quantity}x {item.name}</span>
+            <span className="font-bold text-gray-500">₹{item.price}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Special Requests */}
+      <div className="mb-6">
+        <p className="text-[9px] font-black text-gray-500 uppercase tracking-wider mb-1.5">Special Instructions / Requests</p>
+        <div className={`p-3 rounded-2xl text-xs italic ${
+          hasSpecialRequest 
+            ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold' 
+            : 'bg-white/5 border border-white/5 text-gray-500'
+        }`}>
+          {order.notes || 'No special requests / manual additions'}
+        </div>
+      </div>
+
+      {/* Price Form */}
+      <form onSubmit={handleSubmit} className="pt-4 border-t border-white/5 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-[9px] font-black text-gray-500 uppercase tracking-wider">Current Price</p>
+          <div className="text-2xl font-black text-emerald-500 italic">₹{order.total}</div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 font-bold">₹</span>
+            <input
+              type="number"
+              step="any"
+              value={newPrice}
+              onChange={e => setNewPrice(e.target.value)}
+              className="bg-black/50 border border-white/10 focus:border-emerald-500/50 rounded-xl py-2 pl-7 pr-3 text-sm font-bold text-white w-24 outline-none transition"
+              required
+            />
+          </div>
+          
+          <button
+            type="submit"
+            disabled={isUpdating}
+            className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-white/5 text-black disabled:text-gray-500 font-black uppercase text-[10px] tracking-wider px-4 py-2.5 rounded-xl transition active:scale-[0.98]"
+          >
+            {isUpdating ? 'Saving...' : 'Set Price'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};

@@ -90,17 +90,26 @@ def rider_google_login(request):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 def rider_update_profile(request):
     user = authenticate_rider(request)
     if not user:
         return Response({'error': 'Unauthorized'}, status=401)
         
+    if request.method == 'GET':
+        return Response({'user': UserSerializer(user).data})
+        
     name = request.data.get('name')
     phone = request.data.get('phone')
+    vehicle_number = request.data.get('vehicle_number')
+    driving_license = request.data.get('driving_license')
+    upi_id = request.data.get('upi_id')
     
-    if name: user.name = name
-    if phone: user.phone = phone
+    if name is not None: user.name = name
+    if phone is not None: user.phone = phone
+    if vehicle_number is not None: user.vehicle_number = vehicle_number
+    if driving_license is not None: user.driving_license = driving_license
+    if upi_id is not None: user.upi_id = upi_id
     user.save()
     
     return Response({'message': 'Profile updated', 'user': UserSerializer(user).data})
@@ -110,6 +119,9 @@ def rider_available_orders(request):
     user = authenticate_rider(request)
     if not user:
         return Response({'error': 'Unauthorized'}, status=401)
+        
+    if not user.rider_verified:
+        return Response({'error': 'Rider not verified', 'unverified': True}, status=403)
         
     # Get active orders assigned to this rider
     active_orders = Order.objects.filter(
@@ -144,6 +156,9 @@ def rider_accept_order(request, order_id):
     if not user:
         return Response({'error': 'Unauthorized'}, status=401)
         
+    if not user.rider_verified:
+        return Response({'error': 'Rider not verified', 'unverified': True}, status=403)
+        
     try:
         order = Order.objects.get(id=order_id)
         if order.assigned_rider and order.assigned_rider != user:
@@ -162,6 +177,9 @@ def rider_update_status(request, order_id):
     user = authenticate_rider(request)
     if not user:
         return Response({'error': 'Unauthorized'}, status=401)
+        
+    if not user.rider_verified:
+        return Response({'error': 'Rider not verified', 'unverified': True}, status=403)
         
     try:
         order = Order.objects.get(id=order_id, assigned_rider=user)
@@ -182,6 +200,9 @@ def rider_update_location(request, order_id):
     if not user:
         return Response({'error': 'Unauthorized'}, status=401)
         
+    if not user.rider_verified:
+        return Response({'error': 'Rider not verified', 'unverified': True}, status=403)
+        
     try:
         order = Order.objects.get(id=order_id, assigned_rider=user)
         lat = request.data.get('lat')
@@ -201,6 +222,9 @@ def rider_subscribe(request):
     user = authenticate_rider(request)
     if not user:
         return Response({'error': 'Unauthorized'}, status=401)
+
+    if not user.rider_verified:
+        return Response({'error': 'Rider not verified', 'unverified': True}, status=403)
 
     endpoint = request.data.get('endpoint')
     auth_key = request.data.get('auth')

@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin/version/', admin_views.admin_version),
     path('admin/toggle-site/', admin_views.admin_toggle_site),
     path('admin/delivery-partners/', admin_views.admin_delivery_partners),
+    path('admin/delivery-partners/verify/', admin_views.admin_verify_rider),
 
     # Auth
     path('auth/send-otp/', views.send_otp),
