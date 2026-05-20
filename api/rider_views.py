@@ -112,7 +112,10 @@ def rider_available_orders(request):
         return Response({'error': 'Unauthorized'}, status=401)
         
     # Get active orders assigned to this rider
-    active_orders = Order.objects.filter(assigned_rider=user).exclude(status__in=['delivered', 'cancelled']).order_by('-created_at')
+    active_orders = Order.objects.filter(
+        id__gte=434,
+        assigned_rider=user
+    ).exclude(status__in=['delivered', 'cancelled']).order_by('-created_at')
     
     if active_orders.exists():
         return Response({
@@ -122,6 +125,7 @@ def rider_available_orders(request):
         
     # If no active order, get only the single latest unassigned active order
     latest_order = Order.objects.filter(
+        id__gte=434,
         assigned_rider__isnull=True
     ).exclude(
         status__in=['delivered', 'cancelled']

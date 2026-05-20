@@ -26,7 +26,7 @@ export default function RiderDashboard() {
   const [phone, setPhone] = useState('');
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const prevAvailableCount = useRef(0);
+  const prevLatestOrderId = useRef<number | null>(null);
 
   useEffect(() => {
     // Check current permission
@@ -115,20 +115,17 @@ export default function RiderDashboard() {
       const newOrders = res.data.available_orders || [];
       setAvailableOrders(newOrders);
       
-      // Play sound and trigger browser notification if new orders arrived
-      if (isPolling && newOrders.length > prevAvailableCount.current) {
+      // Play sound and trigger browser notification if a new latest order arrived
+      const latestOrder = newOrders[0];
+      if (isPolling && latestOrder && latestOrder.id !== prevLatestOrderId.current) {
         if (soundEnabled && audioRef.current) {
           audioRef.current.play().catch(e => console.log('Audio play blocked', e));
         }
         
-        // Trigger browser notification for the latest order
-        const latestNewOrder = newOrders[0];
-        if (latestNewOrder) {
-          const restaurantName = latestNewOrder.items?.[0]?.restaurant_name || 'Store';
-          triggerNotification(latestNewOrder.id, restaurantName);
-        }
+        const restaurantName = latestOrder.items?.[0]?.restaurant_name || 'Store';
+        triggerNotification(latestOrder.id, restaurantName);
       }
-      prevAvailableCount.current = newOrders.length;
+      prevLatestOrderId.current = latestOrder ? latestOrder.id : null;
       
     } catch (err: any) {
       if (err.response?.status === 401) {
