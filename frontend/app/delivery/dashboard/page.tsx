@@ -51,10 +51,10 @@ export default function RiderDashboard() {
   }, []);
 
   const triggerNotification = (orderId: number, restaurant: string) => {
-    // Attempt standard Audio Context play on trigger
-    if (soundEnabled) {
-      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
-      audio.play().catch(e => console.log('Autoplay sound failed:', e));
+    // Play the audioRef sound (which has been preloaded & pre-unlocked)
+    if (soundEnabled && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(e => console.log('Autoplay sound failed:', e));
     }
 
     if ('Notification' in window && Notification.permission === 'granted') {
@@ -66,12 +66,16 @@ export default function RiderDashboard() {
         requireInteraction: true
       };
 
-      // Try service worker first (crucial for Chrome Android and Safari iOS)
+      // Try service worker first (crucial for background delivery on iOS and Android)
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.ready.then(registration => {
-          registration.showNotification(title, options);
+        navigator.serviceWorker.getRegistration().then(registration => {
+          if (registration && registration.showNotification) {
+            registration.showNotification(title, options);
+          } else {
+            new Notification(title, options);
+          }
         }).catch(err => {
-          console.error('SW notification failed, trying fallback:', err);
+          console.error('SW registration fetch failed, falling back:', err);
           try {
             new Notification(title, options);
           } catch (e) {
@@ -89,13 +93,6 @@ export default function RiderDashboard() {
   };
 
   const testNotification = () => {
-    // Play test sound
-    if (soundEnabled) {
-      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
-      audio.play().catch(e => console.log('Test sound failed:', e));
-    }
-    
-    // Send test notification
     if ('Notification' in window) {
       if (Notification.permission === 'granted') {
         triggerNotification(999, 'Test Restaurant');
@@ -105,6 +102,7 @@ export default function RiderDashboard() {
           setNotificationPermission(perm);
           if (perm === 'granted') {
             triggerNotification(999, 'Test Restaurant');
+            toast.success('Test notification sent!');
           } else {
             toast.error('Notification permission denied.');
           }
@@ -114,22 +112,30 @@ export default function RiderDashboard() {
   };
 
   useEffect(() => {
-    // Initialize audio with a tiny base64 beep
-    audioRef.current = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
-    
-    const storedToken = localStorage.getItem('rider_token');
-    const storedUser = localStorage.getItem('rider_user');
-    
-    if (!storedToken || !storedUser) {
-      router.push('/delivery/login');
-      return;
+    // 1. Initialize audio with the real notification sound
+    audioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+
+    // 2. Check current notification permission
+    if ('Notification' in window) {
+      setNotificationPermission(Notification.permission);
+      
+      // Auto-request permission on mount
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().then(perm => {
+          setNotificationPermission(perm);
+          if (perm === 'granted') toast.success('Notifications enabled!');
+        });
+      }
     }
 
-    setToken(storedToken);
-    const parsedUser = JSON.parse(storedUser);
-    setUser(parsedUser);
-    
-    // Unlock audio autoplay on first interaction
+    // 3. Register service worker for system notifications
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('SW Registered', reg))
+        .catch(err => console.log('SW Registration failed', err));
+    }
+
+    // 4. Unlock audio autoplay on first user interaction
     const unlockAudio = () => {
       if (audioRef.current) {
         audioRef.current.play().then(() => {
@@ -143,19 +149,48 @@ export default function RiderDashboard() {
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
 
+    return () => {
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    };
+  }, []);
+
+  // Check auth & profile completeness
+  useEffect(() => {
+    const storedToken = localStorage.getItem('rider_token');
+    const storedUser = localStorage.getItem('rider_user');
+    
+    if (!storedToken || !storedUser) {
+      router.push('/delivery/login');
+      return;
+    }
+
+    setToken(storedToken);
+    const parsedUser = JSON.parse(storedUser);
+    setUser(parsedUser);
+
     if (!parsedUser.name || !parsedUser.phone) {
       setShowProfileSetup(true);
       setLoading(false);
     } else {
-      fetchDashboardData(storedToken);
-      const interval = setInterval(() => fetchDashboardData(storedToken, true), 10000);
-      return () => {
-        clearInterval(interval);
-        document.removeEventListener('click', unlockAudio);
-        document.removeEventListener('touchstart', unlockAudio);
-      };
+      setShowProfileSetup(false);
     }
-  }, []);
+  }, [router]);
+
+  // Robust automatic polling whenever token is set and profile setup is done
+  useEffect(() => {
+    if (!token || showProfileSetup) return;
+
+    // Fetch immediately on load or profile completion
+    fetchDashboardData(token, false);
+
+    // Setup 10-second polling interval
+    const interval = setInterval(() => {
+      fetchDashboardData(token, true);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [token, showProfileSetup]);
 
   const getHeaders = (t: string) => ({
     headers: { Authorization: `Bearer ${t}` }
@@ -174,10 +209,6 @@ export default function RiderDashboard() {
       const latestOrder = newOrders[0];
       if (latestOrder) {
         if (isPolling && latestOrder.id !== prevLatestOrderId.current) {
-          if (soundEnabled && audioRef.current) {
-            audioRef.current.play().catch(e => console.log('Audio play blocked', e));
-          }
-          
           const restaurantName = latestOrder.items?.[0]?.restaurant_name || 'Store';
           triggerNotification(latestOrder.id, restaurantName);
         }
