@@ -73,21 +73,24 @@ export default function RiderDashboard() {
   };
 
   const testNotification = () => {
-    if ('Notification' in window) {
-      if (Notification.permission === 'granted') {
-        triggerNotification(999, 'Test Restaurant');
-        toast.success('Test notification sent!');
-      } else {
-        Notification.requestPermission().then(perm => {
-          setNotificationPermission(perm);
-          if (perm === 'granted') {
-            triggerNotification(999, 'Test Restaurant');
-            toast.success('Test notification sent!');
-          } else {
-            toast.error('Notification permission denied.');
-          }
-        });
-      }
+    if (!('Notification' in window)) {
+      alert('This device/browser does not support Web Notifications.');
+      return;
+    }
+    
+    if (Notification.permission === 'granted') {
+      triggerNotification(999, 'Test Restaurant');
+      toast.success('Test notification sent!');
+    } else {
+      Notification.requestPermission().then(perm => {
+        setNotificationPermission(perm);
+        if (perm === 'granted') {
+          triggerNotification(999, 'Test Restaurant');
+          toast.success('Test notification sent!');
+        } else {
+          alert('Notification permission denied or blocked! Check browser settings.');
+        }
+      });
     }
   };
 
@@ -95,13 +98,7 @@ export default function RiderDashboard() {
     // 1. Initialize audio with the real notification sound
     audioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
 
-    // 2. Initialize last seen order ID from localStorage
-    const lastSeen = localStorage.getItem('rider_last_seen_order_id');
-    if (lastSeen) {
-      prevLatestOrderId.current = parseInt(lastSeen, 10);
-    }
-
-    // 3. Check current notification permission
+    // 2. Check current notification permission
     if ('Notification' in window) {
       setNotificationPermission(Notification.permission);
       
@@ -194,22 +191,21 @@ export default function RiderDashboard() {
       
       // Play sound and trigger browser notification if a new latest order arrived
       const latestOrder = newOrders[0];
+      console.log('Incoming latestOrder:', latestOrder, 'prevLatestOrderId:', prevLatestOrderId.current);
       if (latestOrder) {
-        const lastSeenId = prevLatestOrderId.current;
-        
-        // Notify ONLY if:
-        // - It is not the very first load/refresh of the page
-        // - AND the new order's ID is strictly greater than the last order we saw/notified
-        if (!isFirstFetch.current && latestOrder.id > (lastSeenId || 0)) {
+        // Trigger notification if we have loaded at least once, and the incoming order ID is different
+        if (prevLatestOrderId.current !== null && latestOrder.id !== prevLatestOrderId.current) {
+          console.log('TRIGGERING NOTIFICATION for order:', latestOrder.id);
           const restaurantName = latestOrder.items?.[0]?.restaurant_name || 'Store';
           triggerNotification(latestOrder.id, restaurantName);
+        } else {
+          console.log('Skipping notification. prevLatestOrderId is either null or matches latestOrder.id.');
         }
         
         prevLatestOrderId.current = latestOrder.id;
-        localStorage.setItem('rider_last_seen_order_id', latestOrder.id.toString());
+      } else {
+        prevLatestOrderId.current = null;
       }
-      
-      isFirstFetch.current = false;
       
     } catch (err: any) {
       if (err.response?.status === 401) {
