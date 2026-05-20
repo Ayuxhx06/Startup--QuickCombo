@@ -37,6 +37,7 @@ export default function PremiumAdmin() {
   const [users, setUsers] = useState<any[]>([]);
   const [coupons, setCoupons] = useState<any[]>([]);
   const [combos, setCombos] = useState<any[]>([]);
+  const [deliveryPartners, setDeliveryPartners] = useState<any[]>([]);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,6 +73,94 @@ export default function PremiumAdmin() {
     if (adminPassword) fetchData();
   }, [adminPassword, activeTab]);
 
+  const prevOrdersRef = useRef<any[]>([]);
+
+  // Check notification permission on mount
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  // Poll for live orders & trigger audio/visual notifications in Admin Panel
+  useEffect(() => {
+    if (!adminPassword) return;
+
+    const checkLiveNotifications = async () => {
+      try {
+        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+        const res = await axios.get(`${base}/api/admin/orders/`, getHeaders());
+        const polledOrders = res.data || [];
+
+        // Dynamic UI refresh when activeTab is orders or dashboard
+        if (activeTab === 'orders') {
+          setOrders(polledOrders);
+        } else if (activeTab === 'dashboard') {
+          setOrders(polledOrders.slice(0, 10));
+        }
+
+        if (prevOrdersRef.current.length > 0) {
+          // 1. Detect New Orders
+          polledOrders.forEach((order: any) => {
+            const exists = prevOrdersRef.current.some((o: any) => o.id === order.id);
+            if (!exists) {
+              const itemsList = order.items?.map((it: any) => `${it.quantity}x ${it.name}`).join(', ') || 'No items';
+              const bodyText = `From: ${order.user_name} (${order.user_phone})\nAddress: ${order.delivery_address}\nItems: ${itemsList}\nInstructions: ${order.notes || 'None'}`;
+              
+              // Trigger audio notification
+              const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+              audio.play().catch(e => console.log('Audio autoplay blocked', e));
+
+              if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(`Order #${order.id} Received! 🛍️`, {
+                  body: bodyText,
+                  icon: '/favicon.ico',
+                  requireInteraction: true
+                });
+              } else {
+                toast.success(`New Order #${order.id} received!`);
+              }
+            }
+          });
+
+          // 2. Detect Rider Acceptance
+          polledOrders.forEach((order: any) => {
+            const prev = prevOrdersRef.current.find((o: any) => o.id === order.id);
+            if (prev && !prev.rider_name && order.rider_name) {
+              const bodyText = `Rider ${order.rider_name} (${order.rider_phone || ''}) accepted Order #${order.id}.`;
+              
+              // Trigger audio notification
+              const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+              audio.play().catch(e => console.log('Audio autoplay blocked', e));
+
+              if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(`Rider Accepted Order #${order.id} 🛵`, {
+                  body: bodyText,
+                  icon: '/favicon.ico',
+                  requireInteraction: true
+                });
+              } else {
+                toast.success(`Rider ${order.rider_name} accepted Order #${order.id}`);
+              }
+            }
+          });
+        }
+
+        prevOrdersRef.current = polledOrders;
+      } catch (err) {
+        console.error('Live polling failed:', err);
+      }
+    };
+
+    // Set up polling interval (every 10 seconds)
+    const interval = setInterval(checkLiveNotifications, 10000);
+    
+    // Run once immediately on mount/load
+    checkLiveNotifications();
+
+    return () => clearInterval(interval);
+  }, [adminPassword, activeTab]);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputPassword.trim()) return;
@@ -94,7 +183,7 @@ export default function PremiumAdmin() {
     const dataMap: Record<string, boolean> = {
         dashboard: !!stats,
         orders: orders.length > 0,
-        delivery_partner: orders.length > 0,
+        delivery_partner: deliveryPartners.length > 0,
         menu: menuItems.length > 0,
         categories: categories.length > 0,
         restaurants: restaurants.length > 0,
@@ -131,8 +220,10 @@ export default function PremiumAdmin() {
         await safeFetch(`${base}/api/admin/stats/`, setStats);
         const ordersRes = await axios.get(`${base}/api/admin/orders/`, getHeaders());
         setOrders(ordersRes.data.slice(0, 10)); // Top 10 for dashboard
-      } else if (activeTab === 'orders' || activeTab === 'delivery_partner') {
+      } else if (activeTab === 'orders') {
         await safeFetch(`${base}/api/admin/orders/`, setOrders);
+      } else if (activeTab === 'delivery_partner') {
+        await safeFetch(`${base}/api/admin/delivery-partners/`, setDeliveryPartners);
       } else if (activeTab === 'menu') {
         await safeFetch(`${base}/api/admin/menu/`, setMenuItems);
       } else if (activeTab === 'categories') {
@@ -717,43 +808,14 @@ export default function PremiumAdmin() {
                 className="bg-[#080808] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl overflow-x-auto"
               >
                 <div className="flex justify-between items-center mb-10">
-                    <h3 className="text-2xl lg:text-3xl font-black">DELIVERY PARTNER</h3>
+                    <h3 className="text-2xl lg:text-3xl font-black">DELIVERY PARTNERS</h3>
                 </div>
-                <DeliveryPartnerList items={orders.filter(o => 
-                  o.id.toString().includes(searchTerm) || 
-                  o.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  o.user_phone?.includes(searchTerm)
+                <DeliveryPartnerList items={deliveryPartners.filter(p => 
+                  p.id.toString().includes(searchTerm) || 
+                  p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  p.phone?.includes(searchTerm) ||
+                  p.email?.toLowerCase().includes(searchTerm.toLowerCase())
                 )} 
-                onUpdateTotal={async (orderId, newTotal) => {
-                    try {
-                        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
-                        await axios.patch(`${base}/api/admin/orders/`, { order_id: orderId, total: newTotal }, getHeaders());
-                        toast.success('Total updated successfully');
-                        fetchData();
-                    } catch(e: any) {
-                        toast.error(e.response?.data?.error || 'Failed to update total');
-                    }
-                }}
-                onUpdateStatus={async (orderId, newStatus) => {
-                    try {
-                        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
-                        await axios.patch(`${base}/api/admin/orders/`, { order_id: orderId, status: newStatus }, getHeaders());
-                        toast.success('Status updated');
-                        fetchData();
-                    } catch(e: any) {
-                        toast.error(e.response?.data?.error || 'Failed to update status');
-                    }
-                }}
-                onUpdatePaymentStatus={async (orderId, newPaymentStatus) => {
-                    try {
-                        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
-                        await axios.patch(`${base}/api/admin/orders/`, { order_id: orderId, payment_status: newPaymentStatus }, getHeaders());
-                        toast.success('Payment status updated');
-                        fetchData();
-                    } catch(e: any) {
-                        toast.error(e.response?.data?.error || 'Failed to update payment status');
-                    }
-                }}
                 />
               </motion.div>
             )}
@@ -1857,131 +1919,58 @@ const OrderList = memo(({ items, onUpdate, compact = false }: any) => {
   );
 });
 
-const DeliveryPartnerRow = memo(({ order, onUpdateTotal, onUpdateStatus, onUpdatePaymentStatus }: { 
-    order: any, 
-    onUpdateTotal: (id: number, newTotal: string) => void,
-    onUpdateStatus: (id: number, newStatus: string) => void,
-    onUpdatePaymentStatus: (id: number, newPaymentStatus: string) => void
-}) => {
-    const [editTotal, setEditTotal] = useState(order.total);
-
-    useEffect(() => {
-        setEditTotal(order.total);
-    }, [order.total]);
-
-    return (
-        <tr className="bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-white/10 group">
-          <td className="py-6 px-6 rounded-l-[1.5rem] align-middle">
-            <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-black/50 rounded-2xl flex items-center justify-center font-black text-white italic border border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]">
-                    #{order.id}
-                </div>
-            </div>
-          </td>
-          <td className="py-6 px-6 align-middle">
-            <div className="font-black text-white mb-1 uppercase tracking-wider">{order.user_name || 'Guest'}</div>
-            <div className="text-[10px] text-gray-400 font-mono mb-2">{order.user_phone}</div>
-
-          </td>
-          <td className="py-6 px-6 align-middle">
-             <div className="space-y-2">
-                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic inline-block text-center ${
-                  order.payment_method === 'cod' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-blue-500/10 text-blue-500 border-blue-500/20'
-                }`}>
-                  {order.payment_method === 'cod' ? 'CASH' : 'ONLINE'}
-                </span>
-                <select 
-                  onChange={(e) => onUpdatePaymentStatus(order.id, e.target.value)}
-                  value={order.payment_status}
-                  className={`block w-full bg-black/40 border border-white/10 rounded-lg text-[9px] px-2 py-1 outline-none font-black uppercase italic ${
-                    order.payment_status === 'paid' ? 'text-emerald-500 border-emerald-500/30' : 'text-amber-500'
-                  }`}
-                >
-                  <option value="pending">PENDING</option>
-                  <option value="paid">PAID</option>
-                  <option value="failed">FAILED</option>
-                </select>
-             </div>
-          </td>
-          <td className="py-6 px-6 align-middle">
-            <div className="space-y-2">
-                <div className="text-[10px] text-gray-400">
-                   Subtotal: ₹{order.subtotal} | Fee: ₹{order.delivery_fee}
-                </div>
-                <select 
-                  onChange={(e) => onUpdateStatus(order.id, e.target.value)}
-                  value={order.status}
-                  className="bg-black/40 border border-white/10 rounded-lg text-[9px] px-2 py-1 outline-none font-black uppercase italic w-full text-gray-300"
-                >
-                  <option value="pending">PENDING</option>
-                  <option value="confirmed">CONFIRMED</option>
-                  <option value="preparing">PREPARING</option>
-                  <option value="picked_up">PICKED_UP</option>
-                  <option value="out_for_delivery">OUT_FOR_DELIVERY</option>
-                  <option value="delivered">DELIVERED</option>
-                  <option value="cancelled">CANCELLED</option>
-                </select>
-            </div>
-          </td>
-          <td className="py-6 px-6 align-middle text-right">
-            <div className="flex justify-end items-center gap-2">
-                <span className="text-gray-500 font-black">₹</span>
-                <input 
-                    type="number" 
-                    step="0.01"
-                    value={editTotal}
-                    onChange={(e) => setEditTotal(e.target.value)}
-                    className={`bg-black/50 border border-white/10 rounded-xl px-3 py-2 font-black italic text-xl w-28 text-right outline-none focus:border-emerald-500/50 ${
-                      order.payment_status === 'paid' ? 'text-gray-600' : 'text-emerald-500'
-                    }`}
-                />
-            </div>
-            {order.payment_status === 'paid' && <div className="text-[9px] font-black text-emerald-500 uppercase mt-1">Payment Received ✓</div>}
-          </td>
-          <td className="py-6 px-6 rounded-r-[1.5rem] align-middle text-right">
-            <button 
-              onClick={() => onUpdateTotal(order.id, editTotal)}
-              disabled={editTotal == order.total}
-              className="bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-800 disabled:text-gray-500 text-black font-black uppercase text-[10px] px-6 py-3 rounded-xl transition-all"
-            >
-              SAVE
-            </button>
-          </td>
-        </tr>
-    );
-});
-
-const DeliveryPartnerList = memo(({ items, onUpdateTotal, onUpdateStatus, onUpdatePaymentStatus }: { 
-    items: any[], 
-    onUpdateTotal: (id: number, newTotal: string) => void,
-    onUpdateStatus: (id: number, newStatus: string) => void,
-    onUpdatePaymentStatus: (id: number, newPaymentStatus: string) => void
-}) => {
+const DeliveryPartnerList = memo(({ items }: { items: any[] }) => {
   return (
     <div className="w-full">
       <table className="w-full text-left border-separate border-spacing-y-4">
         <thead>
           <tr className="text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-white/5">
-            <th className="pb-4 font-bold">Order ID</th>
-            <th className="pb-4 font-bold">Customer</th>
-            <th className="pb-4 font-bold">Payment Method / Status</th>
-            <th className="pb-4 font-bold">Order Details / Flow</th>
-            <th className="pb-4 font-bold text-right">To Collect (Total)</th>
-            <th className="pb-4 font-bold text-right">Action</th>
+            <th className="pb-4 font-bold">Partner ID</th>
+            <th className="pb-4 font-bold">Name</th>
+            <th className="pb-4 font-bold">Contact Details</th>
+            <th className="pb-4 font-bold text-center">Rides Completed</th>
+            <th className="pb-4 font-bold text-center">Active Rides</th>
+            <th className="pb-4 font-bold text-right">Joined Date</th>
           </tr>
         </thead>
         <tbody className="text-sm">
-          {items.map((order) => (
-            <DeliveryPartnerRow 
-                key={order.id} 
-                order={order} 
-                onUpdateTotal={onUpdateTotal} 
-                onUpdateStatus={onUpdateStatus}
-                onUpdatePaymentStatus={onUpdatePaymentStatus}
-            />
+          {items.map((partner) => (
+            <tr key={partner.id} className="bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-white/10 group">
+              <td className="py-6 px-6 rounded-l-[1.5rem] align-middle">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-black/50 rounded-2xl flex items-center justify-center font-black text-white italic border border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]">
+                    #{partner.id}
+                  </div>
+                </div>
+              </td>
+              <td className="py-6 px-6 align-middle font-black text-white uppercase tracking-wider">
+                {partner.name || 'Unnamed Partner'}
+              </td>
+              <td className="py-6 px-6 align-middle">
+                <div className="font-mono text-xs text-gray-300">{partner.phone || 'No phone'}</div>
+                <div className="text-[10px] text-gray-500 font-mono mt-1">{partner.email}</div>
+              </td>
+              <td className="py-6 px-6 align-middle text-center">
+                <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-4 py-1.5 rounded-full text-xs font-black italic inline-block">
+                  {partner.completed_rides} RIDES
+                </span>
+              </td>
+              <td className="py-6 px-6 align-middle text-center">
+                <span className={`px-4 py-1.5 rounded-full text-xs font-black italic inline-block border ${
+                  partner.active_rides > 0
+                    ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 animate-pulse'
+                    : 'bg-white/5 text-gray-400 border-white/10'
+                }`}>
+                  {partner.active_rides} ACTIVE
+                </span>
+              </td>
+              <td className="py-6 px-6 rounded-r-[1.5rem] align-middle text-right text-xs font-mono text-gray-400">
+                {partner.date_joined}
+              </td>
+            </tr>
           ))}
           {items.length === 0 && (
-            <tr><td colSpan={6} className="text-center py-20 text-gray-600 font-black uppercase tracking-widest italic">No Active Orders</td></tr>
+            <tr><td colSpan={6} className="text-center py-20 text-gray-600 font-black uppercase tracking-widest italic">No Registered Delivery Partners</td></tr>
           )}
         </tbody>
       </table>

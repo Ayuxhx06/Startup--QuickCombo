@@ -754,3 +754,25 @@ def admin_combos(request):
             return Response(status=204)
         except PredefinedCombo.DoesNotExist:
             return Response({'error': 'Not found'}, status=404)
+
+
+@api_view(['GET'])
+def admin_delivery_partners(request):
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    riders = User.objects.filter(is_rider=True).order_by('-date_joined')
+    data = []
+    for rider in riders:
+        completed_rides = Order.objects.filter(assigned_rider=rider, status='delivered').count()
+        active_rides = Order.objects.filter(assigned_rider=rider).exclude(status__in=['delivered', 'cancelled']).count()
+        data.append({
+            'id': rider.id,
+            'email': rider.email,
+            'phone': rider.phone,
+            'name': rider.name or 'Unnamed Partner',
+            'completed_rides': completed_rides,
+            'active_rides': active_rides,
+            'date_joined': rider.date_joined.strftime('%Y-%m-%d %H:%M:%S') if rider.date_joined else 'N/A'
+        })
+    return Response(data)
