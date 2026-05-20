@@ -122,8 +122,9 @@ def rider_available_orders(request):
         
     # If no active order, get available unassigned orders
     available = Order.objects.filter(
-        assigned_rider__isnull=True, 
-        status__in=['pending', 'confirmed', 'preparing']
+        assigned_rider__isnull=True
+    ).exclude(
+        status__in=['delivered', 'cancelled']
     ).order_by('-created_at')[:10]
     
     return Response({
