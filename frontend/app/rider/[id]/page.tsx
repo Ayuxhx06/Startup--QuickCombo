@@ -125,9 +125,18 @@ export default function RiderTrackingPage() {
         <div className="space-y-4">
           <div className="flex items-start gap-3">
             <div className="p-2 bg-white/5 rounded-xl text-gray-400"><MapPin size={20} /></div>
-            <div>
+            <div className="flex-1">
               <p className="text-xs text-gray-500 font-bold uppercase tracking-tighter">Delivery Address</p>
-              <p className="font-medium text-gray-200">{order.delivery_address}</p>
+              <p className="font-medium text-gray-200 mb-2">{order.delivery_address}</p>
+              {order.delivery_lat && order.delivery_lng && (
+                  <button 
+                      onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${order.delivery_lat},${order.delivery_lng}`, '_blank')}
+                      className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase px-4 py-2 rounded-xl transition-all shadow-lg shadow-blue-900/20 active:scale-95"
+                  >
+                      <Navigation size={12} className="text-white" />
+                      NAVIGATE
+                  </button>
+              )}
             </div>
           </div>
           <div className="flex items-start gap-3">
@@ -227,16 +236,20 @@ export default function RiderTrackingPage() {
              </div>
            )}
            
-           <div className="flex justify-between items-center pt-4 border-t border-white/5">
+            <div className="flex justify-between items-center pt-4 border-t border-white/5">
               <div>
                 <span className="text-lg font-black uppercase italic text-white block leading-none">To Collect</span>
-                <p className={`text-[10px] font-black uppercase tracking-widest mt-2 px-2 py-0.5 rounded-md inline-block ${order.payment_method === 'cod' ? 'bg-amber-500/20 text-amber-500' : 'bg-blue-500/20 text-blue-500'}`}>
-                  {order.payment_method === 'cod' ? '💵 Cash on Delivery' : '📱 Paid Online'}
+                <p className={`text-[10px] font-black uppercase tracking-widest mt-2 px-2 py-0.5 rounded-md inline-block ${order.payment_status === 'paid' ? 'bg-emerald-500/20 text-emerald-500' : (order.payment_method === 'cod' ? 'bg-amber-500/20 text-amber-500' : 'bg-blue-500/20 text-blue-500')}`}>
+                  {order.payment_status === 'paid' ? '✅ Already Paid' : (order.payment_method === 'cod' ? '💵 Cash on Delivery' : '📱 Paid Online')}
                 </p>
               </div>
               <div className="text-right">
-                <span className="text-3xl font-black text-emerald-500 italic leading-none">₹{order.total}</span>
-                <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">Final Invoice Value</p>
+                <span className={`text-3xl font-black italic leading-none ${order.payment_status === 'paid' ? 'text-gray-500' : 'text-emerald-500'}`}>
+                    ₹{order.payment_status === 'paid' ? '0' : order.total}
+                </span>
+                <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">
+                    {order.payment_status === 'paid' ? 'No Cash Required' : 'Final Invoice Value'}
+                </p>
               </div>
            </div>
         </div>

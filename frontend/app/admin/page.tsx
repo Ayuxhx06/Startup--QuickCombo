@@ -7,7 +7,7 @@ import {
   Plus, Edit2, Trash2, ChevronRight, LogOut, Loader2, 
   Lock, Users, BarChart3, Layers, Store, ShieldCheck,
   AlertCircle, ArrowUpRight, DollarSign, PieChart, Menu, X,
-  FileUp, Download, Ticket, Power, Bike
+  FileUp, Download, Ticket, Power, Bike, MapPin
 } from 'lucide-react';
 import { useRef } from 'react';
 import axios from 'axios';
@@ -91,7 +91,7 @@ export default function PremiumAdmin() {
 
   const fetchData = async () => {
     // Avoid redundant fetches if data already exists for the active tab
-    const hasData = {
+    const dataMap: Record<string, boolean> = {
         dashboard: !!stats,
         orders: orders.length > 0,
         delivery_partner: orders.length > 0,
@@ -101,7 +101,8 @@ export default function PremiumAdmin() {
         users: users.length > 0,
         promos: coupons.length > 0,
         combos: combos.length > 0
-    }[activeTab as keyof typeof hasData];
+    };
+    const hasData = dataMap[activeTab] || false;
 
     // If we're not on dashboard and already have data, don't show full screen loader
     if (activeTab !== 'dashboard' && hasData) {
@@ -271,8 +272,8 @@ export default function PremiumAdmin() {
       await axios.patch(`${API}/api/admin/orders/`, { order_id: orderId, status }, getHeaders());
       toast.success(`Order #${orderId} Updated`);
       fetchData();
-    } catch (e) {
-      toast.error('Update failed');
+    } catch (e: any) {
+      toast.error(e.response?.data?.error || 'Update failed');
     }
   };
 
@@ -382,20 +383,20 @@ export default function PremiumAdmin() {
 
       if (res.data.success) {
         const { created, updated, total, categorization_log, errors } = res.data;
-        toast.success(`ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ ${targetRestaurant.name}: ${created} new, ${updated} updated (${total} items)`, { id: toastId, duration: 5000 });
+        toast.success(`✅ ${targetRestaurant.name}: ${created} new, ${updated} updated (${total} items)`, { id: toastId, duration: 5000 });
         if (categorization_log?.length > 0) {
           setImportLog(categorization_log);
           setShowImportLog(true);
         }
         if (errors?.length > 0) {
           console.warn('Row errors:', errors);
-          toast(`ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â ${errors.length} row(s) had errors ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â check console`, { icon: 'ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â' });
+          toast('⚠️ ' + errors.length + ' row(s) had errors — check console', { icon: '⚠️' });
         }
         fetchData();
       }
     } catch (err: any) {
       const errMsg = err.response?.data?.error || err.message || 'Import failed';
-      toast.error(`ÃƒÂ¢Ã‚ÂÃ…â€™ ${errMsg}`, { id: toastId });
+      toast.error('❌ ' + errMsg, { id: toastId });
       console.error('Per-restaurant import error:', err.response?.data);
     } finally {
       setUploading(false);
@@ -720,18 +721,40 @@ export default function PremiumAdmin() {
                 </div>
                 <DeliveryPartnerList items={orders.filter(o => 
                   o.id.toString().includes(searchTerm) || 
-                  o.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  o.phone?.includes(searchTerm)
-                )} onUpdateTotal={async (orderId, newTotal) => {
+                  o.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  o.user_phone?.includes(searchTerm)
+                )} 
+                onUpdateTotal={async (orderId, newTotal) => {
                     try {
                         const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
                         await axios.patch(`${base}/api/admin/orders/`, { order_id: orderId, total: newTotal }, getHeaders());
                         toast.success('Total updated successfully');
-                        fetchData(); // Refresh orders
-                    } catch(e) {
-                        toast.error('Failed to update total');
+                        fetchData();
+                    } catch(e: any) {
+                        toast.error(e.response?.data?.error || 'Failed to update total');
                     }
-                }} />
+                }}
+                onUpdateStatus={async (orderId, newStatus) => {
+                    try {
+                        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+                        await axios.patch(`${base}/api/admin/orders/`, { order_id: orderId, status: newStatus }, getHeaders());
+                        toast.success('Status updated');
+                        fetchData();
+                    } catch(e: any) {
+                        toast.error(e.response?.data?.error || 'Failed to update status');
+                    }
+                }}
+                onUpdatePaymentStatus={async (orderId, newPaymentStatus) => {
+                    try {
+                        const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
+                        await axios.patch(`${base}/api/admin/orders/`, { order_id: orderId, payment_status: newPaymentStatus }, getHeaders());
+                        toast.success('Payment status updated');
+                        fetchData();
+                    } catch(e: any) {
+                        toast.error(e.response?.data?.error || 'Failed to update payment status');
+                    }
+                }}
+                />
               </motion.div>
             )}
 
@@ -1834,8 +1857,18 @@ const OrderList = memo(({ items, onUpdate, compact = false }: any) => {
   );
 });
 
-const DeliveryPartnerRow = memo(({ order, onUpdateTotal }: { order: any, onUpdateTotal: (id: number, newTotal: string) => void }) => {
+const DeliveryPartnerRow = memo(({ order, onUpdateTotal, onUpdateStatus, onUpdatePaymentStatus }: { 
+    order: any, 
+    onUpdateTotal: (id: number, newTotal: string) => void,
+    onUpdateStatus: (id: number, newStatus: string) => void,
+    onUpdatePaymentStatus: (id: number, newPaymentStatus: string) => void
+}) => {
     const [editTotal, setEditTotal] = useState(order.total);
+
+    useEffect(() => {
+        setEditTotal(order.total);
+    }, [order.total]);
+
     return (
         <tr className="bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-white/10 group">
           <td className="py-6 px-6 rounded-l-[1.5rem] align-middle">
@@ -1847,18 +1880,47 @@ const DeliveryPartnerRow = memo(({ order, onUpdateTotal }: { order: any, onUpdat
           </td>
           <td className="py-6 px-6 align-middle">
             <div className="font-black text-white mb-1 uppercase tracking-wider">{order.user_name || 'Guest'}</div>
-            <div className="text-[10px] text-gray-400 font-mono">{order.user_phone}</div>
+            <div className="text-[10px] text-gray-400 font-mono mb-2">{order.user_phone}</div>
+
           </td>
           <td className="py-6 px-6 align-middle">
-             <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic inline-block text-center ${
-              order.payment_method === 'cod' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-blue-500/10 text-blue-500 border-blue-500/20'
-            }`}>
-              {order.payment_method === 'cod' ? 'CASH' : 'ONLINE'}
-            </span>
+             <div className="space-y-2">
+                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase border italic inline-block text-center ${
+                  order.payment_method === 'cod' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                }`}>
+                  {order.payment_method === 'cod' ? 'CASH' : 'ONLINE'}
+                </span>
+                <select 
+                  onChange={(e) => onUpdatePaymentStatus(order.id, e.target.value)}
+                  value={order.payment_status}
+                  className={`block w-full bg-black/40 border border-white/10 rounded-lg text-[9px] px-2 py-1 outline-none font-black uppercase italic ${
+                    order.payment_status === 'paid' ? 'text-emerald-500 border-emerald-500/30' : 'text-amber-500'
+                  }`}
+                >
+                  <option value="pending">PENDING</option>
+                  <option value="paid">PAID</option>
+                  <option value="failed">FAILED</option>
+                </select>
+             </div>
           </td>
           <td className="py-6 px-6 align-middle">
-            <div className="text-[10px] text-gray-400">
-               Subtotal: ₹{order.subtotal} | Fee: ₹{order.delivery_fee} {parseFloat(order.discount_amount) > 0 ? `| Disc: -₹${order.discount_amount}` : ''}
+            <div className="space-y-2">
+                <div className="text-[10px] text-gray-400">
+                   Subtotal: ₹{order.subtotal} | Fee: ₹{order.delivery_fee}
+                </div>
+                <select 
+                  onChange={(e) => onUpdateStatus(order.id, e.target.value)}
+                  value={order.status}
+                  className="bg-black/40 border border-white/10 rounded-lg text-[9px] px-2 py-1 outline-none font-black uppercase italic w-full text-gray-300"
+                >
+                  <option value="pending">PENDING</option>
+                  <option value="confirmed">CONFIRMED</option>
+                  <option value="preparing">PREPARING</option>
+                  <option value="picked_up">PICKED_UP</option>
+                  <option value="out_for_delivery">OUT_FOR_DELIVERY</option>
+                  <option value="delivered">DELIVERED</option>
+                  <option value="cancelled">CANCELLED</option>
+                </select>
             </div>
           </td>
           <td className="py-6 px-6 align-middle text-right">
@@ -1869,9 +1931,12 @@ const DeliveryPartnerRow = memo(({ order, onUpdateTotal }: { order: any, onUpdat
                     step="0.01"
                     value={editTotal}
                     onChange={(e) => setEditTotal(e.target.value)}
-                    className="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-emerald-500 font-black italic text-xl w-28 text-right outline-none focus:border-emerald-500/50"
+                    className={`bg-black/50 border border-white/10 rounded-xl px-3 py-2 font-black italic text-xl w-28 text-right outline-none focus:border-emerald-500/50 ${
+                      order.payment_status === 'paid' ? 'text-gray-600' : 'text-emerald-500'
+                    }`}
                 />
             </div>
+            {order.payment_status === 'paid' && <div className="text-[9px] font-black text-emerald-500 uppercase mt-1">Payment Received ✓</div>}
           </td>
           <td className="py-6 px-6 rounded-r-[1.5rem] align-middle text-right">
             <button 
@@ -1886,7 +1951,12 @@ const DeliveryPartnerRow = memo(({ order, onUpdateTotal }: { order: any, onUpdat
     );
 });
 
-const DeliveryPartnerList = memo(({ items, onUpdateTotal }: { items: any[], onUpdateTotal: (id: number, newTotal: string) => void }) => {
+const DeliveryPartnerList = memo(({ items, onUpdateTotal, onUpdateStatus, onUpdatePaymentStatus }: { 
+    items: any[], 
+    onUpdateTotal: (id: number, newTotal: string) => void,
+    onUpdateStatus: (id: number, newStatus: string) => void,
+    onUpdatePaymentStatus: (id: number, newPaymentStatus: string) => void
+}) => {
   return (
     <div className="w-full">
       <table className="w-full text-left border-separate border-spacing-y-4">
@@ -1894,15 +1964,21 @@ const DeliveryPartnerList = memo(({ items, onUpdateTotal }: { items: any[], onUp
           <tr className="text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-white/5">
             <th className="pb-4 font-bold">Order ID</th>
             <th className="pb-4 font-bold">Customer</th>
-            <th className="pb-4 font-bold">Payment Method</th>
-            <th className="pb-4 font-bold">Order Details</th>
+            <th className="pb-4 font-bold">Payment Method / Status</th>
+            <th className="pb-4 font-bold">Order Details / Flow</th>
             <th className="pb-4 font-bold text-right">To Collect (Total)</th>
             <th className="pb-4 font-bold text-right">Action</th>
           </tr>
         </thead>
         <tbody className="text-sm">
           {items.map((order) => (
-            <DeliveryPartnerRow key={order.id} order={order} onUpdateTotal={onUpdateTotal} />
+            <DeliveryPartnerRow 
+                key={order.id} 
+                order={order} 
+                onUpdateTotal={onUpdateTotal} 
+                onUpdateStatus={onUpdateStatus}
+                onUpdatePaymentStatus={onUpdatePaymentStatus}
+            />
           ))}
           {items.length === 0 && (
             <tr><td colSpan={6} className="text-center py-20 text-gray-600 font-black uppercase tracking-widest italic">No Active Orders</td></tr>
