@@ -42,14 +42,31 @@ export default function RiderDashboard() {
     const parsedUser = JSON.parse(storedUser);
     setUser(parsedUser);
     
+    // Unlock audio autoplay on first interaction
+    const unlockAudio = () => {
+      if (audioRef.current) {
+        audioRef.current.play().then(() => {
+          audioRef.current?.pause();
+          if (audioRef.current) audioRef.current.currentTime = 0;
+        }).catch(e => console.log("Unlock failed", e));
+      }
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    };
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+
     if (!parsedUser.name || !parsedUser.phone) {
       setShowProfileSetup(true);
       setLoading(false);
     } else {
       fetchDashboardData(storedToken);
-      // Setup polling every 10 seconds
       const interval = setInterval(() => fetchDashboardData(storedToken, true), 10000);
-      return () => clearInterval(interval);
+      return () => {
+        clearInterval(interval);
+        document.removeEventListener('click', unlockAudio);
+        document.removeEventListener('touchstart', unlockAudio);
+      };
     }
   }, []);
 
