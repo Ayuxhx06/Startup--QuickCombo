@@ -4,7 +4,7 @@ import os
 def sync_next_folder():
     host = 'ssh-quickcombo.alwaysdata.net'
     user = 'quickcombo'
-    pas = 'Dinesh@061004'
+    pas = 'Dinesh@06102004'
     
     local_next = r'c:\Placement project\Quickcombo\frontend\.next'
     remote_path = '/home/quickcombo/fresh_app/.next'
@@ -27,7 +27,7 @@ def sync_next_folder():
 
         def upload_item(local_item, remote_item):
             if os.path.isfile(local_item):
-                print(f"Uploading {item_name}")
+                print(f"Uploading {item_name}", flush=True)
                 sftp.put(local_item, remote_item)
             else:
                 ensure_remote_dir(remote_item)
@@ -44,8 +44,8 @@ def sync_next_folder():
             if os.path.exists(local_item):
                 upload_item(local_item, remote_item)
         
-        print("Sync complete.")
-        print("Restarting Passenger...")
+        print("Sync complete.", flush=True)
+        print("Restarting Passenger...", flush=True)
         ssh.exec_command("touch /home/quickcombo/www/fresh_app/tmp/restart.txt") # Standard Node restart
         ssh.exec_command("touch /home/quickcombo/www/quickcombo_backend/passenger_wsgi.py")
         

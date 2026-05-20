@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from . import admin_views
 from . import views_payment
+from . import rider_views
 
 urlpatterns = [
     # ADMIN DASHBOARD (TOP PRIORITY)
@@ -60,4 +61,12 @@ urlpatterns = [
     # Payments (Cashfree)
     path('payment/create-session/', views_payment.create_payment_session),
     path('payment/webhook/', views_payment.cashfree_webhook),
+    
+    # Rider App
+    path('rider/auth/', rider_views.rider_login),
+    path('rider/profile/', rider_views.rider_update_profile),
+    path('rider/orders/available/', rider_views.rider_available_orders),
+    path('rider/orders/<int:order_id>/accept/', rider_views.rider_accept_order),
+    path('rider/orders/<int:order_id>/status/', rider_views.rider_update_status),
+    path('rider/orders/<int:order_id>/location/', rider_views.rider_update_location),
 ]

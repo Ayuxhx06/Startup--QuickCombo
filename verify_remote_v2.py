@@ -1,17 +1,18 @@
-import paramiko
-ssh = paramiko.SSHClient()
-ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-try:
-    ssh.connect('ssh-quickcombo.alwaysdata.net', username='quickcombo', password='Dinesh@061004')
-    # Count occurrences
-    stdin, stdout, stderr = ssh.exec_command('grep -c "packingCharge" /home/quickcombo/fresh_app/app/checkout/page.tsx')
-    print("packingCharge count:", stdout.read().decode().strip())
-    
-    stdin, stdout, stderr = ssh.exec_command('grep -c "onlyEssentials" /home/quickcombo/fresh_app/app/checkout/page.tsx')
-    print("onlyEssentials count:", stdout.read().decode().strip())
+import requests
+import json
 
-    # Check if build artifact exists and its date
-    stdin, stdout, stderr = ssh.exec_command('ls -l /home/quickcombo/fresh_app/.next/BUILD_ID')
-    print("Build Artifact:", stdout.read().decode().strip())
-finally:
-    ssh.close()
+url = "https://quickcombo.alwaysdata.net/api/admin/orders/"
+headers = {"X-Admin-Password": "Admin@4098", "Content-Type": "application/json"}
+data = {"order_id": 403, "total": 310.00}
+
+print("Sending PATCH request...")
+res = requests.patch(url, headers=headers, json=data)
+print(f"Status: {res.status_code}")
+print(f"Response: {res.text}")
+
+res_get = requests.get(url, headers=headers)
+orders = res_get.json()
+for o in orders:
+    if o['id'] == 403:
+        print(f"Verified Total in DB: {o['total']}")
+        break

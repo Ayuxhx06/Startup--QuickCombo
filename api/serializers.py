@@ -45,6 +45,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
+    rider_name = serializers.SerializerMethodField()
+    rider_phone = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -52,7 +54,17 @@ class OrderSerializer(serializers.ModelSerializer):
                   'delivery_lat', 'delivery_lng', 'status', 'payment_method',
                   'payment_status', 'subtotal', 'delivery_fee', 'discount_amount', 
                   'applied_coupon', 'total', 'notes', 'created_at', 'updated_at', 
-                  'rider_lat', 'rider_lng', 'items']
+                  'rider_lat', 'rider_lng', 'items', 'rider_name', 'rider_phone']
+
+    def get_rider_name(self, obj):
+        if obj.assigned_rider:
+            return obj.assigned_rider.name or "Rider"
+        return None
+
+    def get_rider_phone(self, obj):
+        if obj.assigned_rider:
+            return obj.assigned_rider.phone
+        return None
 
 
 class AddressSerializer(serializers.ModelSerializer):

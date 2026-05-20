@@ -1,12 +1,13 @@
-import paramiko
-ssh = paramiko.SSHClient()
-ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-try:
-    ssh.connect('ssh-quickcombo.alwaysdata.net', username='quickcombo', password='Dinesh@061004')
-    stdin, stdout, stderr = ssh.exec_command('grep "packingCharge" /home/quickcombo/fresh_app/app/checkout/page.tsx')
-    print("PackingCharge in file:", stdout.read().decode())
-    
-    stdin, stdout, stderr = ssh.exec_command('grep "onlyEssentials" /home/quickcombo/fresh_app/app/checkout/page.tsx')
-    print("onlyEssentials in file:", stdout.read().decode())
-finally:
-    ssh.close()
+import requests
+import json
+
+url = "https://quickcombo.alwaysdata.net/api/admin/orders/"
+headers = {"X-Admin-Password": "Admin@4098"}
+
+res = requests.get(url, headers=headers)
+orders = res.json()
+
+for o in orders:
+    if o['id'] == 403:
+        print(f"Order #403 Total: {o['total']}")
+        break

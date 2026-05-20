@@ -107,19 +107,37 @@ def admin_orders(request):
         return Response(OrderSerializer(orders, many=True).data)
     
     elif request.method == 'PATCH':
-        order_id = request.data.get('order_id')
+        order_id = request.data.get('order_id') or request.data.get('id')
+        if not order_id:
+            return Response({'error': 'Order ID is required'}, status=400)
+            
         new_status = request.data.get('status')
         new_total = request.data.get('total')
+        new_payment_status = request.data.get('payment_status')
+        
+        update_fields = {}
+        if request.data.get('status') is not None:
+            update_fields['status'] = request.data.get('status')
+        if request.data.get('total') is not None:
+            update_fields['total'] = request.data.get('total')
+        if request.data.get('payment_status') is not None:
+            update_fields['payment_status'] = request.data.get('payment_status')
+            
         try:
-            order = Order.objects.get(pk=order_id)
-            if new_status is not None:
-                order.status = new_status
-            if new_total is not None:
-                order.total = new_total
-            order.save()
-            return Response(OrderSerializer(order).data)
-        except Order.DoesNotExist:
-            return Response({'error': 'Order not found'}, status=404)
+            if not update_fields:
+                return Response({'error': 'No fields to update'}, status=400)
+                
+            updated_count = Order.objects.filter(pk=order_id).update(**update_fields)
+            if updated_count == 0:
+                return Response({'error': f'Order #{order_id} not found'}, status=404)
+                
+            return Response({
+                'success': True, 
+                'order_id': order_id,
+                'updated_fields': update_fields
+            })
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
 
 @api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 def admin_menu_items(request):

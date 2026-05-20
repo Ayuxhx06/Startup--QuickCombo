@@ -108,7 +108,7 @@ export default function OrderTrackingPage() {
         {/* Premium Status Pill */}
         <motion.div 
             initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-            className="w-full bg-[#27A152] text-white p-6 rounded-[2.5rem] shadow-[0_20px_40px_rgba(39,161,82,0.3)] border border-white/20 pointer-events-auto relative overflow-hidden"
+            className="w-full bg-[#27A152] text-white p-6 rounded-[2.5rem] shadow-[0_20px_40px_rgba(39,161,82,0.3)] border border-white/20 pointer-events-auto relative overflow-hidden mb-4"
         >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -mr-16 -mt-16" />
             
@@ -133,6 +133,34 @@ export default function OrderTrackingPage() {
                 </div>
             </div>
         </motion.div>
+
+        {/* Assigned Rider Card */}
+        <AnimatePresence>
+          {order.rider_name && tracking.status !== 'delivered' && (
+            <motion.div 
+                initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0, y: -20 }}
+                className="w-full bg-white/90 backdrop-blur-md p-4 rounded-3xl shadow-lg border border-white/40 pointer-events-auto flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200">
+                  <span className="text-xl">🛵</span>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Your Delivery Partner</p>
+                  <p className="font-black text-gray-900 text-sm">{order.rider_name}</p>
+                </div>
+              </div>
+              {order.rider_phone && (
+                <a 
+                  href={`tel:${order.rider_phone}`}
+                  className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 hover:bg-green-200 transition-colors shadow-sm"
+                >
+                  <PhoneCall size={18} />
+                </a>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Floating Bottom Action */}

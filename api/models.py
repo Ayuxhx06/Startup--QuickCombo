@@ -32,6 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     otp_created_at = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_rider = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = 'email'
@@ -146,6 +147,7 @@ class Order(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)
+    assigned_rider = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='assigned_orders', null=True, blank=True)
     user_email = models.EmailField(blank=True)
     user_name = models.CharField(max_length=100, blank=True)
     user_phone = models.CharField(max_length=15, blank=True)

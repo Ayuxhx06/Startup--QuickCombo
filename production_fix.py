@@ -3,16 +3,12 @@ import os
 
 host = "ssh-quickcombo.alwaysdata.net"
 user = "quickcombo"
-password = "Dinesh@061004"
+password = "Dinesh@06102004"
 
 # Files modified in this task
 files = [
-    (r"c:\Placement project\Quickcombo\frontend\app\terms\page.tsx", "/home/quickcombo/fresh_app/app/terms/page.tsx"),
-    (r"c:\Placement project\Quickcombo\frontend\app\privacy\page.tsx", "/home/quickcombo/fresh_app/app/privacy/page.tsx"),
-    (r"c:\Placement project\Quickcombo\frontend\app\checkout\page.tsx", "/home/quickcombo/fresh_app/app/checkout/page.tsx"),
-    (r"c:\Placement project\Quickcombo\frontend\app\menu\page.tsx", "/home/quickcombo/fresh_app/app/menu/page.tsx"),
-    (r"c:\Placement project\Quickcombo\frontend\app\profile\page.tsx", "/home/quickcombo/fresh_app/app/profile/page.tsx"),
-    (r"c:\Placement project\Quickcombo\frontend\components\AuthModal.tsx", "/home/quickcombo/fresh_app/components/AuthModal.tsx"),
+    (r"c:\Placement project\Quickcombo\frontend\app\admin\page.tsx", "/home/quickcombo/fresh_app/app/admin/page.tsx"),
+    (r"c:\Placement project\Quickcombo\frontend\app\rider\[id]\page.tsx", "/home/quickcombo/fresh_app/app/rider/[id]/page.tsx"),
 ]
 
 ssh = paramiko.SSHClient()
