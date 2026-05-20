@@ -15,6 +15,8 @@ export default function RiderDashboard() {
   const [loading, setLoading] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   
+  const [notificationPermission, setNotificationPermission] = useState<string>('default');
+  
   const [activeOrder, setActiveOrder] = useState<any>(null);
   const [availableOrders, setAvailableOrders] = useState<any[]>([]);
   
@@ -25,6 +27,36 @@ export default function RiderDashboard() {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const prevAvailableCount = useRef(0);
+
+  useEffect(() => {
+    // Check current permission
+    if ('Notification' in window) {
+      setNotificationPermission(Notification.permission);
+      
+      // Auto-request permission on mount
+      if (Notification.permission === 'default') {
+        Notification.requestPermission().then(perm => {
+          setNotificationPermission(perm);
+          if (perm === 'granted') toast.success('Notifications enabled!');
+        });
+      }
+    }
+  }, []);
+
+  const triggerNotification = (orderId: number, restaurant: string) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification('New QuickCombo Order! 🛵', {
+          body: `Order #${orderId} is ready from ${restaurant}. Tap to view.`,
+          icon: '/favicon.ico',
+          tag: 'new-order',
+          requireInteraction: true
+        });
+      } catch (e) {
+        console.error('Notification trigger failed:', e);
+      }
+    }
+  };
 
   useEffect(() => {
     // Initialize audio with a tiny base64 beep
@@ -83,9 +115,18 @@ export default function RiderDashboard() {
       const newOrders = res.data.available_orders || [];
       setAvailableOrders(newOrders);
       
-      // Play sound if new orders arrived
-      if (isPolling && newOrders.length > prevAvailableCount.current && soundEnabled && audioRef.current) {
-         audioRef.current.play().catch(e => console.log('Audio play blocked', e));
+      // Play sound and trigger browser notification if new orders arrived
+      if (isPolling && newOrders.length > prevAvailableCount.current) {
+        if (soundEnabled && audioRef.current) {
+          audioRef.current.play().catch(e => console.log('Audio play blocked', e));
+        }
+        
+        // Trigger browser notification for the latest order
+        const latestNewOrder = newOrders[0];
+        if (latestNewOrder) {
+          const restaurantName = latestNewOrder.items?.[0]?.restaurant_name || 'Store';
+          triggerNotification(latestNewOrder.id, restaurantName);
+        }
       }
       prevAvailableCount.current = newOrders.length;
       
@@ -140,6 +181,26 @@ export default function RiderDashboard() {
     }
   };
 
+  const handleRequestPermission = () => {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(perm => {
+        setNotificationPermission(perm);
+        if (perm === 'granted') {
+          toast.success('System notifications enabled!');
+          // Trigger test notification
+          new Notification('Notifications Active! 🛵', {
+            body: 'You will receive notifications for new orders here.',
+            icon: '/favicon.ico'
+          });
+        } else if (perm === 'denied') {
+          toast.error('Notifications blocked. Please reset permissions in your browser address bar.');
+        }
+      });
+    } else {
+      toast.error('Browser does not support notifications.');
+    }
+  };
+
   if (loading) return (
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
       <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
@@ -183,6 +244,22 @@ export default function RiderDashboard() {
       </header>
 
       <main className="p-4 max-w-md mx-auto">
+        {/* Browser notification alert banner */}
+        {notificationPermission !== 'granted' && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 p-4 rounded-2xl mb-6 text-sm flex flex-col gap-3 font-semibold"
+          >
+            <p>Please enable browser notifications to receive real-time order alerts on Safari and Chrome.</p>
+            <button 
+              onClick={handleRequestPermission}
+              className="bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs py-2.5 px-4 rounded-xl self-start uppercase tracking-widest transition-all"
+            >
+              Enable Notifications
+            </button>
+          </motion.div>
+        )}
         
         {/* ACTIVE ORDER */}
         {activeOrder ? (

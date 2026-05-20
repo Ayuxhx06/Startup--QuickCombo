@@ -120,16 +120,18 @@ def rider_available_orders(request):
             'available_orders': []
         })
         
-    # If no active order, get available unassigned orders
-    available = Order.objects.filter(
+    # If no active order, get only the single latest unassigned active order
+    latest_order = Order.objects.filter(
         assigned_rider__isnull=True
     ).exclude(
         status__in=['delivered', 'cancelled']
-    ).order_by('-created_at')[:10]
+    ).order_by('-created_at').first()
+    
+    available_orders = [latest_order] if latest_order else []
     
     return Response({
         'active_order': None,
-        'available_orders': OrderSerializer(available, many=True).data
+        'available_orders': OrderSerializer(available_orders, many=True).data
     })
 
 @api_view(['POST'])
