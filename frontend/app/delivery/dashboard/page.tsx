@@ -88,6 +88,31 @@ export default function RiderDashboard() {
     }
   };
 
+  const testNotification = () => {
+    // Play test sound
+    if (soundEnabled) {
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+      audio.play().catch(e => console.log('Test sound failed:', e));
+    }
+    
+    // Send test notification
+    if ('Notification' in window) {
+      if (Notification.permission === 'granted') {
+        triggerNotification(999, 'Test Restaurant');
+        toast.success('Test notification sent!');
+      } else {
+        Notification.requestPermission().then(perm => {
+          setNotificationPermission(perm);
+          if (perm === 'granted') {
+            triggerNotification(999, 'Test Restaurant');
+          } else {
+            toast.error('Notification permission denied.');
+          }
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     // Initialize audio with a tiny base64 beep
     audioRef.current = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
@@ -264,14 +289,17 @@ export default function RiderDashboard() {
             <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Rider Portal</p>
             <h1 className="text-sm font-black">{user?.name}</h1>
          </div>
-         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4">
+            <button onClick={testNotification} className="text-emerald-500/80 hover:text-emerald-400 text-xs font-bold px-2.5 py-1.5 bg-emerald-500/10 rounded-lg">
+              Test Alert
+            </button>
             <button onClick={() => setSoundEnabled(!soundEnabled)} className="text-gray-400 hover:text-white">
               {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
             </button>
             <button onClick={handleLogout} className="text-red-500/80 hover:text-red-500">
               <LogOut size={20} />
             </button>
-         </div>
+          </div>
       </header>
 
       <main className="p-4 max-w-md mx-auto">
@@ -283,12 +311,20 @@ export default function RiderDashboard() {
             className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 p-4 rounded-2xl mb-6 text-sm flex flex-col gap-3 font-semibold"
           >
             <p>Please enable browser notifications to receive real-time order alerts on Safari and Chrome.</p>
-            <button 
-              onClick={handleRequestPermission}
-              className="bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs py-2.5 px-4 rounded-xl self-start uppercase tracking-widest transition-all"
-            >
-              Enable Notifications
-            </button>
+            <div className="flex gap-2">
+              <button 
+                onClick={handleRequestPermission}
+                className="bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs py-2.5 px-4 rounded-xl uppercase tracking-widest transition-all"
+              >
+                Enable Notifications
+              </button>
+              <button 
+                onClick={testNotification}
+                className="bg-white/10 hover:bg-white/20 text-white font-black text-xs py-2.5 px-4 rounded-xl uppercase tracking-widest transition-all"
+              >
+                Test Notification
+              </button>
+            </div>
           </motion.div>
         )}
         
