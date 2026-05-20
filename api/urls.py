@@ -64,6 +64,7 @@ urlpatterns = [
     
     # Rider App
     path('rider/auth/', rider_views.rider_login),
+    path('rider/auth/google/', rider_views.rider_google_login),
     path('rider/profile/', rider_views.rider_update_profile),
     path('rider/orders/available/', rider_views.rider_available_orders),
     path('rider/orders/<int:order_id>/accept/', rider_views.rider_accept_order),
