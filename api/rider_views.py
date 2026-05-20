@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
-from .models import User, Order
+from .models import User, Order, RiderPushSubscription
 from .serializers import OrderSerializer, UserSerializer
 from django.utils import timezone
 from django.db.models import Q
@@ -194,3 +194,28 @@ def rider_update_location(request, order_id):
         return Response({'error': 'Coordinates required'}, status=400)
     except Order.DoesNotExist:
         return Response({'error': 'Order not found'}, status=404)
+
+
+@api_view(['POST'])
+def rider_subscribe(request):
+    user = authenticate_rider(request)
+    if not user:
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    endpoint = request.data.get('endpoint')
+    auth_key = request.data.get('auth')
+    p256dh_key = request.data.get('p256dh')
+
+    if not endpoint or not auth_key or not p256dh_key:
+        return Response({'error': 'Subscription details required'}, status=400)
+
+    RiderPushSubscription.objects.update_or_create(
+        endpoint=endpoint,
+        defaults={
+            'user': user,
+            'auth_key': auth_key,
+            'p256dh_key': p256dh_key
+        }
+    )
+
+    return Response({'message': 'Subscribed successfully'})

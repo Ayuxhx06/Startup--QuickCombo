@@ -70,4 +70,5 @@ urlpatterns = [
     path('rider/orders/<int:order_id>/accept/', rider_views.rider_accept_order),
     path('rider/orders/<int:order_id>/status/', rider_views.rider_update_status),
     path('rider/orders/<int:order_id>/location/', rider_views.rider_update_location),
+    path('rider/subscribe/', rider_views.rider_subscribe),
 ]

@@ -94,6 +94,58 @@ export default function RiderDashboard() {
     }
   };
 
+  const subscribeToPushNotifications = async (t: string, reg: ServiceWorkerRegistration) => {
+    try {
+      if (!reg.pushManager) {
+        console.warn('Push manager is not supported on this browser/device.');
+        return;
+      }
+
+      // Check current subscription
+      let sub = await reg.pushManager.getSubscription();
+      
+      const VAPID_PUBLIC_KEY = 'BFspP4ge4f7UZpmvvDQcm280ZlLm9WjYp_Z5COtyb8eOaFGtQAQR0MAGCllsOUqwDn2FnW5x2_NGnIi0PqC7C0U';
+      
+      // Helper function to convert base64 URL to Uint8Array
+      const urlBase64ToUint8Array = (base64String: string) => {
+        const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+          outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+      };
+
+      const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+
+      if (!sub) {
+        // Subscribe
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: convertedVapidKey
+        });
+        console.log('Subscribed to Web Push:', sub);
+      }
+
+      // Send to backend
+      const subscriptionJSON = sub.toJSON();
+      if (subscriptionJSON.endpoint && subscriptionJSON.keys?.auth && subscriptionJSON.keys?.p256dh) {
+        await axios.post(`${API}/api/rider/subscribe/`, {
+          endpoint: subscriptionJSON.endpoint,
+          auth: subscriptionJSON.keys.auth,
+          p256dh: subscriptionJSON.keys.p256dh
+        }, {
+          headers: { Authorization: `Bearer ${t}` }
+        });
+        console.log('Registered Web Push subscription with backend.');
+      }
+    } catch (err) {
+      console.error('Failed to subscribe to Web Push:', err);
+    }
+  };
+
   useEffect(() => {
     // 1. Initialize audio with the real notification sound
     audioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
@@ -111,14 +163,20 @@ export default function RiderDashboard() {
       }
     }
 
-    // 4. Register service worker for system notifications
+    // 3. Register service worker for system notifications
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('SW Registered', reg))
+        .then(reg => {
+          console.log('SW Registered', reg);
+          const storedToken = localStorage.getItem('rider_token');
+          if (storedToken) {
+            subscribeToPushNotifications(storedToken, reg);
+          }
+        })
         .catch(err => console.log('SW Registration failed', err));
     }
 
-    // 5. Unlock audio autoplay on first user interaction
+    // 4. Unlock audio autoplay on first user interaction
     const unlockAudio = () => {
       if (audioRef.current) {
         audioRef.current.play().then(() => {
@@ -157,6 +215,12 @@ export default function RiderDashboard() {
       setLoading(false);
     } else {
       setShowProfileSetup(false);
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(reg => {
+        subscribeToPushNotifications(storedToken, reg);
+      });
     }
   }, [router]);
 

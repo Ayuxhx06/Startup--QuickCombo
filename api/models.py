@@ -234,3 +234,14 @@ class PredefinedCombo(models.Model):
     class Meta:
         verbose_name = "Predefined Combo"
         verbose_name_plural = "Predefined Combos"
+
+
+class RiderPushSubscription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='push_subscriptions')
+    endpoint = models.TextField(unique=True)
+    auth_key = models.CharField(max_length=255)
+    p256dh_key = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.endpoint[:30]}..."

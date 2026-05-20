@@ -685,6 +685,13 @@ def place_order(request):
         # 6. Send Confirmation
         send_order_confirmation_email(order)
 
+        # 6b. Send Web Push to Riders
+        try:
+            from .utils_push import send_rider_push_notification
+            send_rider_push_notification(order)
+        except Exception as push_err:
+            print(f"Rider Push Notification failed: {push_err}")
+
         # 7. Update Google Sheets
         try:
             from .utils_sheets import append_order_to_sheet

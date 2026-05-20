@@ -22,3 +22,33 @@ self.addEventListener('notificationclick', function(event) {
     })
   );
 });
+
+self.addEventListener('push', function(event) {
+  let payload = {
+    title: 'New QuickCombo Order! 🛵',
+    body: 'A new order is available. Tap to view.'
+  };
+
+  if (event.data) {
+    try {
+      payload = event.data.json();
+    } catch (e) {
+      payload.body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: payload.body,
+    icon: '/favicon.ico',
+    badge: '/favicon.ico',
+    tag: 'new-order-' + (payload.order_id || Date.now()),
+    requireInteraction: true,
+    data: {
+      orderId: payload.order_id
+    }
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title, options)
+  );
+});
