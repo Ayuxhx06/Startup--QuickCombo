@@ -102,7 +102,7 @@ def admin_orders(request):
             'items', 
             'items__menu_item', 
             'items__menu_item__restaurant'
-        ).order_by('-created_at')[:50] # Limit to latest 50 for performance
+        ).order_by('-created_at')
         
         return Response(OrderSerializer(orders, many=True).data)
     
