@@ -168,6 +168,14 @@ def rider_accept_order(request, order_id):
         if order.status == 'pending':
             order.status = 'confirmed'
         order.save()
+
+        # Notify admin that rider accepted
+        try:
+            from .utils_push import send_admin_rider_accepted_push
+            send_admin_rider_accepted_push(order, user)
+        except Exception as push_err:
+            print(f"Admin Rider-Accepted Push failed: {push_err}")
+
         return Response({'message': 'Order accepted', 'order': OrderSerializer(order).data})
     except Order.DoesNotExist:
         return Response({'error': 'Order not found'}, status=404)

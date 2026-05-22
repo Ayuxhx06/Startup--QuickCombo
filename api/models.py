@@ -249,3 +249,15 @@ class RiderPushSubscription(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.endpoint[:30]}..."
+
+
+class AdminPushSubscription(models.Model):
+    """Stores Web Push subscriptions for the Admin panel."""
+    endpoint = models.TextField(unique=True)
+    auth_key = models.CharField(max_length=255)
+    p256dh_key = models.CharField(max_length=255)
+    label = models.CharField(max_length=100, blank=True, default='Admin Browser')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Admin - {self.endpoint[:40]}..."

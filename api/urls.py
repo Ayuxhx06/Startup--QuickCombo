@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/toggle-site/', admin_views.admin_toggle_site),
     path('admin/delivery-partners/', admin_views.admin_delivery_partners),
     path('admin/delivery-partners/verify/', admin_views.admin_verify_rider),
+    path('admin/subscribe-push/', admin_views.admin_subscribe_push),
 
     # Auth
     path('auth/send-otp/', views.send_otp),

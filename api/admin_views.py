@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 # Use absolute imports for reliability on AlwaysData
-from api.models import User, Order, MenuItem, Restaurant, Category, Coupon, GlobalConfig, PredefinedCombo
+from api.models import User, Order, MenuItem, Restaurant, Category, Coupon, GlobalConfig, PredefinedCombo, AdminPushSubscription
 from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer, CouponSerializer, GlobalConfigSerializer, PredefinedComboSerializer
 import csv
 import io
@@ -766,6 +766,12 @@ def admin_delivery_partners(request):
     for rider in riders:
         completed_rides = Order.objects.filter(assigned_rider=rider, status='delivered').count()
         active_rides = Order.objects.filter(assigned_rider=rider).exclude(status__in=['delivered', 'cancelled']).count()
+        # Check if rider is currently on a live delivery trip
+        current_trip = Order.objects.filter(
+            assigned_rider=rider,
+            status__in=['picked_up', 'out_for_delivery', 'confirmed', 'preparing']
+        ).order_by('-updated_at').first()
+        on_trip = current_trip is not None
         data.append({
             'id': rider.id,
             'email': rider.email,
@@ -777,9 +783,13 @@ def admin_delivery_partners(request):
             'rider_verified': rider.rider_verified,
             'completed_rides': completed_rides,
             'active_rides': active_rides,
+            'on_trip': on_trip,
+            'current_order_id': current_trip.id if current_trip else None,
+            'current_order_status': current_trip.get_status_display() if current_trip else None,
             'date_joined': rider.date_joined.strftime('%Y-%m-%d %H:%M:%S') if rider.date_joined else 'N/A'
         })
     return Response(data)
+
 
 
 @api_view(['POST'])
@@ -796,3 +806,26 @@ def admin_verify_rider(request):
         return Response({'message': 'Rider verification status updated', 'rider_verified': rider.rider_verified})
     except User.DoesNotExist:
         return Response({'error': 'Rider not found'}, status=404)
+
+
+@api_view(['POST'])
+def admin_subscribe_push(request):
+    """Register or refresh an admin browser's Web Push subscription."""
+    if request.headers.get('X-Admin-Password', '') != getattr(settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    endpoint  = request.data.get('endpoint')
+    auth_key  = request.data.get('auth')
+    p256dh_key = request.data.get('p256dh')
+
+    if not endpoint or not auth_key or not p256dh_key:
+        return Response({'error': 'endpoint, auth, and p256dh are required'}, status=400)
+
+    AdminPushSubscription.objects.update_or_create(
+        endpoint=endpoint,
+        defaults={
+            'auth_key': auth_key,
+            'p256dh_key': p256dh_key,
+        }
+    )
+    return Response({'message': 'Admin push subscription registered successfully'})

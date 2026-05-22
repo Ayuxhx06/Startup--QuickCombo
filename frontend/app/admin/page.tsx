@@ -75,12 +75,68 @@ export default function PremiumAdmin() {
 
   const prevOrdersRef = useRef<any[]>([]);
 
-  // Check notification permission on mount
-  useEffect(() => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+  const VAPID_PUBLIC_KEY = 'BFspP4ge4f7UZpmvvDQcm280ZlLm9WjYp_Z5COtyb8eOaFGtQAQR0MAGCllsOUqwDn2FnW5x2_NGnIi0PqC7C0U';
+
+  const urlBase64ToUint8Array = (base64String: string) => {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+    return outputArray;
+  };
+
+  const subscribeAdminPush = async (pass: string) => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      console.warn('Push not supported on this browser');
+      return;
     }
-  }, []);
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      let sub = await registration.pushManager.getSubscription();
+      if (!sub) {
+        sub = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        });
+      }
+      const subJSON = sub.toJSON();
+      if (subJSON.endpoint && subJSON.keys?.auth && subJSON.keys?.p256dh) {
+        await axios.post(`${LIVE_BACKEND}/api/admin/subscribe-push/`, {
+          endpoint: subJSON.endpoint,
+          auth: subJSON.keys.auth,
+          p256dh: subJSON.keys.p256dh,
+        }, { headers: { 'X-Admin-Password': pass } });
+        console.log('✅ Admin push subscription registered with backend');
+      }
+    } catch (err) {
+      console.error('Admin push subscribe failed:', err);
+    }
+  };
+
+  // Register SW and request notification permission + subscribe to push
+  useEffect(() => {
+    if (!adminPassword) return;
+
+    const setupPush = async () => {
+      if (!('Notification' in window)) return;
+      let perm = Notification.permission;
+      if (perm === 'default') {
+        perm = await Notification.requestPermission();
+      }
+      if (perm !== 'granted') return;
+
+      if ('serviceWorker' in navigator) {
+        try {
+          await navigator.serviceWorker.register('/sw.js');
+          await subscribeAdminPush(adminPassword);
+        } catch (err) {
+          console.error('SW registration failed:', err);
+        }
+      }
+    };
+    setupPush();
+  }, [adminPassword]);
 
   // Poll for live orders & trigger audio/visual notifications in Admin Panel
   useEffect(() => {
@@ -1992,30 +2048,45 @@ const OrderList = memo(({ items, onUpdate, compact = false }: any) => {
 const DeliveryPartnerList = memo(({ items, onVerifyPartner }: { items: any[], onVerifyPartner: (riderId: number, verify: boolean) => void }) => {
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full text-left border-separate border-spacing-y-4 min-w-[900px]">
+      <table className="w-full text-left border-separate border-spacing-y-4 min-w-[1000px]">
         <thead>
           <tr className="text-[10px] text-gray-500 font-bold uppercase tracking-widest border-b border-white/5">
             <th className="pb-4 font-bold">Partner ID</th>
             <th className="pb-4 font-bold">Name</th>
             <th className="pb-4 font-bold">Contact Details</th>
             <th className="pb-4 font-bold">Verification Info</th>
-            <th className="pb-4 font-bold text-center">Rides Completed</th>
-            <th className="pb-4 font-bold text-center">Active Rides</th>
-            <th className="pb-4 font-bold text-right">Verification Status / Action</th>
+            <th className="pb-4 font-bold text-center">Completed</th>
+            <th className="pb-4 font-bold text-center">Trip Status</th>
+            <th className="pb-4 font-bold text-right">Verification / Action</th>
           </tr>
         </thead>
         <tbody className="text-sm">
           {items.map((partner) => (
-            <tr key={partner.id} className="bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-white/10 group">
+            <tr key={partner.id} className={`transition-all border hover:bg-white/10 group ${
+              partner.on_trip
+                ? 'bg-orange-500/5 border-orange-500/20 hover:border-orange-500/30'
+                : 'bg-white/5 border-transparent hover:border-white/10'
+            }`}>
               <td className="py-6 px-6 rounded-l-[1.5rem] align-middle">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-black/50 rounded-2xl flex items-center justify-center font-black text-white italic border border-white/10 shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black italic border shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] ${
+                    partner.on_trip ? 'bg-orange-500/10 border-orange-500/30 text-orange-400' : 'bg-black/50 border-white/10 text-white'
+                  }`}>
                     #{partner.id}
                   </div>
                 </div>
               </td>
-              <td className="py-6 px-6 align-middle font-black text-white uppercase tracking-wider">
-                {partner.name || 'Unnamed Partner'}
+              <td className="py-6 px-6 align-middle">
+                <div className="font-black text-white uppercase tracking-wider">{partner.name || 'Unnamed Partner'}</div>
+                {partner.on_trip && (
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                    </span>
+                    <span className="text-[10px] font-black uppercase text-orange-400 tracking-widest">On Trip</span>
+                  </div>
+                )}
               </td>
               <td className="py-6 px-6 align-middle">
                 <div className="font-mono text-xs text-gray-300">{partner.phone || 'No phone'}</div>
@@ -2041,13 +2112,27 @@ const DeliveryPartnerList = memo(({ items, onVerifyPartner }: { items: any[], on
                 </span>
               </td>
               <td className="py-6 px-6 align-middle text-center">
-                <span className={`px-4 py-1.5 rounded-full text-xs font-black italic inline-block border ${
-                  partner.active_rides > 0
-                    ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 animate-pulse'
-                    : 'bg-white/5 text-gray-400 border-white/10'
-                }`}>
-                  {partner.active_rides} ACTIVE
-                </span>
+                {partner.on_trip ? (
+                  <div className="flex flex-col items-center gap-1.5">
+                    <span className="bg-orange-500/15 text-orange-400 border border-orange-500/30 px-4 py-1.5 rounded-full text-xs font-black italic inline-flex items-center gap-1.5 animate-pulse">
+                      🛵 ONGOING TRIP
+                    </span>
+                    <span className="text-[10px] text-orange-300/70 font-mono">
+                      Order #{partner.current_order_id}
+                    </span>
+                    <span className="text-[9px] text-gray-500 uppercase tracking-wider">
+                      {partner.current_order_status}
+                    </span>
+                  </div>
+                ) : (
+                  <span className={`px-4 py-1.5 rounded-full text-xs font-black italic inline-block border ${
+                    partner.active_rides > 0
+                      ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                      : 'bg-white/5 text-gray-500 border-white/10'
+                  }`}>
+                    {partner.active_rides > 0 ? `${partner.active_rides} ACTIVE` : 'IDLE'}
+                  </span>
+                )}
               </td>
               <td className="py-6 px-6 rounded-r-[1.5rem] align-middle text-right">
                 <div className="flex flex-col items-end gap-2">
@@ -2088,6 +2173,7 @@ const DeliveryPartnerList = memo(({ items, onVerifyPartner }: { items: any[], on
     </div>
   );
 });
+
 
 const PriceAdjustCard = ({ order, onUpdatePrice }: { order: any, onUpdatePrice: (id: number, total: number) => Promise<void> }) => {
   const [newPrice, setNewPrice] = useState(order.total);

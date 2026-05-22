@@ -692,12 +692,20 @@ def place_order(request):
         except Exception as push_err:
             print(f"Rider Push Notification failed: {push_err}")
 
+        # 6c. Send Web Push to Admin
+        try:
+            from .utils_push import send_admin_new_order_push
+            send_admin_new_order_push(order)
+        except Exception as push_err:
+            print(f"Admin Push Notification failed: {push_err}")
+
         # 7. Update Google Sheets
         try:
             from .utils_sheets import append_order_to_sheet
             append_order_to_sheet(order)
         except Exception as sheet_err:
             print(f"Sheet update skipped/failed: {sheet_err}")
+
 
         return Response({'order_id': order.id, 'total': float(total), 'status': 'out_for_delivery'}, status=201)
 
