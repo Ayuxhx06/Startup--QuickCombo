@@ -3,6 +3,7 @@ from . import views
 from . import admin_views
 from . import views_payment
 from . import rider_views
+from . import ai_views
 
 urlpatterns = [
     # ADMIN DASHBOARD (TOP PRIORITY)
@@ -22,6 +23,9 @@ urlpatterns = [
     path('admin/delivery-partners/', admin_views.admin_delivery_partners),
     path('admin/delivery-partners/verify/', admin_views.admin_verify_rider),
     path('admin/subscribe-push/', admin_views.admin_subscribe_push),
+
+    # AI Chatbot
+    path('qiqi/chat/', ai_views.qiqi_chat),
 
     # Auth
     path('auth/send-otp/', views.send_otp),
