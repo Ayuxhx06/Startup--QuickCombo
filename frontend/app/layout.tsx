@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
 import StickyCart from "@/components/StickyCart";
 import FloatingTracker from "@/components/FloatingTracker";
-import QiqiChatbot from "@/components/QiqiChatbot";
+
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import MaintenanceGuard from "@/components/MaintenanceGuard";
@@ -65,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <BottomNav />
               <StickyCart />
               <FloatingTracker />
-              <QiqiChatbot />
+
               <Toaster
                 position="top-center"
                 toastOptions={{

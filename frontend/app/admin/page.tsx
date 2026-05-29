@@ -74,6 +74,9 @@ export default function PremiumAdmin() {
   }, [adminPassword, activeTab]);
 
   const prevOrdersRef = useRef<any[]>([]);
+  const adminAudioRef = useRef<HTMLAudioElement | null>(null);
+  const seenOrderIdsRef = useRef<Set<number>>(new Set());
+  const seenRiderAcceptRef = useRef<Set<string>>(new Set()); // "orderId-riderName"
 
   const VAPID_PUBLIC_KEY = 'BFspP4ge4f7UZpmvvDQcm280ZlLm9WjYp_Z5COtyb8eOaFGtQAQR0MAGCllsOUqwDn2FnW5x2_NGnIi0PqC7C0U';
 
@@ -114,9 +117,35 @@ export default function PremiumAdmin() {
     }
   };
 
-  // Register SW and request notification permission + subscribe to push
+  // Setup push + audio on admin login
   useEffect(() => {
     if (!adminPassword) return;
+
+    // Pre-create and unlock audio
+    adminAudioRef.current = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
+    adminAudioRef.current.preload = 'auto';
+    const unlockAudio = () => {
+      adminAudioRef.current?.play().then(() => {
+        adminAudioRef.current?.pause();
+        if (adminAudioRef.current) adminAudioRef.current.currentTime = 0;
+      }).catch(() => {});
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('keydown', unlockAudio);
+    };
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('keydown', unlockAudio);
+
+    // Load seen IDs from localStorage so we survive tab switches
+    try {
+      const saved = localStorage.getItem('qc_admin_seen_orders');
+      if (saved) {
+        seenOrderIdsRef.current = new Set(JSON.parse(saved));
+      }
+      const savedRider = localStorage.getItem('qc_admin_seen_rider');
+      if (savedRider) {
+        seenRiderAcceptRef.current = new Set(JSON.parse(savedRider));
+      }
+    } catch {}
 
     const setupPush = async () => {
       if (!('Notification' in window)) return;
@@ -136,71 +165,84 @@ export default function PremiumAdmin() {
       }
     };
     setupPush();
+
+    return () => {
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('keydown', unlockAudio);
+    };
   }, [adminPassword]);
 
   // Poll for live orders & trigger audio/visual notifications in Admin Panel
   useEffect(() => {
     if (!adminPassword) return;
 
+    const fireAdminNotification = (title: string, body: string, type: string) => {
+      // 1. Play pre-unlocked audio
+      if (adminAudioRef.current) {
+        adminAudioRef.current.currentTime = 0;
+        adminAudioRef.current.play().catch(() => {});
+      }
+      // 2. Browser notification (if granted)
+      if ('Notification' in window && Notification.permission === 'granted') {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistration().then(reg => {
+            if (reg?.showNotification) {
+              reg.showNotification(title, { body, icon: '/favicon.ico', requireInteraction: true, tag: type + Date.now() });
+            } else {
+              new Notification(title, { body, icon: '/favicon.ico', requireInteraction: true });
+            }
+          }).catch(() => new Notification(title, { body, icon: '/favicon.ico' }));
+        } else {
+          new Notification(title, { body, icon: '/favicon.ico', requireInteraction: true });
+        }
+      }
+      // 3. Always show toast as in-app fallback
+      toast.success(title, { duration: 8000, icon: '🛍️' });
+    };
+
     const checkLiveNotifications = async () => {
       try {
         const base = API.includes('quickcombo.in') ? LIVE_BACKEND : API;
         const res = await axios.get(`${base}/api/admin/orders/`, getHeaders());
-        const polledOrders = res.data || [];
+        const polledOrders: any[] = res.data || [];
 
-        // Dynamic UI refresh when activeTab is orders or dashboard
+        // Dynamic UI refresh
         if (activeTab === 'orders') {
           setOrders(polledOrders);
         } else if (activeTab === 'dashboard') {
           setOrders(polledOrders.slice(0, 10));
         }
 
-        if (prevOrdersRef.current.length > 0) {
-          // 1. Detect New Orders
-          polledOrders.forEach((order: any) => {
-            const exists = prevOrdersRef.current.some((o: any) => o.id === order.id);
-            if (!exists) {
+        // 1. Detect New Orders — use localStorage-backed seen set
+        polledOrders.forEach((order: any) => {
+          if (!seenOrderIdsRef.current.has(order.id)) {
+            // Don't notify on very first hydration (when set was empty)
+            if (seenOrderIdsRef.current.size > 0) {
               const itemsList = order.items?.map((it: any) => `${it.quantity}x ${it.name}`).join(', ') || 'No items';
-              const bodyText = `From: ${order.user_name} (${order.user_phone})\nAddress: ${order.delivery_address}\nItems: ${itemsList}\nInstructions: ${order.notes || 'None'}`;
-              
-              // Trigger audio notification
-              const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
-              audio.play().catch(e => console.log('Audio autoplay blocked', e));
-
-              if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification(`Order #${order.id} Received! 🛍️`, {
-                  body: bodyText,
-                  icon: '/favicon.ico',
-                  requireInteraction: true
-                });
-              } else {
-                toast.success(`New Order #${order.id} received!`);
-              }
+              const body = `${order.user_name} • ${order.delivery_address}\n${itemsList}`;
+              fireAdminNotification(`🛍️ New Order #${order.id}!`, body, 'new_order');
             }
-          });
+            seenOrderIdsRef.current.add(order.id);
+          }
+        });
+        // Persist seen IDs (keep only last 100)
+        const seenArr = Array.from(seenOrderIdsRef.current).slice(-100);
+        localStorage.setItem('qc_admin_seen_orders', JSON.stringify(seenArr));
 
-          // 2. Detect Rider Acceptance
-          polledOrders.forEach((order: any) => {
-            const prev = prevOrdersRef.current.find((o: any) => o.id === order.id);
-            if (prev && !prev.rider_name && order.rider_name) {
-              const bodyText = `Rider ${order.rider_name} (${order.rider_phone || ''}) accepted Order #${order.id}.`;
-              
-              // Trigger audio notification
-              const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav');
-              audio.play().catch(e => console.log('Audio autoplay blocked', e));
-
-              if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification(`Rider Accepted Order #${order.id} 🛵`, {
-                  body: bodyText,
-                  icon: '/favicon.ico',
-                  requireInteraction: true
-                });
-              } else {
-                toast.success(`Rider ${order.rider_name} accepted Order #${order.id}`);
-              }
+        // 2. Detect Rider Acceptance
+        polledOrders.forEach((order: any) => {
+          const riderKey = `${order.id}-${order.rider_name}`;
+          if (order.rider_name && !seenRiderAcceptRef.current.has(riderKey)) {
+            // Only notify if we already knew about this order (not brand new)
+            if (seenOrderIdsRef.current.has(order.id)) {
+              const body = `Rider ${order.rider_name} accepted Order #${order.id}`;
+              fireAdminNotification(`🛵 Rider Accepted #${order.id}`, body, 'rider_accepted');
             }
-          });
-        }
+            seenRiderAcceptRef.current.add(riderKey);
+          }
+        });
+        const seenRiderArr = Array.from(seenRiderAcceptRef.current).slice(-100);
+        localStorage.setItem('qc_admin_seen_rider', JSON.stringify(seenRiderArr));
 
         prevOrdersRef.current = polledOrders;
       } catch (err) {
@@ -208,11 +250,8 @@ export default function PremiumAdmin() {
       }
     };
 
-    // Set up polling interval (every 10 seconds)
-    const interval = setInterval(checkLiveNotifications, 10000);
-    
-    // Run once immediately on mount/load
-    checkLiveNotifications();
+    const interval = setInterval(checkLiveNotifications, 8000);
+    checkLiveNotifications(); // run immediately
 
     return () => clearInterval(interval);
   }, [adminPassword, activeTab]);
@@ -481,8 +520,9 @@ export default function PremiumAdmin() {
     if (!file) return;
 
     // Validate file type
-    if (!file.name.toLowerCase().endsWith('.csv')) {
-      toast.error('Please select a valid CSV file');
+    const lowerName = file.name.toLowerCase();
+    if (!lowerName.endsWith('.csv') && !lowerName.endsWith('.xlsx') && !lowerName.endsWith('.xls')) {
+      toast.error('Please select a valid CSV or Excel (.xlsx) file');
       if (e.target) e.target.value = '';
       return;
     }

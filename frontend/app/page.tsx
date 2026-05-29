@@ -16,6 +16,7 @@ const WeatherWidget = dynamic(() => import('@/components/WeatherWidget'), { ssr:
 import FoodCard from '@/components/FoodCard';
 import ManualAddBox from '@/components/ManualAddBox';
 import MenuModal from '@/components/MenuModal';
+import QiqiChatbot from '@/components/QiqiChatbot';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
@@ -406,6 +407,8 @@ export default function HomePage() {
         restaurantName={selectedRest?.name || ''} 
         items={restMenu} 
       />
+      {/* Qiqi AI Chatbot — Home page only */}
+      <QiqiChatbot />
     </div>
   );
 }
