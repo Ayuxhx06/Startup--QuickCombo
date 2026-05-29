@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useCart } from '@/context/CartContext';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
@@ -36,8 +38,14 @@ interface Message {
   suggested_combos?: Combo[];
 }
 
-export default function QiqiChatbot() {
-  const [isOpen, setIsOpen] = useState(false);
+interface QiqiChatbotProps {
+  autoOpen?: boolean;
+  fullPage?: boolean;
+}
+
+export default function QiqiChatbot({ autoOpen = false, fullPage = false }: QiqiChatbotProps = {}) {
+  const [isOpen, setIsOpen] = useState(autoOpen);
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'init',
@@ -132,42 +140,54 @@ export default function QiqiChatbot() {
   return (
     <>
       {/* Floating Action Button Container — sits ABOVE the bottom nav bar */}
-      <div className="fixed bottom-20 right-4 z-40 flex flex-col items-end gap-3">
-        {/* Pulsing Tooltip — only show when chat is closed */}
-        {!isOpen && (
-          <div
-            className="bg-white px-4 py-2 rounded-xl shadow-lg border border-purple-100 animate-bounce relative mr-1"
-            style={{ pointerEvents: 'none' }}
-          >
-            <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
-              Craving something? Chat with Qiqi! ✨
-            </span>
-            {/* Tooltip Triangle pointing down */}
-            <div className="absolute -bottom-2 right-5 w-4 h-4 bg-white border-b border-r border-purple-100 transform rotate-45" />
-          </div>
-        )}
-
-        {/* Main Toggle Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-[0_0_18px_rgba(168,85,247,0.5)] hover:shadow-[0_0_28px_rgba(168,85,247,0.7)] transition-all hover:-translate-y-1 overflow-hidden relative ${!isOpen ? 'animate-pulse' : ''}`}
-        >
-          <div className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity" />
-          {isOpen ? (
-            <span className="text-2xl font-bold">✕</span>
-          ) : (
-            <span className="text-2xl relative z-10 drop-shadow-md">✨</span>
+      {!fullPage && (
+        <div className="fixed bottom-20 right-4 z-40 flex flex-col items-end gap-3">
+          {/* Pulsing Tooltip — only show when chat is closed */}
+          {!isOpen && (
+            <div
+              className="bg-white px-4 py-2 rounded-xl shadow-lg border border-purple-100 animate-bounce relative mr-1"
+              style={{ pointerEvents: 'none' }}
+            >
+              <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
+                Craving something? Chat with Qiqi! ✨
+              </span>
+              {/* Tooltip Triangle pointing down */}
+              <div className="absolute -bottom-2 right-5 w-4 h-4 bg-white border-b border-r border-purple-100 transform rotate-45" />
+            </div>
           )}
-        </button>
-      </div>
+
+          {/* Main Toggle Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-[0_0_18px_rgba(168,85,247,0.5)] hover:shadow-[0_0_28px_rgba(168,85,247,0.7)] transition-all hover:-translate-y-1 overflow-hidden relative ${!isOpen ? 'animate-pulse' : ''}`}
+          >
+            <div className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity" />
+            {isOpen ? (
+              <span className="text-2xl font-bold">✕</span>
+            ) : (
+              <span className="text-2xl relative z-10 drop-shadow-md">✨</span>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Chat Window — opens upward from above the FAB */}
-      {isOpen && (
-        <div className="fixed bottom-36 right-4 w-[340px] max-h-[560px] h-[72vh] bg-white rounded-2xl shadow-2xl flex flex-col z-40 border border-gray-100 overflow-hidden"
-          style={{ animation: 'slideUp 0.25s ease-out' }}
+      {(isOpen || fullPage) && (
+        <div 
+          className={
+            fullPage 
+              ? "fixed inset-0 bg-white flex flex-col z-[60]" 
+              : "fixed bottom-36 right-4 w-[340px] max-h-[560px] h-[72vh] bg-white rounded-2xl shadow-2xl flex flex-col z-40 border border-gray-100 overflow-hidden"
+          }
+          style={!fullPage ? { animation: 'slideUp 0.25s ease-out' } : {}}
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-4 text-white flex items-center gap-3 shrink-0">
+            {fullPage && (
+              <button onClick={() => router.back()} className="mr-1 text-white hover:text-white/80 transition-colors">
+                <ArrowLeft size={24} />
+              </button>
+            )}
             <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center text-xl shadow-inner">
               🤖
             </div>
