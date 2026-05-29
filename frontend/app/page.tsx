@@ -144,6 +144,41 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Core Verticals: Food & Daily Needs */}
+      <section className="px-4 mb-5">
+        <div className="grid grid-cols-2 gap-3 max-w-lg mx-auto">
+          {/* Food Card */}
+          <Link href="/restaurants" className="block">
+            <motion.div
+              whileTap={{ scale: 0.96 }}
+              className="relative overflow-hidden rounded-2xl p-4 h-28 flex flex-col justify-end group transition-all"
+              style={{ background: 'linear-gradient(135deg, #1f1209 0%, #111 100%)', border: '1px solid rgba(249,115,22,0.15)' }}
+            >
+              <div className="absolute -top-2 -right-2 w-20 h-20 bg-orange-500/10 rounded-full blur-xl group-hover:bg-orange-500/20 transition-all" />
+              <div className="absolute top-3 right-3 text-orange-500/40 group-hover:scale-110 transition-transform">
+                <UtensilsCrossed size={36} strokeWidth={1.5} />
+              </div>
+              <h3 className="font-black text-white text-lg leading-tight relative z-10">Food<br />Delivery</h3>
+            </motion.div>
+          </Link>
+
+          {/* Daily Needs Card */}
+          <Link href="/menu" className="block">
+            <motion.div
+              whileTap={{ scale: 0.96 }}
+              className="relative overflow-hidden rounded-2xl p-4 h-28 flex flex-col justify-end group transition-all"
+              style={{ background: 'linear-gradient(135deg, #022c22 0%, #111 100%)', border: '1px solid rgba(34,197,94,0.15)' }}
+            >
+              <div className="absolute -top-2 -right-2 w-20 h-20 bg-green-500/10 rounded-full blur-xl group-hover:bg-green-500/20 transition-all" />
+              <div className="absolute top-3 right-3 text-green-500/40 group-hover:scale-110 transition-transform">
+                <Package size={36} strokeWidth={1.5} />
+              </div>
+              <h3 className="font-black text-white text-lg leading-tight relative z-10">Daily<br />Needs</h3>
+            </motion.div>
+          </Link>
+        </div>
+      </section>
+
       {/* Group Order Entry Card */}
       <section className="px-4 mb-5">
         <motion.div
