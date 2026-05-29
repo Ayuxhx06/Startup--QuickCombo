@@ -33,7 +33,7 @@ export default function StickyCart() {
                     {item.image_url ? (
                       <img src={item.image_url} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="flex items-center justify-center h-full text-xs">🍔</span>
+                      <span className="flex items-center justify-center h-full text-xs"></span>
                     )}
                   </div>
                 ))}

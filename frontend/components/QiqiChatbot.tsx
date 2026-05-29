@@ -50,7 +50,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
     {
       id: 'init',
       role: 'qiqi',
-      content: "Hi! I'm Qiqi, your food mood buddy. 😋 How are you feeling today? Need a custom combo?",
+      content: "Hi! I'm Qiqi, your food mood buddy.  How are you feeling today? Need a custom combo?",
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -100,7 +100,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'qiqi',
-        content: "Oops, my brain is taking a quick nap! Please try again later. 😴",
+        content: "Oops, my brain is taking a quick nap! Please try again later. ",
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -130,7 +130,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
           category_name: item.category_name,
         });
       });
-      toast.success(`${combo.name} added to cart! 🛒`, { duration: 2000, icon: '✨' });
+      toast.success(`${combo.name} added to cart! `, { duration: 2000, icon: '' });
     } else {
       // Fallback for a non-dynamic combo (shouldn't normally happen)
       toast.error("Couldn't add this combo. Please try again.");
@@ -149,7 +149,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
               style={{ pointerEvents: 'none' }}
             >
               <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
-                Craving something? Chat with Qiqi! ✨
+                Craving something? Chat with Qiqi! 
               </span>
               {/* Tooltip Triangle pointing down */}
               <div className="absolute -bottom-2 right-5 w-4 h-4 bg-white border-b border-r border-purple-100 transform rotate-45" />
@@ -163,9 +163,9 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
           >
             <div className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity" />
             {isOpen ? (
-              <span className="text-2xl font-bold">✕</span>
+              <span className="text-2xl font-bold"></span>
             ) : (
-              <span className="text-2xl relative z-10 drop-shadow-md">✨</span>
+              <span className="text-2xl relative z-10 drop-shadow-md"></span>
             )}
           </button>
         </div>
@@ -189,7 +189,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
               </button>
             )}
             <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center text-xl shadow-inner">
-              🤖
+              
             </div>
             <div>
               <h3 className="font-bold text-base leading-tight">Qiqi</h3>
@@ -223,7 +223,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
                       <div key={combo.id} className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
                         {/* Gradient header for dynamic combos */}
                         <div className="w-full h-10 bg-gradient-to-r from-pink-100 to-purple-100 flex items-center px-3 border-b border-gray-50">
-                          <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">✨ Custom Combo</span>
+                          <span className="text-xs font-bold text-purple-600 uppercase tracking-wider"> Custom Combo</span>
                         </div>
 
                         <div className="p-3">
@@ -253,7 +253,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
                               onClick={() => handleAddToCart(combo)}
                               className="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-4 py-2 rounded-lg font-bold shadow hover:shadow-lg transition-all active:scale-95 hover:opacity-90"
                             >
-                              Add to Cart 🛒
+                              Add to Cart 
                             </button>
                           </div>
                         </div>
@@ -291,7 +291,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
               disabled={!inputValue.trim() || isLoading}
               className="bg-gradient-to-r from-pink-500 to-purple-600 text-white w-10 h-10 rounded-xl flex items-center justify-center hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md active:scale-95"
             >
-              ➤
+              
             </button>
           </div>
         </div>

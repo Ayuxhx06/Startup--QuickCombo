@@ -42,7 +42,7 @@ export default function RiderDashboard() {
     }
 
     if ('Notification' in window && Notification.permission === 'granted') {
-      const title = 'New QuickCombo Order! 🛵';
+      const title = 'New QuickCombo Order! ';
       const options = {
         body: `Order #${orderId} is ready from ${restaurant}. Tap to view.`,
         icon: '/favicon.ico',
@@ -379,7 +379,7 @@ export default function RiderDashboard() {
         if (perm === 'granted') {
           toast.success('System notifications enabled!');
           // Trigger test notification
-          new Notification('Notifications Active! 🛵', {
+          new Notification('Notifications Active! ', {
             body: 'You will receive notifications for new orders here.',
             icon: '/favicon.ico'
           });

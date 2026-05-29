@@ -118,10 +118,10 @@ export default function OrderTrackingPage() {
                     initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
                     className="text-2xl font-black mb-3 tracking-tighter"
                 >
-                    {tracking.status === 'delivered' ? 'Order Delivered 🎉' : 
-                     tracking.status === 'out_for_delivery' ? 'Order is on the way 🤘' : 
-                     tracking.status === 'preparing' ? 'Food is Preparing 👨‍🍳' : 
-                     'Order Confirmed ✅'}
+                    {tracking.status === 'delivered' ? 'Order Delivered ' : 
+                     tracking.status === 'out_for_delivery' ? 'Order is on the way ' : 
+                     tracking.status === 'preparing' ? 'Food is Preparing ‍' : 
+                     'Order Confirmed '}
                 </motion.h1>
                 
                 <div className="flex items-center gap-3 bg-white/20 px-5 py-2.5 rounded-full border border-white/20">
@@ -143,7 +143,7 @@ export default function OrderTrackingPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200">
-                  <span className="text-xl">🛵</span>
+                  <span className="text-xl"></span>
                 </div>
                 <div>
                   <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Your Delivery Partner</p>

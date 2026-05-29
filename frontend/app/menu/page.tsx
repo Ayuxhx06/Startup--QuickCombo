@@ -51,7 +51,7 @@ function MenuContent() {
   useEffect(() => {
     const url = restaurantId ? `${API}/api/categories/?restaurant=${restaurantId}` : `${API}/api/categories/`;
     axios.get(url).then(r => {
-      setCategories([{ slug: '', icon: '🍽️', name: 'All' }, ...r.data]);
+      setCategories([{ slug: '', icon: '️', name: 'All' }, ...r.data]);
     });
   }, [restaurantId]);
 
@@ -186,7 +186,7 @@ function MenuContent() {
           </div>
         ) : Object.keys(filteredGrouped).length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
-            <div className="text-6xl mb-4">🍽️</div>
+            <div className="text-6xl mb-4">️</div>
             <p className="font-black uppercase tracking-[0.2em] text-xs">Menu is empty</p>
           </div>
         ) : (
@@ -224,7 +224,7 @@ function MenuContent() {
       />
 
       <div className="text-center mt-12 pb-8 space-y-2 opacity-50">
-        <p className="text-[10px] text-gray-700 font-black tracking-widest uppercase italic">QuickCombo • Made with ❤️ in India</p>
+        <p className="text-[10px] text-gray-700 font-black tracking-widest uppercase italic">QuickCombo • Made with ️ in India</p>
         <div className="flex justify-center gap-4 text-[10px] text-gray-600 font-bold uppercase tracking-widest">
           <Link href="/terms" className="hover:text-green-500 transition-colors">Terms</Link>
           <Link href="/privacy" className="hover:text-green-500 transition-colors">Privacy</Link>

@@ -88,7 +88,7 @@ export default function CartPanel() {
                     animate={{ opacity: 1, y: 0 }}
                     className="flex flex-col items-center justify-center h-64 text-center"
                   >
-                    <div className="text-6xl mb-4">🛒</div>
+                    <div className="text-6xl mb-4"></div>
                     <p className="text-gray-400 font-medium">Your cart is empty</p>
                     <p className="text-gray-600 text-sm mt-1">Add items from the menu</p>
                     <motion.button
@@ -175,7 +175,7 @@ export default function CartPanel() {
                   className="mt-4 p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex gap-3 items-start"
                 >
                   <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
-                    <span className="text-orange-500 text-sm">💡</span>
+                    <span className="text-orange-500 text-sm"></span>
                   </div>
                   <div>
                     <p className="text-orange-200 text-xs font-bold leading-tight uppercase tracking-wider mb-1">Order Tip</p>

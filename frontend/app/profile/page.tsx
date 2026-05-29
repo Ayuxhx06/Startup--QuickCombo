@@ -106,7 +106,7 @@ export default function ProfilePage() {
                  <div className="w-[1px] h-8 bg-white/10" />
                  <div>
                     <p className="text-2xl font-black text-white flex items-center justify-center gap-1">
-                      0 <span className="text-sm text-yellow-500">⭐</span>
+                      0 <span className="text-sm text-yellow-500"></span>
                     </p>
                     <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mt-1">QC Points</p>
                  </div>

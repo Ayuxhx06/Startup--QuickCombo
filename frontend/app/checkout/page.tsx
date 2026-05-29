@@ -140,7 +140,7 @@ export default function CheckoutPage() {
   // -- Coupon Validation --
   const handleApplyCoupon = async () => {
     if (!user) {
-      toast.error('Please login to apply coupons', { icon: '🙋' });
+      toast.error('Please login to apply coupons', { icon: '' });
       return;
     }
     if (!couponInput) return;
@@ -173,7 +173,7 @@ export default function CheckoutPage() {
             <div className="flex-1 w-0 p-5">
               <div className="flex items-start">
                 <div className="shrink-0 pt-0.5">
-                  <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-2xl">🎉</div>
+                  <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-2xl"></div>
                 </div>
                 <div className="ml-4 flex-1">
                   <p className="text-sm font-black text-gray-900 uppercase tracking-tight italic">Coupon Applied!</p>
@@ -252,7 +252,7 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (!user) {
-      toast.error('Please log in to place your order', { icon: '🙋' });
+      toast.error('Please log in to place your order', { icon: '' });
       setShowAuthModal(true);
       return;
     }
@@ -350,7 +350,7 @@ export default function CheckoutPage() {
         </motion.div>
         
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-3xl font-black mb-2">
-          Order Confirmed! 🎉
+          Order Confirmed! 
         </motion.h1>
         
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-gray-400 mb-8">
@@ -381,7 +381,7 @@ export default function CheckoutPage() {
         
         {/* Top Floating Savings Strip */}
         <div className="bg-gradient-to-r from-green-500/20 to-green-600/10 border-l-4 border-green-500 rounded-lg p-3 flex items-center justify-center gap-2">
-          <span>{appliedCoupon ? '🎟️' : '✨'}</span> 
+          <span>{appliedCoupon ? '️' : ''}</span> 
           <span className="text-green-400 font-bold text-sm">
             {appliedCoupon 
               ? `Code ${appliedCoupon.code} applied! Saving ₹${discountAmount}`
@@ -397,7 +397,7 @@ export default function CheckoutPage() {
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                <span className="text-base text-green-500">🎟️</span>
+                <span className="text-base text-green-500">️</span>
               </div>
               <h2 className="font-extrabold text-white text-base tracking-tight">Apply Coupon</h2>
             </div>
@@ -467,7 +467,7 @@ export default function CheckoutPage() {
                        <div className="flex justify-between items-start mb-2">
                          <div className="flex items-center gap-3">
                            <div className={`w-10 h-10 rounded-xl ${isUnlocked ? 'bg-green-500/10 text-green-500' : 'bg-white/5 text-gray-500'} flex items-center justify-center border border-white/5`}>
-                              <span className="text-lg">✨</span>
+                              <span className="text-lg"></span>
                            </div>
                            <div>
                              <h3 className="text-sm font-black text-white italic">
@@ -509,7 +509,7 @@ export default function CheckoutPage() {
                     {item.image_url ? (
                       <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="flex items-center justify-center h-full text-xs">🍔</span>
+                      <span className="flex items-center justify-center h-full text-xs"></span>
                     )}
                   </div>
                   <div>
@@ -539,7 +539,7 @@ export default function CheckoutPage() {
               className="mt-4 p-4 rounded-2xl bg-orange-500/10 border-2 border-orange-500/30 flex gap-3 items-start shadow-[0_0_20px_rgba(251,146,60,0.1)]"
             >
               <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0 animate-pulse">
-                <span className="text-orange-500 text-xl">💡</span>
+                <span className="text-orange-500 text-xl"></span>
               </div>
               <div>
                 <p className="text-orange-400 text-[11px] font-black leading-tight uppercase tracking-[0.1em] mb-1">Important Note</p>
@@ -556,7 +556,7 @@ export default function CheckoutPage() {
         {specialRequests.length > 0 && (
           <section className="bg-[#1c1c1c] rounded-[20px] p-4 border border-orange-500/20">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg">📦</span>
+              <span className="text-lg"></span>
               <div>
                 <h2 className="font-bold text-white text-sm">Special Requests</h2>
                 <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wider">Pay directly to delivery partner</p>
@@ -566,7 +566,7 @@ export default function CheckoutPage() {
               {specialRequests.map(req => (
                 <div key={req.id} className="flex justify-between items-center bg-black/30 px-3 py-2.5 rounded-xl border border-white/5">
                   <div className="flex gap-2 items-center">
-                    <span className="text-base">🛍️</span>
+                    <span className="text-base">️</span>
                     <p className="text-sm font-bold text-white">{req.quantity} {req.unit === 'piece' ? 'pc' : req.unit} {req.name}</p>
                   </div>
                   <span className="text-[10px] text-orange-300 font-black bg-orange-500/10 px-2 py-1 rounded-lg border border-orange-500/20">On Delivery</span>
@@ -574,7 +574,7 @@ export default function CheckoutPage() {
               ))}
             </div>
             <p className="text-[11px] text-gray-500 mt-3 leading-relaxed">
-              💬 Final cost of special items will be collected by our delivery partner at your doorstep.
+               Final cost of special items will be collected by our delivery partner at your doorstep.
             </p>
           </section>
         )}
@@ -625,7 +625,7 @@ export default function CheckoutPage() {
               ) : (
                 <div className="mb-4 space-y-2">
                   <div className="flex items-center gap-2 bg-green-500/10 p-2.5 rounded-xl border border-green-500/20">
-                     <span className="flex w-5 h-5 bg-green-500/20 items-center justify-center rounded-full text-green-500 shrink-0 text-xs">📍</span>
+                     <span className="flex w-5 h-5 bg-green-500/20 items-center justify-center rounded-full text-green-500 shrink-0 text-xs"></span>
                      <span className="text-green-400 text-xs font-bold leading-tight line-clamp-2">
                        {autoLocation || 'Auto-detecting location...'}
                      </span>

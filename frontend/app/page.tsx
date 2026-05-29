@@ -263,7 +263,7 @@ export default function HomePage() {
                   disabled={creatingGroup || !groupName.trim()}
                   className="w-full bg-purple-500 hover:bg-purple-400 disabled:opacity-50 text-white font-black py-4 rounded-2xl transition-all text-sm uppercase tracking-wide shadow-lg shadow-purple-500/20 active:scale-[0.98]"
                 >
-                  {creatingGroup ? 'Creating...' : '🔗 Create Group Link'}
+                  {creatingGroup ? 'Creating...' : ' Create Group Link'}
                 </button>
               </div>
             </div>
@@ -336,7 +336,7 @@ export default function HomePage() {
       {/* Top Restaurants Section */}
       <section id="restaurants-section" className="px-4 mb-8 pt-4">
         <div className="flex items-center justify-between mb-4">
-           <h2 className="font-black text-xl">🌟 Top Restaurants</h2>
+           <h2 className="font-black text-xl"> Top Restaurants</h2>
            <Link href="/restaurants" className="text-green-500 text-sm font-semibold">See all</Link>
         </div>
         <div className="flex gap-4 pb-4 overflow-x-auto no-scrollbar scroll-smooth snap-x">
@@ -350,7 +350,7 @@ export default function HomePage() {
             ))
           ) : filteredRestaurants.length === 0 ? (
             <div className="w-full py-10 text-center flex flex-col items-center gap-3">
-               <div className="text-4xl opacity-40">🍽️</div>
+               <div className="text-4xl opacity-40">️</div>
                <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">No partners match your search</p>
                <button onClick={() => setSearch('')} className="text-green-500 text-xs font-black uppercase">Clear Search</button>
             </div>
@@ -413,7 +413,7 @@ export default function HomePage() {
       {/* Featured Items */}
       <section className="px-4 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-black text-lg">🔥 Popular Food</h2>
+          <h2 className="font-black text-lg"> Popular Food</h2>
           <Link href="/menu" className="flex items-center gap-1 text-green-400 text-sm font-semibold">
             See all <ChevronRight size={16} />
           </Link>
@@ -447,7 +447,7 @@ export default function HomePage() {
       {/* Quick Essentials */}
       <section className="px-4 mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-black text-lg">🛒 Quick Essentials</h2>
+          <h2 className="font-black text-lg"> Quick Essentials</h2>
           <Link href="/menu?category=essentials" className="flex items-center gap-1 text-green-400 text-sm font-semibold">
             See all <ChevronRight size={16} />
           </Link>
@@ -458,7 +458,7 @@ export default function HomePage() {
             className="glass rounded-2xl p-4 flex items-center justify-between hover:border-green-500/20 transition-all mb-4"
           >
             <div className="flex items-center gap-4">
-              <div className="text-3xl">🛒</div>
+              <div className="text-3xl"></div>
               <div>
                 <div className="font-bold">Chips, Drinks, Snacks</div>
                 <div className="text-gray-500 text-sm">Daily essentials delivered fast</div>
@@ -507,7 +507,7 @@ export default function HomePage() {
 
         </div>
         <div className="text-center mt-8 pb-4 space-y-2">
-          <p className="text-[10px] text-gray-700 font-black tracking-widest uppercase italic">QuickCombo • Made with ❤️ in India</p>
+          <p className="text-[10px] text-gray-700 font-black tracking-widest uppercase italic">QuickCombo • Made with ️ in India</p>
           <div className="flex justify-center gap-4 text-[10px] text-gray-600 font-bold uppercase tracking-widest">
             <Link href="/terms" className="hover:text-green-500 transition-colors">Terms</Link>
             <Link href="/privacy" className="hover:text-green-500 transition-colors">Privacy</Link>

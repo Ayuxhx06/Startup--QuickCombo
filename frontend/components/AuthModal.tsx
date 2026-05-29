@@ -51,7 +51,7 @@ export default function AuthModal() {
     const { success, error } = await verifyOtp(email, code, name, phone);
     setLoading(false);
     if (success) { 
-      toast.success(`Welcome to QuickCombo! 🎉`); 
+      toast.success(`Welcome to QuickCombo! `); 
     } else {
       toast.error(error || 'Invalid or expired OTP');
     }
@@ -63,7 +63,7 @@ export default function AuthModal() {
       const { success, error } = await googleLogin(tokenResponse.access_token);
       setLoading(false);
       if (success) {
-        toast.success('Welcome to QuickCombo! 🎉');
+        toast.success('Welcome to QuickCombo! ');
       } else {
         toast.error(error || 'Google login failed');
       }

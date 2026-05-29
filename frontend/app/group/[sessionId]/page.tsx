@@ -123,7 +123,7 @@ export default function GroupOrderPage() {
         menu_item_id: item.id,
         quantity: 1,
       });
-      toast.success(`${item.name} added!`, { icon: '🛒', duration: 1500 });
+      toast.success(`${item.name} added!`, { icon: '', duration: 1500 });
       fetchSession();
     } catch (e: any) {
       toast.error(e.response?.data?.error || 'Failed to add item');
@@ -170,7 +170,7 @@ export default function GroupOrderPage() {
   const shareLink = typeof window !== 'undefined' ? window.location.href : '';
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink);
-    toast.success('Link copied!', { icon: '🔗' });
+    toast.success('Link copied!', { icon: '' });
   };
   const shareWhatsApp = () => {
     window.open(`https://wa.me/?text=${encodeURIComponent(`Join my QuickCombo group order! Add your items here: ${shareLink}`)}`);
@@ -199,7 +199,7 @@ export default function GroupOrderPage() {
   if (error) return (
     <div className="min-h-screen bg-black flex items-center justify-center px-6 text-center">
       <div>
-        <div className="text-5xl mb-4">😕</div>
+        <div className="text-5xl mb-4"></div>
         <h2 className="text-white font-black text-xl mb-2">Session Not Found</h2>
         <p className="text-gray-400 text-sm mb-6">{error}</p>
         <button onClick={() => router.push('/')} className="bg-green-500 text-black font-black px-6 py-3 rounded-xl">

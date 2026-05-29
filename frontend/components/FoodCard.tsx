@@ -30,7 +30,7 @@ export default function FoodCard({ item }: { item: MenuItem }) {
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     addItem({ ...item, quantity: 1, category_name: item.category_name, restaurant: item.restaurant, restaurant_name: item.restaurant_name });
-    if (qty === 0) toast.success(`${item.name} added!`, { icon: '🛒', duration: 1500 });
+    if (qty === 0) toast.success(`${item.name} added!`, { icon: '', duration: 1500 });
   };
 
   const handleRemove = (e: React.MouseEvent) => {

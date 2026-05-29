@@ -120,7 +120,7 @@ export default function PremiumAdmin() {
           auth: subJSON.keys.auth,
           p256dh: subJSON.keys.p256dh,
         }, { headers: { 'X-Admin-Password': pass } });
-        console.log('✅ Admin push subscription registered with backend');
+        console.log(' Admin push subscription registered with backend');
       }
     } catch (err) {
       console.error('Admin push subscribe failed:', err);
@@ -207,7 +207,7 @@ export default function PremiumAdmin() {
         }
       }
       // 3. Always show toast as in-app fallback
-      toast.success(title, { duration: 8000, icon: '🛍️' });
+      toast.success(title, { duration: 8000, icon: '️' });
     };
 
     const checkLiveNotifications = async () => {
@@ -230,7 +230,7 @@ export default function PremiumAdmin() {
             if (seenOrderIdsRef.current.size > 0) {
               const itemsList = order.items?.map((it: any) => `${it.quantity}x ${it.name}`).join(', ') || 'No items';
               const body = `${order.user_name} • ${order.delivery_address}\n${itemsList}`;
-              fireAdminNotification(`🛍️ New Order #${order.id}!`, body, 'new_order');
+              fireAdminNotification(`️ New Order #${order.id}!`, body, 'new_order');
             }
             seenOrderIdsRef.current.add(order.id);
           }
@@ -246,7 +246,7 @@ export default function PremiumAdmin() {
             // Only notify if we already knew about this order (not brand new)
             if (seenOrderIdsRef.current.has(order.id)) {
               const body = `Rider ${order.rider_name} accepted Order #${order.id}`;
-              fireAdminNotification(`🛵 Rider Accepted #${order.id}`, body, 'rider_accepted');
+              fireAdminNotification(` Rider Accepted #${order.id}`, body, 'rider_accepted');
             }
             seenRiderAcceptRef.current.add(riderKey);
           }
@@ -613,20 +613,20 @@ export default function PremiumAdmin() {
 
       if (res.data.success) {
         const { created, updated, total, categorization_log, errors } = res.data;
-        toast.success(`✅ ${targetRestaurant.name}: ${created} new, ${updated} updated (${total} items)`, { id: toastId, duration: 5000 });
+        toast.success(` ${targetRestaurant.name}: ${created} new, ${updated} updated (${total} items)`, { id: toastId, duration: 5000 });
         if (categorization_log?.length > 0) {
           setImportLog(categorization_log);
           setShowImportLog(true);
         }
         if (errors?.length > 0) {
           console.warn('Row errors:', errors);
-          toast('⚠️ ' + errors.length + ' row(s) had errors — check console', { icon: '⚠️' });
+          toast('️ ' + errors.length + ' row(s) had errors — check console', { icon: '️' });
         }
         fetchData();
       }
     } catch (err: any) {
       const errMsg = err.response?.data?.error || err.message || 'Import failed';
-      toast.error('❌ ' + errMsg, { id: toastId });
+      toast.error(' ' + errMsg, { id: toastId });
       console.error('Per-restaurant import error:', err.response?.data);
     } finally {
       setUploading(false);
@@ -1001,8 +1001,8 @@ export default function PremiumAdmin() {
                             <p className="text-xs text-gray-500 truncate">{banner.cta_text} → {banner.cta_link}</p>
                             {/* Analytics */}
                             <div className="flex items-center gap-4 mt-2">
-                              <span className="text-[10px] text-gray-600">👁 {banner.impressions?.toLocaleString() || 0} views</span>
-                              <span className="text-[10px] text-gray-600">🖱 {banner.clicks?.toLocaleString() || 0} clicks</span>
+                              <span className="text-[10px] text-gray-600"> {banner.impressions?.toLocaleString() || 0} views</span>
+                              <span className="text-[10px] text-gray-600"> {banner.clicks?.toLocaleString() || 0} clicks</span>
                               <span className={`text-[10px] font-bold ${
                                 (banner.ctr || 0) >= 10 ? 'text-emerald-400' : (banner.ctr || 0) >= 5 ? 'text-yellow-400' : 'text-gray-500'
                               }`}>CTR {banner.ctr || 0}%</span>
@@ -1970,7 +1970,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                         </>
                                     ) : (
                                         <>
-                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors">📸</div>
+                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors"></div>
                                             <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Click to Upload</span>
                                         </>
                                     )}
@@ -2036,7 +2036,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                         </>
                                     ) : (
                                         <>
-                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors">🍔</div>
+                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors"></div>
                                             <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Click to Upload</span>
                                         </>
                                     )}
@@ -2167,7 +2167,7 @@ function EntityModal({ type, entity, onClose, onSave, headers, categories, resta
                                         </>
                                     ) : (
                                         <>
-                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors">🍱</div>
+                                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500 mb-2 group-hover:text-emerald-500 transition-colors"></div>
                                             <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 text-center px-6">Upload Composite Photo<br/><span className="text-[8px] opacity-50">(Burger + Fries + Drink)</span></span>
                                         </>
                                     )}
@@ -2323,7 +2323,7 @@ const OrderList = memo(({ items, onUpdate, compact = false }: any) => {
                                     <span className="text-[11px] font-bold text-white leading-tight">{item.quantity}x {item.name}</span>
                                     <span className="text-[10px] font-black text-emerald-500/80 italic shrink-0">₹{item.price}</span>
                                 </div>
-                                <div className="text-[9px] text-gray-500 font-bold uppercase mt-1">📍 {item.restaurant_name}</div>
+                                <div className="text-[9px] text-gray-500 font-bold uppercase mt-1"> {item.restaurant_name}</div>
                             </div>
                         ))}
                     </div>
@@ -2444,7 +2444,7 @@ const DeliveryPartnerList = memo(({ items, onVerifyPartner }: { items: any[], on
                 {partner.on_trip ? (
                   <div className="flex flex-col items-center gap-1.5">
                     <span className="bg-orange-500/15 text-orange-400 border border-orange-500/30 px-4 py-1.5 rounded-full text-xs font-black italic inline-flex items-center gap-1.5 animate-pulse">
-                      🛵 ONGOING TRIP
+                       ONGOING TRIP
                     </span>
                     <span className="text-[10px] text-orange-300/70 font-mono">
                       Order #{partner.current_order_id}
@@ -2551,7 +2551,7 @@ const PriceAdjustCard = ({ order, onUpdatePrice }: { order: any, onUpdatePrice: 
       <div className="mb-4">
         <div className="text-sm font-black text-white uppercase italic">{order.user_name || 'GUEST'}</div>
         <div className="text-xs text-gray-400 font-mono mt-0.5">{order.user_phone}</div>
-        <div className="text-xs text-gray-500 mt-1 max-w-sm line-clamp-1">📍 {order.delivery_address}</div>
+        <div className="text-xs text-gray-500 mt-1 max-w-sm line-clamp-1"> {order.delivery_address}</div>
       </div>
 
       {/* Items */}

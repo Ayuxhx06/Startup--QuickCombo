@@ -90,7 +90,7 @@ export default function AboutPage() {
 
         {/* Footer info */}
         <div className="text-center py-6 space-y-2">
-          <p className="text-[10px] text-gray-600 font-bold tracking-widest uppercase">QuickCombo • Made with ❤️ in India</p>
+          <p className="text-[10px] text-gray-600 font-bold tracking-widest uppercase">QuickCombo • Made with ️ in India</p>
           <div className="flex justify-center gap-4 text-[10px] text-gray-500 font-bold uppercase transition-colors">
             <Link href="/terms" className="hover:text-white">Terms</Link>
             <Link href="/privacy" className="hover:text-white">Privacy</Link>

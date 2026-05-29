@@ -58,7 +58,7 @@ export default function ComboBuilder() {
         restaurant_name: combo.restaurant_name
       });
 
-      toast.success(`${combo.name} added! 🥳`, { icon: '🎁' });
+      toast.success(`${combo.name} added! `, { icon: '' });
       setIsOpen(true);
     } catch (err) {
       console.error("Add Combo Error:", err);
@@ -86,7 +86,7 @@ export default function ComboBuilder() {
           <div className="space-y-6">
             {combos.length === 0 ? (
               <div className="text-center py-20 opacity-50">
-                <div className="text-5xl mb-4">📦</div>
+                <div className="text-5xl mb-4"></div>
                 <p className="font-bold uppercase tracking-widest text-xs">No predefined combos yet</p>
                 <p className="text-[10px] mt-2">Add them from the admin panel</p>
               </div>

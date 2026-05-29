@@ -188,7 +188,7 @@ export default function RiderTrackingPage() {
                   </div>
                   <div>
                     <span className="font-bold text-gray-200 block">{item.name}</span>
-                    <span className="text-[10px] text-gray-500 font-bold uppercase">📍 {item.restaurant_name}</span>
+                    <span className="text-[10px] text-gray-500 font-bold uppercase"> {item.restaurant_name}</span>
                   </div>
                 </div>
                 <div className="text-right">
@@ -255,7 +255,7 @@ export default function RiderTrackingPage() {
               <div>
                 <span className="text-lg font-black uppercase italic text-white block leading-none">To Collect</span>
                 <p className={`text-[10px] font-black uppercase tracking-widest mt-2 px-2 py-0.5 rounded-md inline-block ${order.payment_status === 'paid' ? 'bg-emerald-500/20 text-emerald-500' : (order.payment_method === 'cod' ? 'bg-amber-500/20 text-amber-500' : 'bg-blue-500/20 text-blue-500')}`}>
-                  {order.payment_status === 'paid' ? '✅ Already Paid' : (order.payment_method === 'cod' ? '💵 Cash on Delivery' : '📱 Paid Online')}
+                  {order.payment_status === 'paid' ? ' Already Paid' : (order.payment_method === 'cod' ? ' Cash on Delivery' : ' Paid Online')}
                 </p>
               </div>
               <div className="text-right">
