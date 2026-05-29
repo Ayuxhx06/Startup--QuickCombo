@@ -64,16 +64,11 @@ export default function RestaurantsPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
                   
                   {/* Offer Badge (Top Left) */}
-                  {rest.is_featured ? (
+                  {rest.is_featured && (
                     <div className="absolute top-2 left-2 bg-blue-600/95 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
                       PROMOTED
                     </div>
-                  ) : (
-                    <div className="absolute top-2 left-2 bg-rose-600/95 backdrop-blur-sm text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
-                      50% OFF
-                    </div>
                   )}
-
                   {/* Rating Badge (Bottom Left) */}
                   <div className="absolute bottom-2 left-2 bg-green-600/95 backdrop-blur-sm text-white px-1.5 py-0.5 rounded text-[10px] font-black flex items-center gap-0.5 shadow-sm">
                     <Star size={10} className="fill-white" /> {rest.rating}
