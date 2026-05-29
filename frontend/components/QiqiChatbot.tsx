@@ -35,6 +35,7 @@ interface Message {
   role: 'user' | 'qiqi';
   content: string;
   suggested_combos?: Combo[];
+  options?: string[];
 }
 
 interface QiqiChatbotProps {
@@ -67,13 +68,14 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
     }
   }, [messages, isOpen]);
 
-  const handleSend = async () => {
-    if (!inputValue.trim()) return;
+  const handleSend = async (textToSend?: string | React.MouseEvent | React.FormEvent) => {
+    const finalMessage = typeof textToSend === 'string' ? textToSend.trim() : inputValue.trim();
+    if (!finalMessage) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputValue.trim(),
+      content: finalMessage,
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -91,6 +93,7 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
         role: 'qiqi',
         content: response.data.reply,
         suggested_combos: response.data.suggested_combos,
+        options: response.data.options,
       };
 
       setMessages((prev) => [...prev, qiqiMessage]);
@@ -214,6 +217,21 @@ export default function QiqiChatbot({ autoOpen = false, fullPage = false }: Qiqi
                 >
                   {msg.content}
                 </div>
+
+                {/* Options List */}
+                {msg.options && msg.options.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2 w-full max-w-[280px]">
+                    {msg.options.map((opt, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleSend(opt)}
+                        className="bg-purple-100 hover:bg-purple-200 text-purple-700 text-xs px-3 py-1.5 rounded-full font-medium transition-colors border border-purple-200 shadow-sm active:scale-95"
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 {/* Combo Suggestion Cards */}
                 {msg.suggested_combos && msg.suggested_combos.length > 0 && (
