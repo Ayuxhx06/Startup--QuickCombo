@@ -163,7 +163,7 @@ export default function HomePage() {
           </Link>
 
           {/* Daily Needs Card */}
-          <Link href="/menu" className="block">
+          <Link href="/menu?category=essentials" className="block">
             <motion.div
               whileTap={{ scale: 0.96 }}
               className="relative overflow-hidden rounded-2xl p-4 h-28 flex flex-col justify-end group transition-all"
@@ -274,7 +274,7 @@ export default function HomePage() {
       {/* Categories */}
       <section className="px-4 mb-8">
         <h2 className="font-black text-xl mb-5">Explore Categories</h2>
-        <div className="flex gap-4 pb-4 overflow-x-auto no-scrollbar scroll-smooth snap-x">
+        <div className="flex gap-4 pb-4 pt-3 px-1 -mx-1 overflow-x-auto no-scrollbar scroll-smooth snap-x">
           {categories.slice(0, 8).map((cat, i) => {
             const isRestaurantsCard = i === 1;
             const isActive = activeCategory === cat.slug;
