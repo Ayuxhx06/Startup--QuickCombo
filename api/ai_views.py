@@ -108,7 +108,7 @@ Your JSON must match this structure exactly:
             ai_data = json.loads(response_text)
         except json.JSONDecodeError:
             print(f"[Qiqi] JSON Parse Error. Raw: {response_text}")
-            return Response({'error': 'Failed to parse AI response'}, status=500)
+            return Response({'error': 'Failed to parse AI response', 'raw': response_text}, status=500)
 
         # 6. Construct full dynamic combos for the frontend
         frontend_combos = []
@@ -131,9 +131,17 @@ Your JSON must match this structure exactly:
                 "is_dynamic": True
             })
 
+        reply_text = ai_data.get('reply', 'I built some custom combos just for you!')
+        options = ai_data.get('options', [])
+        
+        # Fallback: if Gemini forgets to output the options array but asks for preference
+        lower_reply = reply_text.lower()
+        if not options and ('veg' in lower_reply or 'savoury' in lower_reply or 'sweet' in lower_reply):
+            options = ["Veg", "Non-veg", "Sweet", "Savoury", "Both"]
+
         return Response({
-            'reply': ai_data.get('reply', 'I built some custom combos just for you!'),
-            'options': ai_data.get('options', []),
+            'reply': reply_text,
+            'options': options,
             'suggested_combos': frontend_combos
         })
 
