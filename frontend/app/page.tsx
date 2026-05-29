@@ -125,8 +125,8 @@ export default function HomePage() {
 
   return (
     <div className="page-wrapper">
-      {/* Banner Carousel — top of page */}
-      <section className="pt-4 pb-2">
+      {/* Banner Carousel — full-bleed hero replacement */}
+      <section className="mb-4">
         <BannerCarousel />
       </section>
 
