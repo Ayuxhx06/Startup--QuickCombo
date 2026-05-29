@@ -1612,7 +1612,11 @@ export default function PremiumAdmin() {
                                       </div>
                                       <div className="flex-1">
                                           <div className="flex items-center gap-3">
-                                              <span className={`w-3 h-3 rounded-full ${item.is_veg ? 'bg-emerald-500' : 'bg-red-500'}`} title={item.is_veg ? 'Veg' : 'Non-Veg'} />
+                                              <button 
+                                                  onClick={() => updateItemInline(item.id, { is_veg: !item.is_veg })}
+                                                  className={`w-4 h-4 rounded-full border-2 transition-all hover:scale-110 flex-shrink-0 ${item.is_veg ? 'bg-emerald-500 border-emerald-700' : 'bg-red-500 border-red-700'}`} 
+                                                  title={`Click to mark as ${item.is_veg ? 'Non-Veg' : 'Veg'}`} 
+                                              />
                                               <h5 className="text-lg font-black uppercase italic text-white/90">{item.name}</h5>
                                           </div>
                                           <p className="text-gray-500 text-xs mt-1 truncate max-w-sm">{item.description}</p>
