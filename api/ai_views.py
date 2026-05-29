@@ -56,6 +56,7 @@ WHEN YOU DO THIS, YOU MUST INCLUDE the exact `options` array shown below in your
 (If you are asking this, leave `dynamic_combos` as an empty array).
 
 Once you know their preference (or if they already mentioned it), analyze their message and create 1 to 2 "Dynamic Custom Combos" by picking complementary items from the list below.
+Whenever possible, try to pair a main food item with a drink or beverage (like Coke) to make a complete meal combo.
 Give each combo a fun, creative name.
 Return your response in strictly valid JSON format.
 DO NOT use markdown code blocks like ```json ... ```, just output the raw JSON object.
@@ -103,6 +104,12 @@ Your JSON must match this structure exactly:
         if response_text.endswith('```'):
             response_text = response_text[:-3]
         response_text = response_text.strip()
+
+        # Extract the JSON block if the model outputs text before/after the JSON
+        start_idx = response_text.find('{')
+        end_idx = response_text.rfind('}')
+        if start_idx != -1 and end_idx != -1 and end_idx >= start_idx:
+            response_text = response_text[start_idx:end_idx+1]
 
         try:
             ai_data = json.loads(response_text)
