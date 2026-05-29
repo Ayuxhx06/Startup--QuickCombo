@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.cache import cache as django_cache
+from django.db.models import Q, F
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -1122,9 +1123,9 @@ def public_banners(request):
     """Return all currently active and schedule-valid banners."""
     now = timezone.now()
     banners = Banner.objects.filter(is_active=True).filter(
-        models.Q(schedule_start__isnull=True) | models.Q(schedule_start__lte=now)
+        Q(schedule_start__isnull=True) | Q(schedule_start__lte=now)
     ).filter(
-        models.Q(schedule_end__isnull=True) | models.Q(schedule_end__gte=now)
+        Q(schedule_end__isnull=True) | Q(schedule_end__gte=now)
     ).order_by('sort_order', '-created_at')
 
     data = []
@@ -1144,14 +1145,14 @@ def public_banners(request):
 @api_view(['POST'])
 def banner_impression(request, banner_id):
     """Increment impression count for a banner."""
-    Banner.objects.filter(id=banner_id).update(impressions=models.F('impressions') + 1)
+    Banner.objects.filter(id=banner_id).update(impressions=F('impressions') + 1)
     return Response({'ok': True})
 
 
 @api_view(['POST'])
 def banner_click(request, banner_id):
     """Increment click count for a banner."""
-    Banner.objects.filter(id=banner_id).update(clicks=models.F('clicks') + 1)
+    Banner.objects.filter(id=banner_id).update(clicks=F('clicks') + 1)
     return Response({'ok': True})
 
 

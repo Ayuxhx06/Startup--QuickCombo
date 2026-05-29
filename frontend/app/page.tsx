@@ -180,65 +180,92 @@ export default function HomePage() {
       </section>
 
       {/* Group Order Entry Card */}
-      <section className="px-4 mb-6">
+      <section className="px-4 mb-5">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.15 }}
           onClick={() => setShowGroupModal(true)}
-          className="relative overflow-hidden cursor-pointer bg-gradient-to-r from-purple-900/40 to-blue-900/40 border border-purple-500/20 rounded-2xl p-4 flex items-center gap-4 hover:border-purple-500/40 transition-all active:scale-[0.98]"
+          className="relative overflow-hidden cursor-pointer rounded-2xl p-4 flex items-center gap-4 active:scale-[0.98] transition-all"
+          style={{ background: 'linear-gradient(135deg, #1e0a3c 0%, #0d1f3c 100%)', border: '1px solid rgba(139,92,246,0.25)' }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-blue-500/5" />
-          <div className="w-12 h-12 bg-purple-500/20 border border-purple-500/30 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
-            <Users size={22} className="text-purple-300" />
+          {/* Glow blobs */}
+          <div className="absolute -top-4 -left-4 w-20 h-20 bg-purple-600/20 rounded-full blur-xl pointer-events-none" />
+          <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-blue-600/20 rounded-full blur-xl pointer-events-none" />
+
+          <div className="w-11 h-11 bg-purple-500/20 border border-purple-400/30 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
+            <Users size={20} className="text-purple-300" />
           </div>
-          <div className="relative z-10 flex-1">
-            <h3 className="font-black text-white text-sm">Group Order</h3>
-            <p className="text-purple-300/70 text-xs mt-0.5">Order together with friends — everyone adds their own items</p>
+          <div className="relative z-10 flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5">
+              <h3 className="font-black text-white text-sm">Group Order</h3>
+              <span className="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 py-0.5 rounded-full font-black uppercase">New</span>
+            </div>
+            <p className="text-purple-300/60 text-[11px]">Order together · everyone picks their own</p>
           </div>
-          <div className="relative z-10 bg-purple-500 text-white text-xs font-black px-3 py-2 rounded-xl shrink-0">
-            Start
+          <div className="relative z-10 bg-purple-500 hover:bg-purple-400 text-white text-[11px] font-black px-3.5 py-2 rounded-xl shrink-0 shadow-lg shadow-purple-500/25">
+            Start →
           </div>
         </motion.div>
       </section>
 
-      {/* Group Order Name Modal */}
+      {/* Group Order Name Modal — sits above bottom nav */}
       {showGroupModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+        <div 
+          className="fixed inset-0 z-[60] flex items-end justify-center"
+          style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
+          onClick={() => setShowGroupModal(false)}
+        >
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-sm bg-[#111] border border-white/10 rounded-3xl p-6"
+            exit={{ opacity: 0, y: 60 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="w-full max-w-md mb-20 mx-4"
+            onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center">
-                <Users size={20} className="text-purple-400" />
+            <div className="bg-[#111] border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+              {/* Header with back button */}
+              <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center">
+                    <Users size={18} className="text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-white text-base leading-tight">Group Order</h3>
+                    <p className="text-gray-500 text-[11px]">Friends deliver to your address</p>
+                  </div>
+                </div>
+                {/* Back / Close button */}
+                <button 
+                  onClick={() => setShowGroupModal(false)}
+                  className="w-8 h-8 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center transition-all"
+                >
+                  <span className="text-gray-400 text-lg leading-none">&times;</span>
+                </button>
               </div>
-              <div>
-                <h3 className="font-black text-white">Start Group Order</h3>
-                <p className="text-gray-400 text-xs">Your friends will deliver to your address</p>
+
+              {/* Body */}
+              <div className="p-5">
+                <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-2">Your Name</label>
+                <input
+                  type="text"
+                  value={groupName}
+                  onChange={e => setGroupName(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleCreateGroupOrder()}
+                  placeholder="e.g. Ayush"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-white placeholder-gray-600 focus:border-purple-500/50 outline-none text-sm transition-all"
+                  autoFocus
+                />
+                <p className="text-[10px] text-gray-600 mt-2 mb-4">A shareable link will be created — send it to your friends on WhatsApp</p>
+                <button
+                  onClick={handleCreateGroupOrder}
+                  disabled={creatingGroup || !groupName.trim()}
+                  className="w-full bg-purple-500 hover:bg-purple-400 disabled:opacity-50 text-white font-black py-4 rounded-2xl transition-all text-sm uppercase tracking-wide shadow-lg shadow-purple-500/20 active:scale-[0.98]"
+                >
+                  {creatingGroup ? 'Creating...' : '🔗 Create Group Link'}
+                </button>
               </div>
-            </div>
-            <input
-              type="text"
-              value={groupName}
-              onChange={e => setGroupName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleCreateGroupOrder()}
-              placeholder="Your name (e.g. Ayush)"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-white placeholder-gray-600 focus:border-purple-500/50 outline-none mb-4 text-sm"
-              autoFocus
-            />
-            <div className="flex gap-3">
-              <button onClick={() => setShowGroupModal(false)} className="flex-1 bg-white/5 hover:bg-white/10 text-gray-400 font-bold py-3.5 rounded-2xl transition-all text-sm">
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateGroupOrder}
-                disabled={creatingGroup || !groupName.trim()}
-                className="flex-2 flex-1 bg-purple-500 hover:bg-purple-400 disabled:opacity-50 text-white font-black py-3.5 rounded-2xl transition-all text-sm uppercase tracking-wide"
-              >
-                {creatingGroup ? 'Creating...' : 'Create Link'}
-              </button>
             </div>
           </motion.div>
         </div>
