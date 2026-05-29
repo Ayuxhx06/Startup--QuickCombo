@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useCart } from '@/context/CartContext';
+import toast from 'react-hot-toast';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
@@ -10,7 +12,10 @@ interface MenuItem {
   name: string;
   price: number;
   image_url: string;
-  restaurant_name: string;
+  is_veg: boolean;
+  restaurant_name?: string;
+  restaurant?: number | string;
+  category_name?: string;
 }
 
 interface Combo {
@@ -43,6 +48,7 @@ export default function QiqiChatbot() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { addItem } = useCart();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -100,81 +106,73 @@ export default function QiqiChatbot() {
     }
   };
 
-  // Add to cart functionality (adds all individual items from the dynamic combo)
+  // Add all items from a dynamic combo to cart using real CartContext
   const handleAddToCart = (combo: Combo) => {
-    try {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      
-      if (combo.is_dynamic && combo.items) {
-        // Add each individual item from the dynamic combo
-        combo.items.forEach(item => {
-          cart.push({
-            type: 'item',
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: 1,
-          });
-        });
-        alert(`Added ${combo.items.length} items from ${combo.name} to your cart!`);
-      } else {
-        // Fallback for predefined combo or if items missing
-        cart.push({
-          type: 'combo',
-          id: combo.id,
-          name: combo.name,
-          price: combo.price,
+    if (combo.is_dynamic && combo.items && combo.items.length > 0) {
+      combo.items.forEach(item => {
+        addItem({
+          id: item.id,
+          name: item.name,
+          price: Number(item.price),
           quantity: 1,
+          image_url: item.image_url || '',
+          is_veg: item.is_veg ?? true,
+          restaurant: item.restaurant,
+          restaurant_name: item.restaurant_name,
+          category_name: item.category_name,
         });
-        alert(`Added ${combo.name} to cart!`);
-      }
-      
-      localStorage.setItem('cart', JSON.stringify(cart));
-      window.dispatchEvent(new Event('cart-updated'));
-    } catch (err) {
-      console.error("Cart error", err);
+      });
+      toast.success(`${combo.name} added to cart! 🛒`, { duration: 2000, icon: '✨' });
+    } else {
+      // Fallback for a non-dynamic combo (shouldn't normally happen)
+      toast.error("Couldn't add this combo. Please try again.");
     }
   };
 
   return (
     <>
-      {/* Floating Action Button Container */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-        {/* Pulsing Tooltip (Only show when closed) */}
+      {/* Floating Action Button Container — sits ABOVE the bottom nav bar */}
+      <div className="fixed bottom-20 right-4 z-40 flex flex-col items-end gap-3">
+        {/* Pulsing Tooltip — only show when chat is closed */}
         {!isOpen && (
-          <div className="bg-white px-4 py-2 rounded-xl shadow-lg border border-purple-100 animate-bounce relative mr-2">
-            <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+          <div
+            className="bg-white px-4 py-2 rounded-xl shadow-lg border border-purple-100 animate-bounce relative mr-1"
+            style={{ pointerEvents: 'none' }}
+          >
+            <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
               Craving something? Chat with Qiqi! ✨
             </span>
-            {/* Tooltip Triangle */}
-            <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-b border-r border-purple-100 transform rotate-45"></div>
+            {/* Tooltip Triangle pointing down */}
+            <div className="absolute -bottom-2 right-5 w-4 h-4 bg-white border-b border-r border-purple-100 transform rotate-45" />
           </div>
         )}
 
+        {/* Main Toggle Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all hover:-translate-y-1 overflow-hidden relative ${!isOpen ? 'animate-pulse' : ''}`}
+          className={`w-14 h-14 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-[0_0_18px_rgba(168,85,247,0.5)] hover:shadow-[0_0_28px_rgba(168,85,247,0.7)] transition-all hover:-translate-y-1 overflow-hidden relative ${!isOpen ? 'animate-pulse' : ''}`}
         >
-          {/* Subtle glow effect */}
-          <div className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity"></div>
+          <div className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity" />
           {isOpen ? (
-            <span className="text-3xl">✕</span>
+            <span className="text-2xl font-bold">✕</span>
           ) : (
-            <span className="text-3xl relative z-10 drop-shadow-md">✨</span>
+            <span className="text-2xl relative z-10 drop-shadow-md">✨</span>
           )}
         </button>
       </div>
 
-      {/* Chat Window */}
+      {/* Chat Window — opens upward from above the FAB */}
       {isOpen && (
-        <div className="fixed bottom-28 right-6 w-[350px] max-h-[600px] h-[75vh] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-300">
+        <div className="fixed bottom-36 right-4 w-[340px] max-h-[560px] h-[72vh] bg-white rounded-2xl shadow-2xl flex flex-col z-40 border border-gray-100 overflow-hidden"
+          style={{ animation: 'slideUp 0.25s ease-out' }}
+        >
           {/* Header */}
-          <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-4 text-white flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-2xl shadow-inner">
+          <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-4 text-white flex items-center gap-3 shrink-0">
+            <div className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center text-xl shadow-inner">
               🤖
             </div>
             <div>
-              <h3 className="font-bold text-lg leading-tight">Qiqi</h3>
+              <h3 className="font-bold text-base leading-tight">Qiqi</h3>
               <p className="text-xs text-pink-100 font-medium">Your AI Food Buddy</p>
             </div>
           </div>
@@ -198,43 +196,44 @@ export default function QiqiChatbot() {
                   {msg.content}
                 </div>
 
-                {/* Combo Suggestions */}
+                {/* Combo Suggestion Cards */}
                 {msg.suggested_combos && msg.suggested_combos.length > 0 && (
                   <div className="mt-2 flex flex-col gap-3 w-full max-w-[280px]">
                     {msg.suggested_combos.map((combo) => (
-                      <div key={combo.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        {/* If it's a dynamic combo, we might not have a single image, so maybe show a nice gradient header */}
-                        {combo.image_url ? (
-                          <img src={combo.image_url} alt={combo.name} className="w-full h-24 object-cover" />
-                        ) : (
-                          <div className="w-full h-12 bg-gradient-to-r from-pink-100 to-purple-100 flex items-center px-3 border-b border-gray-50">
-                             <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">✨ Custom Combo</span>
-                          </div>
-                        )}
+                      <div key={combo.id} className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
+                        {/* Gradient header for dynamic combos */}
+                        <div className="w-full h-10 bg-gradient-to-r from-pink-100 to-purple-100 flex items-center px-3 border-b border-gray-50">
+                          <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">✨ Custom Combo</span>
+                        </div>
+
                         <div className="p-3">
                           <h4 className="font-bold text-sm text-gray-800">{combo.name}</h4>
-                          <p className="text-xs text-gray-500 line-clamp-2 mt-1 italic">{combo.description}</p>
-                          
-                          {/* List items if dynamic */}
-                          {combo.is_dynamic && combo.items && (
-                            <div className="mt-2 pt-2 border-t border-gray-50">
-                              <ul className="text-xs text-gray-600 space-y-1">
+                          <p className="text-xs text-gray-500 mt-0.5 italic line-clamp-2">{combo.description}</p>
+
+                          {/* Item list */}
+                          {combo.is_dynamic && combo.items && combo.items.length > 0 && (
+                            <div className="mt-2 pt-2 border-t border-gray-100">
+                              <ul className="text-xs text-gray-600 space-y-0.5">
                                 {combo.items.map(item => (
-                                  <li key={item.id} className="flex justify-between">
+                                  <li key={item.id} className="flex justify-between items-center">
                                     <span className="truncate pr-2">• {item.name}</span>
+                                    <span className="text-purple-500 font-semibold shrink-0">₹{item.price}</span>
                                   </li>
                                 ))}
                               </ul>
                             </div>
                           )}
 
-                          <div className="flex justify-between items-center mt-3 pt-2">
-                            <span className="font-bold text-purple-600">₹{combo.price}</span>
-                            <button 
+                          <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-50">
+                            <div>
+                              <p className="text-[10px] text-gray-400 leading-none">Total</p>
+                              <span className="font-bold text-purple-600 text-sm">₹{combo.price}</span>
+                            </div>
+                            <button
                               onClick={() => handleAddToCart(combo)}
-                              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-4 py-1.5 rounded-lg font-medium shadow-md hover:shadow-lg transition-all active:scale-95"
+                              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-4 py-2 rounded-lg font-bold shadow hover:shadow-lg transition-all active:scale-95 hover:opacity-90"
                             >
-                              Add All
+                              Add to Cart 🛒
                             </button>
                           </div>
                         </div>
@@ -244,7 +243,8 @@ export default function QiqiChatbot() {
                 )}
               </div>
             ))}
-            
+
+            {/* Loading dots */}
             {isLoading && (
               <div className="self-start bg-white border border-gray-100 text-gray-800 shadow-sm rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1 items-center">
                 <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -256,7 +256,7 @@ export default function QiqiChatbot() {
           </div>
 
           {/* Input Area */}
-          <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
+          <div className="p-3 bg-white border-t border-gray-100 flex gap-2 shrink-0">
             <input
               type="text"
               value={inputValue}
@@ -276,7 +276,13 @@ export default function QiqiChatbot() {
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </>
   );
 }
-
