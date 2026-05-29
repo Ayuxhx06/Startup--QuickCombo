@@ -3,15 +3,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://quickcombo.alwaysdata.net';
 
-interface Combo {
+interface MenuItem {
   id: number;
   name: string;
-  description: string;
   price: number;
   image_url: string;
   restaurant_name: string;
+}
+
+interface Combo {
+  id: string | number;
+  name: string;
+  description: string;
+  price: string | number;
+  image_url?: string;
+  restaurant_name?: string;
+  items?: MenuItem[];
+  is_dynamic?: boolean;
 }
 
 interface Message {
@@ -27,7 +37,7 @@ export default function QiqiChatbot() {
     {
       id: 'init',
       role: 'qiqi',
-      content: "Hi! I'm Qiqi, your food mood buddy. 😋 How are you feeling today? Need a combo recommendation?",
+      content: "Hi! I'm Qiqi, your food mood buddy. 😋 How are you feeling today? Need a custom combo?",
     }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -76,7 +86,7 @@ export default function QiqiChatbot() {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'qiqi',
-        content: "Oops, my brain is taking a quick nap! Please check if my Gemini API key is configured. 😴",
+        content: "Oops, my brain is taking a quick nap! Please try again later. 😴",
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -90,22 +100,37 @@ export default function QiqiChatbot() {
     }
   };
 
-  // Add to cart functionality (simplistic version for the demo)
+  // Add to cart functionality (adds all individual items from the dynamic combo)
   const handleAddToCart = (combo: Combo) => {
-    // Note: Since this is a floating component, it will just use localStorage or a toast to show it's added.
-    // Assuming cart is an array in localStorage.
     try {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      cart.push({
-        type: 'combo',
-        id: combo.id,
-        name: combo.name,
-        price: combo.price,
-        quantity: 1,
-      });
+      
+      if (combo.is_dynamic && combo.items) {
+        // Add each individual item from the dynamic combo
+        combo.items.forEach(item => {
+          cart.push({
+            type: 'item',
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: 1,
+          });
+        });
+        alert(`Added ${combo.items.length} items from ${combo.name} to your cart!`);
+      } else {
+        // Fallback for predefined combo or if items missing
+        cart.push({
+          type: 'combo',
+          id: combo.id,
+          name: combo.name,
+          price: combo.price,
+          quantity: 1,
+        });
+        alert(`Added ${combo.name} to cart!`);
+      }
+      
       localStorage.setItem('cart', JSON.stringify(cart));
       window.dispatchEvent(new Event('cart-updated'));
-      alert(`Added ${combo.name} to cart!`);
     } catch (err) {
       console.error("Cart error", err);
     }
@@ -113,29 +138,44 @@ export default function QiqiChatbot() {
 
   return (
     <>
-      {/* Floating Action Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 z-50 overflow-hidden"
-      >
-        {isOpen ? (
-          <span className="text-2xl">✕</span>
-        ) : (
-          <span className="text-2xl">✨</span>
+      {/* Floating Action Button Container */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        {/* Pulsing Tooltip (Only show when closed) */}
+        {!isOpen && (
+          <div className="bg-white px-4 py-2 rounded-xl shadow-lg border border-purple-100 animate-bounce relative mr-2">
+            <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+              Craving something? Chat with Qiqi! ✨
+            </span>
+            {/* Tooltip Triangle */}
+            <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-b border-r border-purple-100 transform rotate-45"></div>
+          </div>
         )}
-      </button>
+
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all hover:-translate-y-1 overflow-hidden relative ${!isOpen ? 'animate-pulse' : ''}`}
+        >
+          {/* Subtle glow effect */}
+          <div className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity"></div>
+          {isOpen ? (
+            <span className="text-3xl">✕</span>
+          ) : (
+            <span className="text-3xl relative z-10 drop-shadow-md">✨</span>
+          )}
+        </button>
+      </div>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-[350px] max-h-[600px] h-[75vh] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-300">
+        <div className="fixed bottom-28 right-6 w-[350px] max-h-[600px] h-[75vh] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-100 overflow-hidden animate-in slide-in-from-bottom-4 fade-in duration-300">
           {/* Header */}
           <div className="bg-gradient-to-r from-pink-500 to-purple-600 p-4 text-white flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-2xl">
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-2xl shadow-inner">
               🤖
             </div>
             <div>
               <h3 className="font-bold text-lg leading-tight">Qiqi</h3>
-              <p className="text-xs text-pink-100">Your AI Food Buddy</p>
+              <p className="text-xs text-pink-100 font-medium">Your AI Food Buddy</p>
             </div>
           </div>
 
@@ -151,7 +191,7 @@ export default function QiqiChatbot() {
                 <div
                   className={`px-4 py-2 rounded-2xl text-sm ${
                     msg.role === 'user'
-                      ? 'bg-purple-600 text-white rounded-br-sm'
+                      ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-br-sm shadow-md'
                       : 'bg-white border border-gray-100 text-gray-800 shadow-sm rounded-bl-sm'
                   }`}
                 >
@@ -160,22 +200,41 @@ export default function QiqiChatbot() {
 
                 {/* Combo Suggestions */}
                 {msg.suggested_combos && msg.suggested_combos.length > 0 && (
-                  <div className="mt-2 flex flex-col gap-2 w-full max-w-[280px]">
+                  <div className="mt-2 flex flex-col gap-3 w-full max-w-[280px]">
                     {msg.suggested_combos.map((combo) => (
                       <div key={combo.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        {combo.image_url && (
+                        {/* If it's a dynamic combo, we might not have a single image, so maybe show a nice gradient header */}
+                        {combo.image_url ? (
                           <img src={combo.image_url} alt={combo.name} className="w-full h-24 object-cover" />
+                        ) : (
+                          <div className="w-full h-12 bg-gradient-to-r from-pink-100 to-purple-100 flex items-center px-3 border-b border-gray-50">
+                             <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">✨ Custom Combo</span>
+                          </div>
                         )}
                         <div className="p-3">
                           <h4 className="font-bold text-sm text-gray-800">{combo.name}</h4>
-                          <p className="text-xs text-gray-500 line-clamp-2 mt-1">{combo.description}</p>
-                          <div className="flex justify-between items-center mt-3">
+                          <p className="text-xs text-gray-500 line-clamp-2 mt-1 italic">{combo.description}</p>
+                          
+                          {/* List items if dynamic */}
+                          {combo.is_dynamic && combo.items && (
+                            <div className="mt-2 pt-2 border-t border-gray-50">
+                              <ul className="text-xs text-gray-600 space-y-1">
+                                {combo.items.map(item => (
+                                  <li key={item.id} className="flex justify-between">
+                                    <span className="truncate pr-2">• {item.name}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          <div className="flex justify-between items-center mt-3 pt-2">
                             <span className="font-bold text-purple-600">₹{combo.price}</span>
                             <button 
                               onClick={() => handleAddToCart(combo)}
-                              className="bg-purple-50 text-purple-600 text-xs px-3 py-1.5 rounded-lg font-medium hover:bg-purple-100 transition-colors"
+                              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-4 py-1.5 rounded-lg font-medium shadow-md hover:shadow-lg transition-all active:scale-95"
                             >
-                              Add
+                              Add All
                             </button>
                           </div>
                         </div>
@@ -187,10 +246,10 @@ export default function QiqiChatbot() {
             ))}
             
             {isLoading && (
-              <div className="self-start bg-white border border-gray-100 text-gray-800 shadow-sm rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1">
-                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="self-start bg-white border border-gray-100 text-gray-800 shadow-sm rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1 items-center">
+                <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -210,7 +269,7 @@ export default function QiqiChatbot() {
             <button
               onClick={handleSend}
               disabled={!inputValue.trim() || isLoading}
-              className="bg-purple-600 text-white w-10 h-10 rounded-xl flex items-center justify-center hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white w-10 h-10 rounded-xl flex items-center justify-center hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md active:scale-95"
             >
               ➤
             </button>
@@ -220,3 +279,4 @@ export default function QiqiChatbot() {
     </>
   );
 }
+
