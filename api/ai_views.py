@@ -143,7 +143,7 @@ Your JSON must match this structure exactly:
         
         # Fallback: if Gemini forgets to output the options array but asks for preference
         lower_reply = reply_text.lower()
-        if not options and ('veg' in lower_reply or 'savoury' in lower_reply or 'sweet' in lower_reply):
+        if not options and not frontend_combos and ('veg' in lower_reply or 'savoury' in lower_reply or 'sweet' in lower_reply):
             options = ["Veg", "Non-veg", "Sweet", "Savoury", "Both"]
 
         return Response({
