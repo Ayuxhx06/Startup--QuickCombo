@@ -19,8 +19,14 @@ export default function RiderTrackingPage() {
   useEffect(() => {
     fetchOrder();
 
+    // Auto-refresh order data every 10 seconds to catch price changes
+    const interval = setInterval(() => {
+        fetchOrderSilent();
+    }, 10000);
+
     return () => {
         stopTracking();
+        clearInterval(interval);
     };
   }, [params.id]);
 
@@ -32,6 +38,15 @@ export default function RiderTrackingPage() {
       toast.error('Failed to load order details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchOrderSilent = async () => {
+    try {
+      const res = await axios.get(`${API}/api/orders/${params.id}/`);
+      setOrder(res.data);
+    } catch (err) {
+      console.error('Silent fetch failed:', err);
     }
   };
 

@@ -24,6 +24,10 @@ urlpatterns = [
     path('admin/delivery-partners/verify/', admin_views.admin_verify_rider),
     path('admin/subscribe-push/', admin_views.admin_subscribe_push),
 
+    # Admin Banner Management
+    path('admin/banners/', admin_views.admin_banners),
+    path('admin/banners/<int:banner_id>/', admin_views.admin_banner_detail),
+
     # AI Chatbot
     path('qiqi/chat/', ai_views.qiqi_chat),
 
@@ -64,6 +68,18 @@ urlpatterns = [
 
     # Weather
     path('weather/', views.weather),
+
+    # Banners (public)
+    path('banners/', views.public_banners),
+    path('banners/<int:banner_id>/impression/', views.banner_impression),
+    path('banners/<int:banner_id>/click/', views.banner_click),
+
+    # Group Ordering
+    path('group-order/create/', views.group_order_create),
+    path('group-order/<str:session_id>/', views.group_order_detail),
+    path('group-order/<str:session_id>/add/', views.group_order_add_item),
+    path('group-order/<str:session_id>/item/<int:item_id>/', views.group_order_remove_item),
+    path('group-order/<str:session_id>/checkout/', views.group_order_checkout_data),
 
     # Payments (Cashfree)
     path('payment/create-session/', views_payment.create_payment_session),

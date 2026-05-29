@@ -23,13 +23,13 @@ def _send_push(endpoint, auth_key, p256dh_key, payload: dict, label: str = ""):
             vapid_private_key=VAPID_PRIVATE_KEY,
             vapid_claims=VAPID_CLAIMS,
         )
-        print(f"✅ Web Push sent to {label or endpoint[:30]}")
+        print(f"[OK] Web Push sent to {label or endpoint[:30]}")
         return True
     except WebPushException as ex:
-        print(f"❌ WebPushException for {label or endpoint[:30]}: {ex}")
+        print(f"[FAIL] WebPushException for {label or endpoint[:30]}: {ex}")
         return "expired" if (ex.response is not None and ex.response.status_code in [404, 410]) else False
     except Exception as e:
-        print(f"❌ Push error for {label or endpoint[:30]}: {e}")
+        print(f"[ERROR] Push error for {label or endpoint[:30]}: {e}")
         return False
 
 
@@ -48,7 +48,7 @@ def send_rider_push_notification(order):
     ) or "No items"
 
     payload = {
-        "title": "New QuickCombo Order! 🛵",
+        "title": "New QuickCombo Order! [Rider]",
         "body": f"Order #{order.id} from {restaurant_name} — {items_list}. Tap to view.",
         "order_id": order.id,
         "restaurant": restaurant_name,
@@ -57,17 +57,17 @@ def send_rider_push_notification(order):
     }
 
     subscriptions = RiderPushSubscription.objects.all()
-    print(f"🔔 Rider Push → Order #{order.id} → {subscriptions.count()} riders")
+    print(f"[INFO] Rider Push -> Order #{order.id} -> {subscriptions.count()} riders")
 
     to_delete = []
     for sub in subscriptions:
-        result = _send_push(sub.endpoint, sub.auth_key, sub.p256dh_key, payload, label=sub.user.email)
+        result = _send_push(sub.endpoint, sub.auth_key, sub.p256dh_key, payload, label=sub.user.email if hasattr(sub, 'user') and sub.user else "Rider")
         if result == "expired":
             to_delete.append(sub.pk)
 
     if to_delete:
         RiderPushSubscription.objects.filter(pk__in=to_delete).delete()
-        print(f"🗑️ Deleted {len(to_delete)} expired rider subscriptions")
+        print(f"[CLEAN] Deleted {len(to_delete)} expired rider subscriptions")
 
 
 # ─── Admin Push ───────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ def send_admin_new_order_push(order):
     items_lines = []
     shops = set()
     for item in order.items.all():
-        items_lines.append(f"{item.quantity}x {item.name} (₹{item.price})")
+        items_lines.append(f"{item.quantity}x {item.name} (Rs {item.price})")
         if item.menu_item and item.menu_item.restaurant:
             shops.add(item.menu_item.restaurant.name)
 
@@ -87,15 +87,15 @@ def send_admin_new_order_push(order):
     shops_str = " | ".join(shops) if shops else "QuickCombo Store"
 
     body = (
-        f"#{order.id} • {order.user_name} • 📞 {order.user_phone}\n"
-        f"📍 {order.delivery_address}\n"
-        f"🛍️ {items_str}\n"
-        f"🏪 {shops_str}\n"
-        f"💰 ₹{order.total} via {order.get_payment_method_display()}"
+        f"#{order.id} | {order.user_name} | {order.user_phone}\n"
+        f"Address: {order.delivery_address}\n"
+        f"Items: {items_str}\n"
+        f"Store: {shops_str}\n"
+        f"Total: Rs {order.total} via {order.get_payment_method_display()}"
     )
 
     payload = {
-        "title": f"🛍️ New Order #{order.id} Received!",
+        "title": f"New Order #{order.id} Received!",
         "body": body,
         "order_id": order.id,
         "type": "admin_new_order",
@@ -105,7 +105,7 @@ def send_admin_new_order_push(order):
     }
 
     subscriptions = AdminPushSubscription.objects.all()
-    print(f"🔔 Admin New-Order Push → Order #{order.id} → {subscriptions.count()} admin sessions")
+    print(f"[INFO] Admin New-Order Push -> Order #{order.id} -> {subscriptions.count()} admin sessions")
 
     to_delete = []
     for sub in subscriptions:
@@ -115,7 +115,7 @@ def send_admin_new_order_push(order):
 
     if to_delete:
         AdminPushSubscription.objects.filter(pk__in=to_delete).delete()
-        print(f"🗑️ Deleted {len(to_delete)} expired admin subscriptions")
+        print(f"[CLEAN] Deleted {len(to_delete)} expired admin subscriptions")
 
 
 def send_admin_rider_accepted_push(order, rider):
@@ -123,13 +123,13 @@ def send_admin_rider_accepted_push(order, rider):
     from .models import AdminPushSubscription
 
     body = (
-        f"Rider {rider.name or rider.email} (📞 {rider.phone or 'N/A'}) "
+        f"Rider {rider.name or rider.email} ({rider.phone or 'N/A'}) "
         f"accepted Order #{order.id}.\n"
-        f"Status: {order.get_status_display()} • ₹{order.total}"
+        f"Status: {order.get_status_display()} | Rs {order.total}"
     )
 
     payload = {
-        "title": f"🛵 Rider Accepted Order #{order.id}",
+        "title": f"Rider Accepted Order #{order.id}",
         "body": body,
         "order_id": order.id,
         "rider_name": rider.name or rider.email,
@@ -139,7 +139,7 @@ def send_admin_rider_accepted_push(order, rider):
     }
 
     subscriptions = AdminPushSubscription.objects.all()
-    print(f"🔔 Admin Rider-Accepted Push → Order #{order.id} → {subscriptions.count()} admin sessions")
+    print(f"[INFO] Admin Rider-Accepted Push -> Order #{order.id} -> {subscriptions.count()} admin sessions")
 
     to_delete = []
     for sub in subscriptions:
@@ -149,3 +149,4 @@ def send_admin_rider_accepted_push(order, rider):
 
     if to_delete:
         AdminPushSubscription.objects.filter(pk__in=to_delete).delete()
+

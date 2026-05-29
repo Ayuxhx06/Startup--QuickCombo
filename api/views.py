@@ -10,7 +10,7 @@ from django.core.cache import cache as django_cache
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from .models import User, Category, MenuItem, Order, OrderItem, Address, Restaurant, Coupon, CouponUsage, GlobalConfig, PredefinedCombo
+from .models import User, Category, MenuItem, Order, OrderItem, Address, Restaurant, Coupon, CouponUsage, GlobalConfig, PredefinedCombo, Banner, GroupOrder, GroupOrderItem
 from .serializers import (UserSerializer, CategorySerializer, MenuItemSerializer,
                           OrderSerializer, AddressSerializer, RestaurantSerializer, CouponSerializer, GlobalConfigSerializer, PredefinedComboSerializer)
 
@@ -1112,4 +1112,219 @@ def get_site_config(request):
         'site_online': site_online.value == 'true' if site_online else True,
         'orders_enabled': orders_enabled.value == 'true' if orders_enabled else True,
         'orders_disabled_message': orders_disabled_message.value if orders_disabled_message else "We are currently not accepting orders. Please try again later."
+    })
+
+
+# ─── Banners ──────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+def public_banners(request):
+    """Return all currently active and schedule-valid banners."""
+    now = timezone.now()
+    banners = Banner.objects.filter(is_active=True).filter(
+        models.Q(schedule_start__isnull=True) | models.Q(schedule_start__lte=now)
+    ).filter(
+        models.Q(schedule_end__isnull=True) | models.Q(schedule_end__gte=now)
+    ).order_by('sort_order', '-created_at')
+
+    data = []
+    for b in banners:
+        data.append({
+            'id': b.id,
+            'title': b.title,
+            'subtitle': b.subtitle,
+            'cta_text': b.cta_text,
+            'cta_link': b.cta_link,
+            'image_url': b.image_url,
+            'bg_color': b.bg_color,
+        })
+    return Response(data)
+
+
+@api_view(['POST'])
+def banner_impression(request, banner_id):
+    """Increment impression count for a banner."""
+    Banner.objects.filter(id=banner_id).update(impressions=models.F('impressions') + 1)
+    return Response({'ok': True})
+
+
+@api_view(['POST'])
+def banner_click(request, banner_id):
+    """Increment click count for a banner."""
+    Banner.objects.filter(id=banner_id).update(clicks=models.F('clicks') + 1)
+    return Response({'ok': True})
+
+
+# ─── Group Ordering ───────────────────────────────────────────────────────────
+
+import random
+import string as string_module
+
+def generate_session_id():
+    chars = string_module.ascii_uppercase + string_module.digits
+    return ''.join(random.choices(chars, k=8))
+
+
+@api_view(['POST'])
+def group_order_create(request):
+    """Create a new group order session."""
+    creator_name = request.data.get('creator_name', '').strip()
+    creator_email = request.data.get('creator_email', '').strip()
+    creator_address = request.data.get('creator_address', '').strip()
+    creator_lat = request.data.get('creator_lat')
+    creator_lng = request.data.get('creator_lng')
+
+    if not creator_name:
+        return Response({'error': 'Your name is required to start a group order'}, status=400)
+
+    # Generate unique session ID
+    session_id = generate_session_id()
+    while GroupOrder.objects.filter(session_id=session_id).exists():
+        session_id = generate_session_id()
+
+    group = GroupOrder.objects.create(
+        session_id=session_id,
+        creator_name=creator_name,
+        creator_email=creator_email,
+        creator_address=creator_address,
+        creator_lat=creator_lat,
+        creator_lng=creator_lng,
+        expires_at=timezone.now() + timedelta(hours=3),
+    )
+    return Response({'session_id': group.session_id, 'expires_at': group.expires_at}, status=201)
+
+
+@api_view(['GET'])
+def group_order_detail(request, session_id):
+    """Get full group order session with all items."""
+    try:
+        group = GroupOrder.objects.get(session_id=session_id, is_active=True)
+    except GroupOrder.DoesNotExist:
+        return Response({'error': 'Group order not found or expired'}, status=404)
+
+    if group.is_expired():
+        group.is_active = False
+        group.save(update_fields=['is_active'])
+        return Response({'error': 'This group order session has expired'}, status=410)
+
+    items = []
+    for item in group.items.select_related('menu_item').order_by('added_at'):
+        items.append({
+            'id': item.id,
+            'menu_item_id': item.menu_item_id,
+            'item_name': item.item_name,
+            'item_price': float(item.item_price),
+            'item_image': item.item_image,
+            'item_is_veg': item.item_is_veg,
+            'quantity': item.quantity,
+            'added_by': item.added_by,
+            'added_at': item.added_at.isoformat(),
+        })
+
+    # Calculate total
+    total = sum(i['item_price'] * i['quantity'] for i in items)
+
+    return Response({
+        'session_id': group.session_id,
+        'creator_name': group.creator_name,
+        'creator_address': group.creator_address,
+        'creator_lat': group.creator_lat,
+        'creator_lng': group.creator_lng,
+        'expires_at': group.expires_at.isoformat(),
+        'items': items,
+        'total': round(total, 2),
+        'participant_count': group.items.values('added_by').distinct().count(),
+    })
+
+
+@api_view(['POST'])
+def group_order_add_item(request, session_id):
+    """Add an item to the group order."""
+    try:
+        group = GroupOrder.objects.get(session_id=session_id, is_active=True)
+    except GroupOrder.DoesNotExist:
+        return Response({'error': 'Group order not found'}, status=404)
+
+    if group.is_expired():
+        return Response({'error': 'Session expired'}, status=410)
+
+    added_by = request.data.get('added_by', '').strip()
+    menu_item_id = request.data.get('menu_item_id')
+    quantity = int(request.data.get('quantity', 1))
+
+    if not added_by:
+        return Response({'error': 'Your name is required'}, status=400)
+    if not menu_item_id:
+        return Response({'error': 'menu_item_id is required'}, status=400)
+
+    try:
+        menu_item = MenuItem.objects.get(id=menu_item_id, is_available=True)
+    except MenuItem.DoesNotExist:
+        return Response({'error': 'Item not found or unavailable'}, status=404)
+
+    # Check if this person already has this item — if yes, just increase qty
+    existing = group.items.filter(menu_item=menu_item, added_by=added_by).first()
+    if existing:
+        existing.quantity += quantity
+        existing.save(update_fields=['quantity'])
+        item_id = existing.id
+    else:
+        new_item = GroupOrderItem.objects.create(
+            group_order=group,
+            menu_item=menu_item,
+            item_name=menu_item.name,
+            item_price=menu_item.price,
+            item_image=menu_item.image_url or '',
+            item_is_veg=menu_item.is_veg,
+            quantity=quantity,
+            added_by=added_by,
+        )
+        item_id = new_item.id
+
+    return Response({'ok': True, 'item_id': item_id}, status=201)
+
+
+@api_view(['DELETE'])
+def group_order_remove_item(request, session_id, item_id):
+    """Remove an item from the group order."""
+    try:
+        group = GroupOrder.objects.get(session_id=session_id, is_active=True)
+        item = group.items.get(id=item_id)
+    except (GroupOrder.DoesNotExist, GroupOrderItem.DoesNotExist):
+        return Response({'error': 'Not found'}, status=404)
+
+    removed_by = request.data.get('added_by', '') or request.query_params.get('added_by', '')
+    item.delete()
+    return Response({'ok': True})
+
+
+@api_view(['GET'])
+def group_order_checkout_data(request, session_id):
+    """Return cart data ready for checkout — uses creator's address."""
+    try:
+        group = GroupOrder.objects.get(session_id=session_id, is_active=True)
+    except GroupOrder.DoesNotExist:
+        return Response({'error': 'Group order not found'}, status=404)
+
+    if group.is_expired():
+        return Response({'error': 'Session expired'}, status=410)
+
+    items = []
+    for item in group.items.select_related('menu_item').order_by('added_at'):
+        items.append({
+            'id': item.menu_item_id or 0,
+            'name': item.item_name,
+            'price': float(item.item_price),
+            'quantity': item.quantity,
+            'image_url': item.item_image,
+            'is_veg': item.item_is_veg,
+            'added_by': item.added_by,
+        })
+
+    return Response({
+        'items': items,
+        'delivery_address': group.creator_address,
+        'delivery_lat': group.creator_lat,
+        'delivery_lng': group.creator_lng,
+        'creator_name': group.creator_name,
     })

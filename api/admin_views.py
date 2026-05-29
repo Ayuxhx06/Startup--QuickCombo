@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 # Use absolute imports for reliability on AlwaysData
-from api.models import User, Order, MenuItem, Restaurant, Category, Coupon, GlobalConfig, PredefinedCombo, AdminPushSubscription
+from api.models import User, Order, MenuItem, Restaurant, Category, Coupon, GlobalConfig, PredefinedCombo, AdminPushSubscription, Banner
 from api.serializers import OrderSerializer, MenuItemSerializer, RestaurantSerializer, CategorySerializer, UserSerializer, CouponSerializer, GlobalConfigSerializer, PredefinedComboSerializer
 import csv
 import io
@@ -448,38 +448,63 @@ def admin_bulk_import(request):
         return Response({'error': 'Missing type or file'}, status=400)
 
     try:
-        # Step 0: Try multiple encodings
         content = None
-        for enc in ['utf-8-sig', 'cp1252', 'latin-1']:
-            try:
-                csv_file.seek(0)
-                content = csv_file.read().decode(enc)
-                break
-            except UnicodeDecodeError:
-                continue
+        rows = []
         
-        if not content:
-            return Response({'error': 'Unsupported file encoding. Please use UTF-8 or CSV.'}, status=400)
+        # Check if it is an excel file by filename
+        is_excel = csv_file.name.lower().endswith('.xlsx') or csv_file.name.lower().endswith('.xls')
+        
+        if is_excel:
+            try:
+                import openpyxl
+                wb = openpyxl.load_workbook(csv_file, data_only=True)
+                sheet = wb.active
+                headers = []
+                for i, row in enumerate(sheet.iter_rows(values_only=True)):
+                    if i == 0:
+                        headers = [str(cell).strip() if cell else f"col_{j}" for j, cell in enumerate(row)]
+                    else:
+                        row_dict = {}
+                        is_empty = True
+                        for j, cell in enumerate(row):
+                            if j < len(headers):
+                                val = str(cell).strip() if cell is not None else ''
+                                row_dict[headers[j]] = val
+                                if val: is_empty = False
+                        if not is_empty:
+                            rows.append(row_dict)
+            except Exception as e:
+                return Response({'error': f'Failed to read Excel file: {str(e)}'}, status=400)
+        else:
+            # Step 0: Try multiple encodings for CSV
+            for enc in ['utf-8-sig', 'cp1252', 'latin-1']:
+                try:
+                    csv_file.seek(0)
+                    content = csv_file.read().decode(enc)
+                    break
+                except UnicodeDecodeError:
+                    continue
+            
+            if not content:
+                return Response({'error': 'Unsupported file encoding. Please use UTF-8, CSV, or XLSX.'}, status=400)
 
-        # Step 0.1: Smart Delimiter Detection
-        snippet = content[:2048]
-        try:
-            dialect = csv.Sniffer().sniff(snippet)
-            # Sanity check: if sniffer found something weird like 'a', fallback to comma
-            if dialect.delimiter not in [',', ';', '\t', '|']:
-                dialect.delimiter = ','
-        except:
-            dialect = 'excel' # Use default comma
+            # Step 0.1: Smart Delimiter Detection
+            snippet = content[:2048]
+            try:
+                dialect = csv.Sniffer().sniff(snippet)
+            except:
+                dialect = 'excel' # Use default comma
 
-        io_string = io.StringIO(content)
-        reader = csv.DictReader(io_string, dialect=dialect)
+            io_string = io.StringIO(content)
+            reader = csv.DictReader(io_string, dialect=dialect)
+            rows = list(reader)
 
         from django.db import transaction
 
         created_count = 0
         updated_count = 0
         errors = []
-        categorized_log = [] 
+        categorized_log = []
 
         # Header Normalize Map
         ALIAS_MAP = {
@@ -491,8 +516,8 @@ def admin_bulk_import(request):
         }
 
         with transaction.atomic():
-            for row in reader:
-                # Normalize headers: lowcase everything and strip junk. Handle None values from DictReader.
+            for row in rows:
+                # Normalize headers: lowcase everything and strip junk. Handle None values from DictReader or openpyxl
                 raw_row = {str(k).lower().strip(): str(v or '').strip() for k, v in row.items() if k}
                 
                 # Apply Aliases & Fuzzy Matching
@@ -829,3 +854,106 @@ def admin_subscribe_push(request):
         }
     )
     return Response({'message': 'Admin push subscription registered successfully'})
+
+
+ADMIN_PASS = lambda req: req.headers.get('X-Admin-Password', '') == getattr(__import__('django.conf', fromlist=['settings']).conf.settings, 'ADMIN_PANEL_PASSWORD', 'Admin@4098')
+
+
+@api_view(['GET', 'POST'])
+def admin_banners(request):
+    """List all banners or create a new one."""
+    from django.conf import settings as _s
+    if request.headers.get('X-Admin-Password', '') != getattr(_s, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    if request.method == 'GET':
+        banners = Banner.objects.all().order_by('sort_order', '-created_at')
+        data = []
+        for b in banners:
+            data.append({
+                'id': b.id,
+                'title': b.title,
+                'subtitle': b.subtitle,
+                'cta_text': b.cta_text,
+                'cta_link': b.cta_link,
+                'image_url': b.image_url,
+                'bg_color': b.bg_color,
+                'is_active': b.is_active,
+                'sort_order': b.sort_order,
+                'schedule_start': b.schedule_start.isoformat() if b.schedule_start else None,
+                'schedule_end': b.schedule_end.isoformat() if b.schedule_end else None,
+                'impressions': b.impressions,
+                'clicks': b.clicks,
+                'ctr': b.ctr,
+                'created_at': b.created_at.isoformat(),
+            })
+        return Response(data)
+
+    # POST — create new banner
+    d = request.data
+    banner = Banner.objects.create(
+        title=d.get('title', 'New Banner'),
+        subtitle=d.get('subtitle', ''),
+        cta_text=d.get('cta_text', 'Order Now'),
+        cta_link=d.get('cta_link', '/menu'),
+        image_url=d.get('image_url', ''),
+        bg_color=d.get('bg_color', '#0a0a0a'),
+        is_active=d.get('is_active', True),
+        sort_order=d.get('sort_order', 0),
+        schedule_start=d.get('schedule_start') or None,
+        schedule_end=d.get('schedule_end') or None,
+    )
+    clear_admin_caches()
+    return Response({'id': banner.id, 'message': 'Banner created'}, status=201)
+
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+def admin_banner_detail(request, banner_id):
+    """Get, update, or delete a specific banner."""
+    from django.conf import settings as _s
+    if request.headers.get('X-Admin-Password', '') != getattr(_s, 'ADMIN_PANEL_PASSWORD', 'Admin@4098'):
+        return Response({'error': 'Unauthorized'}, status=401)
+
+    try:
+        banner = Banner.objects.get(id=banner_id)
+    except Banner.DoesNotExist:
+        return Response({'error': 'Banner not found'}, status=404)
+
+    if request.method == 'DELETE':
+        banner.delete()
+        clear_admin_caches()
+        return Response({'message': 'Banner deleted'})
+
+    if request.method == 'PATCH':
+        d = request.data
+        if 'title' in d: banner.title = d['title']
+        if 'subtitle' in d: banner.subtitle = d['subtitle']
+        if 'cta_text' in d: banner.cta_text = d['cta_text']
+        if 'cta_link' in d: banner.cta_link = d['cta_link']
+        if 'image_url' in d: banner.image_url = d['image_url']
+        if 'bg_color' in d: banner.bg_color = d['bg_color']
+        if 'is_active' in d: banner.is_active = bool(d['is_active'])
+        if 'sort_order' in d: banner.sort_order = int(d['sort_order'])
+        if 'schedule_start' in d: banner.schedule_start = d['schedule_start'] or None
+        if 'schedule_end' in d: banner.schedule_end = d['schedule_end'] or None
+        banner.save()
+        clear_admin_caches()
+        return Response({'message': 'Banner updated'})
+
+    # GET single banner
+    return Response({
+        'id': banner.id,
+        'title': banner.title,
+        'subtitle': banner.subtitle,
+        'cta_text': banner.cta_text,
+        'cta_link': banner.cta_link,
+        'image_url': banner.image_url,
+        'bg_color': banner.bg_color,
+        'is_active': banner.is_active,
+        'sort_order': banner.sort_order,
+        'schedule_start': banner.schedule_start.isoformat() if banner.schedule_start else None,
+        'schedule_end': banner.schedule_end.isoformat() if banner.schedule_end else None,
+        'impressions': banner.impressions,
+        'clicks': banner.clicks,
+        'ctr': banner.ctr,
+    })

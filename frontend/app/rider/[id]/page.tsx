@@ -16,14 +16,6 @@ export default function RiderTrackingPage() {
   const [loading, setLoading] = useState(true);
   const watchId = useRef<number | null>(null);
 
-  useEffect(() => {
-    fetchOrder();
-
-    return () => {
-        stopTracking();
-    };
-  }, [params.id]);
-
   const fetchOrder = async () => {
     try {
       const res = await axios.get(`${API}/api/orders/${params.id}/`);
@@ -34,6 +26,29 @@ export default function RiderTrackingPage() {
       setLoading(false);
     }
   };
+
+  const fetchOrderSilent = async () => {
+    try {
+      const res = await axios.get(`${API}/api/orders/${params.id}/`);
+      setOrder(res.data);
+    } catch (err) {
+      console.error('Silent fetch failed:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrder();
+
+    // Auto-refresh order data every 10 seconds to catch price changes
+    const interval = setInterval(() => {
+        fetchOrderSilent();
+    }, 10000);
+
+    return () => {
+        stopTracking();
+        clearInterval(interval);
+    };
+  }, [params.id]);
 
   const startTracking = () => {
     if (!navigator.geolocation) {

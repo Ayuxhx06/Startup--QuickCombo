@@ -151,6 +151,7 @@ DEFAULT_FROM_EMAIL = 'QuickCombo <ayushtomar061004@gmail.com>'
 
 # Legacy Brevo keys
 BREVO_API_KEY = 'xkeysib-' + '141d3bfdb6a51e7cbe10f42b52e9bc2672c3935a6515a515f6ef3ca5b4237d19-jVb9hORlbgI1yzyc'
+OPENAI_API_KEY = config("OPENAI_API_KEY", default="")
 BREVO_SENDER_EMAIL = 'ayushtomar061004@gmail.com'
 ADMIN_EMAIL = 'support@quickcombo.in'
 GEOAPIFY_KEY = '8861a276' + 'c2d0445eb971d14867e39664'
@@ -163,3 +164,4 @@ CASHFREE_APP_ID = '125266011' + 'ae6630b2d9ee278d940662521'
 CASHFREE_SECRET_KEY = 'cfsk_ma_prod_' + 'fb68e1059e38db892c2a8d7888358dcc_d5633fef'
 CASHFREE_WEBHOOK_SECRET = 'okv20tncei' + 'louw6uqgod'
 CASHFREE_MODE = 'production'
+GEMINI_API_KEY = config("GEMINI_API_KEY", default="")

@@ -8,11 +8,11 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowRight, Zap, Star, Clock, MapPin, ChevronRight, Search,
   Coffee, IceCream, Drumstick, Carrot, UtensilsCrossed, Package, 
-  Soup, Pizza, Sandwich, Flame, Store, Utensils, Croissant, Wheat
+  Soup, Pizza, Sandwich, Flame, Store, Utensils, Croissant, Wheat, Users
 } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-const WeatherWidget = dynamic(() => import('@/components/WeatherWidget'), { ssr: false });
+const BannerCarousel = dynamic(() => import('@/components/BannerCarousel'), { ssr: false });
 import FoodCard from '@/components/FoodCard';
 import ManualAddBox from '@/components/ManualAddBox';
 import MenuModal from '@/components/MenuModal';
@@ -45,6 +45,9 @@ export default function HomePage() {
   const [selectedRest, setSelectedRest] = useState<{id: number, name: string} | null>(null);
   const [restMenu, setRestMenu] = useState<MenuItem[]>([]);
   const [loadingMenu, setLoadingMenu] = useState(false);
+  const [creatingGroup, setCreatingGroup] = useState(false);
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [groupName, setGroupName] = useState('');
 
   const handleOpenMenu = async (e: React.MouseEvent, rest: Restaurant) => {
     e.preventDefault();
@@ -62,6 +65,24 @@ export default function HomePage() {
     }
   };
 
+  const handleCreateGroupOrder = async () => {
+    if (!groupName.trim()) return;
+    setCreatingGroup(true);
+    try {
+      const res = await axios.post(`${API}/api/group-order/create/`, {
+        creator_name: groupName.trim(),
+      });
+      const sessionId = res.data.session_id;
+      sessionStorage.setItem(`group_name_${sessionId}`, groupName.trim());
+      setShowGroupModal(false);
+      setGroupName('');
+      router.push(`/group/${sessionId}`);
+    } catch {
+      alert('Failed to create group order. Please try again.');
+    } finally {
+      setCreatingGroup(false);
+    }
+  };
 
   const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
@@ -110,7 +131,7 @@ export default function HomePage() {
         {/* Ambient glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-64 bg-green-500/8 rounded-full blur-3xl pointer-events-none" />
         <div className="relative max-w-lg mx-auto">
-          <WeatherWidget />
+          <BannerCarousel />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -157,6 +178,71 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Group Order Entry Card */}
+      <section className="px-4 mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          onClick={() => setShowGroupModal(true)}
+          className="relative overflow-hidden cursor-pointer bg-gradient-to-r from-purple-900/40 to-blue-900/40 border border-purple-500/20 rounded-2xl p-4 flex items-center gap-4 hover:border-purple-500/40 transition-all active:scale-[0.98]"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-blue-500/5" />
+          <div className="w-12 h-12 bg-purple-500/20 border border-purple-500/30 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
+            <Users size={22} className="text-purple-300" />
+          </div>
+          <div className="relative z-10 flex-1">
+            <h3 className="font-black text-white text-sm">Group Order</h3>
+            <p className="text-purple-300/70 text-xs mt-0.5">Order together with friends — everyone adds their own items</p>
+          </div>
+          <div className="relative z-10 bg-purple-500 text-white text-xs font-black px-3 py-2 rounded-xl shrink-0">
+            Start
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Group Order Name Modal */}
+      {showGroupModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full max-w-sm bg-[#111] border border-white/10 rounded-3xl p-6"
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center">
+                <Users size={20} className="text-purple-400" />
+              </div>
+              <div>
+                <h3 className="font-black text-white">Start Group Order</h3>
+                <p className="text-gray-400 text-xs">Your friends will deliver to your address</p>
+              </div>
+            </div>
+            <input
+              type="text"
+              value={groupName}
+              onChange={e => setGroupName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleCreateGroupOrder()}
+              placeholder="Your name (e.g. Ayush)"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3.5 text-white placeholder-gray-600 focus:border-purple-500/50 outline-none mb-4 text-sm"
+              autoFocus
+            />
+            <div className="flex gap-3">
+              <button onClick={() => setShowGroupModal(false)} className="flex-1 bg-white/5 hover:bg-white/10 text-gray-400 font-bold py-3.5 rounded-2xl transition-all text-sm">
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateGroupOrder}
+                disabled={creatingGroup || !groupName.trim()}
+                className="flex-2 flex-1 bg-purple-500 hover:bg-purple-400 disabled:opacity-50 text-white font-black py-3.5 rounded-2xl transition-all text-sm uppercase tracking-wide"
+              >
+                {creatingGroup ? 'Creating...' : 'Create Link'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Categories */}
       <section className="px-4 mb-8">

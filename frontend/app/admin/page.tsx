@@ -38,6 +38,16 @@ export default function PremiumAdmin() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [combos, setCombos] = useState<any[]>([]);
   const [deliveryPartners, setDeliveryPartners] = useState<any[]>([]);
+  const [banners, setBanners] = useState<any[]>([]);
+  const [bannerModal, setBannerModal] = useState(false);
+  const [editingBanner, setEditingBanner] = useState<any | null>(null);
+  const [bannerForm, setBannerForm] = useState({
+    title: '', subtitle: '', cta_text: 'Order Now', cta_link: '/menu',
+    image_url: '', bg_color: '#0a0a0a', is_active: true,
+    sort_order: 0, schedule_start: '', schedule_end: ''
+  });
+  const [bannerUploading, setBannerUploading] = useState(false);
+  const [bannerSaving, setBannerSaving] = useState(false);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -284,7 +294,8 @@ export default function PremiumAdmin() {
         restaurants: restaurants.length > 0,
         users: users.length > 0,
         promos: coupons.length > 0,
-        combos: combos.length > 0
+        combos: combos.length > 0,
+        banners: banners.length > 0
     };
     const hasData = dataMap[activeTab] || false;
 
@@ -317,6 +328,9 @@ export default function PremiumAdmin() {
         setOrders(ordersRes.data.slice(0, 10)); // Top 10 for dashboard
       } else if (activeTab === 'orders' || activeTab === 'price_adjust') {
         await safeFetch(`${base}/api/admin/orders/`, setOrders);
+      } else if (activeTab === 'banners') {
+        const res = await axios.get(`${base}/api/admin/banners/`, getHeaders());
+        setBanners(res.data || []);
       } else if (activeTab === 'delivery_partner') {
         await safeFetch(`${base}/api/admin/delivery-partners/`, setDeliveryPartners);
       } else if (activeTab === 'menu') {
@@ -723,6 +737,7 @@ export default function PremiumAdmin() {
                 {[
                   { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
                   { id: 'orders', label: 'Orders Hub', icon: ShoppingBag },
+                  { id: 'banners', label: 'Banners', icon: FileUp },
                   { id: 'price_adjust', label: 'Price Adjust', icon: DollarSign },
                   { id: 'delivery_partner', label: 'Delivery Partner', icon: Bike },
                   { id: 'menu', label: 'Food Items', icon: Utensils },
@@ -925,6 +940,280 @@ export default function PremiumAdmin() {
                   o.phone?.includes(searchTerm)
                 )} onUpdate={updateOrderStatus} />
 
+              </motion.div>
+            )}
+
+            {activeTab === 'banners' && (
+              <motion.div key="banners" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+                className="bg-[#080808] rounded-[1.5rem] lg:rounded-[2.5rem] p-6 lg:p-10 border border-white/5 shadow-2xl"
+              >
+                {/* Header */}
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h3 className="text-2xl lg:text-3xl font-black">BANNERS</h3>
+                    <p className="text-gray-500 text-sm mt-1">Manage home page promotional banners</p>
+                  </div>
+                  <button
+                    onClick={() => { setEditingBanner(null); setBannerForm({ title: '', subtitle: '', cta_text: 'Order Now', cta_link: '/menu', image_url: '', bg_color: '#0a0a0a', is_active: true, sort_order: banners.length, schedule_start: '', schedule_end: '' }); setBannerModal(true); }}
+                    className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-sm px-4 py-2.5 rounded-xl transition-all active:scale-[0.98]"
+                  >
+                    <Plus size={16} /> Add Banner
+                  </button>
+                </div>
+
+                {/* Banner List */}
+                {banners.length === 0 ? (
+                  <div className="text-center py-20 text-gray-600">
+                    <FileUp size={40} className="mx-auto mb-3 opacity-30" />
+                    <p className="font-bold text-lg">No banners yet</p>
+                    <p className="text-sm mt-1">Click "Add Banner" to create your first promotional banner</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {banners.map((banner: any) => (
+                      <div key={banner.id} className="bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all">
+                        <div className="flex items-center gap-4 p-4">
+                          {/* Thumbnail */}
+                          <div className="w-20 h-14 rounded-xl overflow-hidden shrink-0 border border-white/10">
+                            {banner.image_url ? (
+                              <img
+                                src={banner.image_url.startsWith('http') ? banner.image_url : `${LIVE_BACKEND}${banner.image_url}`}
+                                alt={banner.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center" style={{ background: banner.bg_color }}>
+                                <FileUp size={16} className="text-white/30" />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-black text-sm text-white truncate">{banner.title}</h4>
+                              <span className={`shrink-0 text-[9px] font-black px-2 py-0.5 rounded-full uppercase ${
+                                banner.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/5 text-gray-500 border border-white/10'
+                              }`}>
+                                {banner.is_active ? 'Active' : 'Inactive'}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-500 truncate">{banner.cta_text} → {banner.cta_link}</p>
+                            {/* Analytics */}
+                            <div className="flex items-center gap-4 mt-2">
+                              <span className="text-[10px] text-gray-600">👁 {banner.impressions?.toLocaleString() || 0} views</span>
+                              <span className="text-[10px] text-gray-600">🖱 {banner.clicks?.toLocaleString() || 0} clicks</span>
+                              <span className={`text-[10px] font-bold ${
+                                (banner.ctr || 0) >= 10 ? 'text-emerald-400' : (banner.ctr || 0) >= 5 ? 'text-yellow-400' : 'text-gray-500'
+                              }`}>CTR {banner.ctr || 0}%</span>
+                              <span className="text-[10px] text-gray-600">#{banner.sort_order} order</span>
+                            </div>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex items-center gap-2 shrink-0">
+                            {/* Toggle active */}
+                            <button
+                              onClick={async () => {
+                                await axios.patch(`${LIVE_BACKEND}/api/admin/banners/${banner.id}/`, { is_active: !banner.is_active }, getHeaders());
+                                setBanners(prev => prev.map(b => b.id === banner.id ? { ...b, is_active: !b.is_active } : b));
+                              }}
+                              className={`text-xs font-black px-3 py-1.5 rounded-xl border transition-all ${
+                                banner.is_active
+                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30'
+                                  : 'bg-white/5 text-gray-500 border-white/10 hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/30'
+                              }`}
+                            >
+                              {banner.is_active ? 'Disable' : 'Enable'}
+                            </button>
+                            {/* Reorder */}
+                            <div className="flex flex-col gap-0.5">
+                              <button onClick={async () => {
+                                await axios.patch(`${LIVE_BACKEND}/api/admin/banners/${banner.id}/`, { sort_order: Math.max(0, banner.sort_order - 1) }, getHeaders());
+                                const res = await axios.get(`${LIVE_BACKEND}/api/admin/banners/`, getHeaders());
+                                setBanners(res.data);
+                              }} className="w-6 h-5 bg-white/5 hover:bg-white/10 rounded flex items-center justify-center text-gray-400 transition-all">
+                                <ChevronRight size={10} className="-rotate-90" />
+                              </button>
+                              <button onClick={async () => {
+                                await axios.patch(`${LIVE_BACKEND}/api/admin/banners/${banner.id}/`, { sort_order: banner.sort_order + 1 }, getHeaders());
+                                const res = await axios.get(`${LIVE_BACKEND}/api/admin/banners/`, getHeaders());
+                                setBanners(res.data);
+                              }} className="w-6 h-5 bg-white/5 hover:bg-white/10 rounded flex items-center justify-center text-gray-400 transition-all">
+                                <ChevronRight size={10} className="rotate-90" />
+                              </button>
+                            </div>
+                            {/* Edit */}
+                            <button
+                              onClick={() => {
+                                setEditingBanner(banner);
+                                setBannerForm({
+                                  title: banner.title, subtitle: banner.subtitle || '',
+                                  cta_text: banner.cta_text, cta_link: banner.cta_link,
+                                  image_url: banner.image_url || '', bg_color: banner.bg_color || '#0a0a0a',
+                                  is_active: banner.is_active, sort_order: banner.sort_order,
+                                  schedule_start: banner.schedule_start || '', schedule_end: banner.schedule_end || ''
+                                });
+                                setBannerModal(true);
+                              }}
+                              className="w-8 h-8 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center transition-all"
+                            >
+                              <Edit2 size={13} className="text-gray-400" />
+                            </button>
+                            {/* Delete */}
+                            <button
+                              onClick={async () => {
+                                if (!confirm(`Delete "${banner.title}"?`)) return;
+                                await axios.delete(`${LIVE_BACKEND}/api/admin/banners/${banner.id}/`, getHeaders());
+                                setBanners(prev => prev.filter(b => b.id !== banner.id));
+                                toast.success('Banner deleted');
+                              }}
+                              className="w-8 h-8 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl flex items-center justify-center transition-all"
+                            >
+                              <Trash2 size={13} className="text-red-400" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add / Edit Modal */}
+                {bannerModal && (
+                  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setBannerModal(false)}>
+                    <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                      <div className="p-6">
+                        <h3 className="font-black text-lg mb-6">{editingBanner ? 'Edit Banner' : 'New Banner'}</h3>
+
+                        {/* Image Upload */}
+                        <div className="mb-4">
+                          <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-2">Banner Image</label>
+                          {bannerForm.image_url ? (
+                            <div className="relative">
+                              <img src={bannerForm.image_url.startsWith('http') ? bannerForm.image_url : `${LIVE_BACKEND}${bannerForm.image_url}`} alt="Banner" className="w-full h-32 object-cover rounded-xl" />
+                              <button onClick={() => setBannerForm(f => ({ ...f, image_url: '' }))} className="absolute top-2 right-2 w-7 h-7 bg-black/70 rounded-lg flex items-center justify-center text-white">
+                                <X size={12} />
+                              </button>
+                            </div>
+                          ) : (
+                            <label className="w-full h-24 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-emerald-500/40 transition-all">
+                              {bannerUploading ? (
+                                <Loader2 size={20} className="text-emerald-400 animate-spin" />
+                              ) : (
+                                <>
+                                  <FileUp size={20} className="text-gray-500 mb-1" />
+                                  <span className="text-xs text-gray-600">Upload banner image</span>
+                                </>
+                              )}
+                              <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                setBannerUploading(true);
+                                try {
+                                  const fd = new FormData();
+                                  fd.append('image', file);
+                                  const res = await axios.post(`${LIVE_BACKEND}/api/admin/upload-image/`, fd, { headers: { 'X-Admin-Password': adminPassword } });
+                                  setBannerForm(f => ({ ...f, image_url: res.data.url }));
+                                } catch { toast.error('Upload failed'); }
+                                finally { setBannerUploading(false); }
+                              }} />
+                            </label>
+                          )}
+                        </div>
+
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-1.5">Title *</label>
+                            <input value={bannerForm.title} onChange={e => setBannerForm(f => ({...f, title: e.target.value}))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 text-sm transition-all" placeholder="e.g. Summer Sale — 20% Off!" />
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-1.5">Subtitle</label>
+                            <input value={bannerForm.subtitle} onChange={e => setBannerForm(f => ({...f, subtitle: e.target.value}))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 text-sm transition-all" placeholder="e.g. Use code SUMMER20 at checkout" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-1.5">Button Text</label>
+                              <input value={bannerForm.cta_text} onChange={e => setBannerForm(f => ({...f, cta_text: e.target.value}))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 text-sm transition-all" placeholder="Order Now" />
+                            </div>
+                            <div>
+                              <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-1.5">Sort Order</label>
+                              <input type="number" value={bannerForm.sort_order} onChange={e => setBannerForm(f => ({...f, sort_order: parseInt(e.target.value) || 0}))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 text-sm transition-all" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-1.5">Redirect Link *</label>
+                            <input value={bannerForm.cta_link} onChange={e => setBannerForm(f => ({...f, cta_link: e.target.value}))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 text-sm transition-all" placeholder="/menu or /combo or /menu?category=beverages" />
+                            {/* Quick picks */}
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {['/menu', '/combo', '/menu?category=beverages', '/menu?category=essentials', '/restaurants'].map(link => (
+                                <button key={link} onClick={() => setBannerForm(f => ({...f, cta_link: link}))} className={`text-[9px] px-2 py-1 rounded-lg font-bold border transition-all ${
+                                  bannerForm.cta_link === link ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-white/5 border-white/10 text-gray-500 hover:bg-white/10'
+                                }`}>{link}</button>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-1.5">Fallback BG Color</label>
+                            <div className="flex gap-3 items-center">
+                              <input type="color" value={bannerForm.bg_color} onChange={e => setBannerForm(f => ({...f, bg_color: e.target.value}))} className="w-12 h-10 rounded-lg border border-white/10 cursor-pointer bg-transparent" />
+                              <input value={bannerForm.bg_color} onChange={e => setBannerForm(f => ({...f, bg_color: e.target.value}))} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 text-sm transition-all" />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-1.5">Schedule Start</label>
+                              <input type="datetime-local" value={bannerForm.schedule_start} onChange={e => setBannerForm(f => ({...f, schedule_start: e.target.value}))} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none focus:border-emerald-500/50 text-xs transition-all" />
+                            </div>
+                            <div>
+                              <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-1.5">Schedule End</label>
+                              <input type="datetime-local" value={bannerForm.schedule_end} onChange={e => setBannerForm(f => ({...f, schedule_end: e.target.value}))} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white outline-none focus:border-emerald-500/50 text-xs transition-all" />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3 pt-1">
+                            <button onClick={() => setBannerForm(f => ({...f, is_active: !f.is_active}))} className={`relative w-10 h-5 rounded-full transition-all ${ bannerForm.is_active ? 'bg-emerald-500' : 'bg-white/10' }`}>
+                              <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${ bannerForm.is_active ? 'left-5' : 'left-0.5' }`} />
+                            </button>
+                            <span className="text-sm font-bold text-white">{bannerForm.is_active ? 'Active — visible on site' : 'Inactive — hidden from site'}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+                          <button onClick={() => setBannerModal(false)} className="flex-1 bg-white/5 hover:bg-white/10 text-gray-400 font-bold py-3.5 rounded-2xl transition-all">
+                            Cancel
+                          </button>
+                          <button
+                            disabled={bannerSaving || !bannerForm.title || !bannerForm.cta_link}
+                            onClick={async () => {
+                              setBannerSaving(true);
+                              try {
+                                const payload = {
+                                  ...bannerForm,
+                                  schedule_start: bannerForm.schedule_start || null,
+                                  schedule_end: bannerForm.schedule_end || null,
+                                };
+                                if (editingBanner) {
+                                  await axios.patch(`${LIVE_BACKEND}/api/admin/banners/${editingBanner.id}/`, payload, getHeaders());
+                                  toast.success('Banner updated!');
+                                } else {
+                                  await axios.post(`${LIVE_BACKEND}/api/admin/banners/`, payload, getHeaders());
+                                  toast.success('Banner created!');
+                                }
+                                const res = await axios.get(`${LIVE_BACKEND}/api/admin/banners/`, getHeaders());
+                                setBanners(res.data);
+                                setBannerModal(false);
+                              } catch { toast.error('Failed to save banner'); }
+                              finally { setBannerSaving(false); }
+                            }}
+                            className="flex-1 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-black py-3.5 rounded-2xl transition-all uppercase tracking-wider"
+                          >
+                            {bannerSaving ? 'Saving...' : editingBanner ? 'Save Changes' : 'Create Banner'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             )}
 

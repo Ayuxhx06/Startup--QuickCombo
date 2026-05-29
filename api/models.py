@@ -261,3 +261,75 @@ class AdminPushSubscription(models.Model):
 
     def __str__(self):
         return f"Admin - {self.endpoint[:40]}..."
+
+
+class Banner(models.Model):
+    """Promotional banners shown on the home page carousel."""
+    title = models.CharField(max_length=200)
+    subtitle = models.CharField(max_length=300, blank=True)
+    cta_text = models.CharField(max_length=50, default='Order Now')
+    cta_link = models.CharField(max_length=500, help_text="e.g. /menu?category=beverages or /combo")
+    image_url = models.CharField(max_length=500, blank=True)
+    bg_color = models.CharField(max_length=20, default='#0a0a0a', help_text="Fallback background hex color")
+    is_active = models.BooleanField(default=True, db_index=True)
+    sort_order = models.IntegerField(default=0, help_text="Lower = shown first")
+    schedule_start = models.DateTimeField(null=True, blank=True, help_text="Auto-activate from this time")
+    schedule_end = models.DateTimeField(null=True, blank=True, help_text="Auto-deactivate after this time")
+    impressions = models.IntegerField(default=0)
+    clicks = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['sort_order', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def ctr(self):
+        if self.impressions == 0:
+            return 0
+        return round((self.clicks / self.impressions) * 100, 1)
+
+    def is_scheduled_active(self):
+        now = timezone.now()
+        if self.schedule_start and now < self.schedule_start:
+            return False
+        if self.schedule_end and now > self.schedule_end:
+            return False
+        return True
+
+
+class GroupOrder(models.Model):
+    """A shared group ordering session."""
+    session_id = models.CharField(max_length=12, unique=True, db_index=True)
+    creator_name = models.CharField(max_length=100)
+    creator_email = models.EmailField(blank=True)
+    creator_address = models.TextField(blank=True)
+    creator_lat = models.FloatField(null=True, blank=True)
+    creator_lng = models.FloatField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    expires_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Group {self.session_id} by {self.creator_name}"
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+
+class GroupOrderItem(models.Model):
+    """An item added to a group order session by a participant."""
+    group_order = models.ForeignKey(GroupOrder, on_delete=models.CASCADE, related_name='items')
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.SET_NULL, null=True, blank=True)
+    item_name = models.CharField(max_length=200)
+    item_price = models.DecimalField(max_digits=8, decimal_places=2)
+    item_image = models.CharField(max_length=500, blank=True)
+    item_is_veg = models.BooleanField(default=True)
+    quantity = models.IntegerField(default=1)
+    added_by = models.CharField(max_length=100)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.quantity}x {self.item_name} (by {self.added_by})"

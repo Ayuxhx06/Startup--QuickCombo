@@ -1,0 +1,4 @@
+/home/quickcombo/www/quickcombo_backend/frontend/app/layout.tsx
+/home/quickcombo/www/quickcombo_backend/frontend/components/QiqiChatbot.tsx
+/home/quickcombo/quickcombo_app/frontend/app/layout.tsx
+/home/quickcombo/quickcombo_app/frontend/components/QiqiChatbot.tsx
