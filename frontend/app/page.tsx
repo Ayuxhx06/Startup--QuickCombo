@@ -6,7 +6,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowRight, Zap, Star, Clock, MapPin, ChevronRight, Search,
+  Zap, Star, Clock, MapPin, ChevronRight, Search,
   Coffee, IceCream, Drumstick, Carrot, UtensilsCrossed, Package, 
   Soup, Pizza, Sandwich, Flame, Store, Utensils, Croissant, Wheat, Users
 } from 'lucide-react';
@@ -125,57 +125,22 @@ export default function HomePage() {
 
   return (
     <div className="page-wrapper">
-      {/* Hero */}
-      <section className="relative overflow-hidden px-4 pt-6 pb-10">
+      {/* Banner Carousel — top of page */}
+      <section className="pt-4 pb-2">
+        <BannerCarousel />
+      </section>
 
-        {/* Ambient glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-64 bg-green-500/8 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative max-w-lg mx-auto">
-          <BannerCarousel />
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mt-6"
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-green-400 pulse-green" />
-              <span className="text-green-400 text-sm font-semibold">Delivering Now · 20-35 min</span>
-            </div>
-            <h1 className="text-4xl font-black leading-tight mb-2">
-              Food + Essentials,<br />
-              <span className="gradient-text">Delivered Fast ⚡</span>
-            </h1>
-            <p className="text-gray-400 text-base mb-6">
-              Combos, snacks, drinks & daily essentials — all in one order.
-            </p>
-            <div className="flex flex-col gap-5">
-              <div className="flex gap-3">
-                <Link href="/menu">
-                  <motion.button whileTap={{ scale: 0.96 }} className="btn-primary px-6 py-3 flex items-center gap-2 font-bold">
-                    Order Now <ArrowRight size={18} />
-                  </motion.button>
-                </Link>
-                <Link href="/combo">
-                  <motion.button whileTap={{ scale: 0.96 }} className="btn-ghost px-6 py-3 flex items-center gap-2 font-bold">
-                    <Zap size={18} />Explore Combos
-                  </motion.button>
-                </Link>
-              </div>
-
-              {/* Home Page Search Bar */}
-              <div className="relative max-w-md group">
-                <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
-                <input 
-                  type="text"
-                  placeholder="Search for 'Pizza', 'Burgers', 'Milk'..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/5 transition-all font-medium placeholder:text-gray-600 shadow-xl"
-                />
-              </div>
-            </div>
-          </motion.div>
+      {/* Search Bar */}
+      <section className="px-4 pb-4">
+        <div className="relative max-w-lg mx-auto group">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-green-500 transition-colors" />
+          <input
+            type="text"
+            placeholder="Search for 'Pizza', 'Burgers', 'Milk'..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-11 pr-4 text-sm text-white outline-none focus:border-green-500/50 focus:ring-4 focus:ring-green-500/5 transition-all placeholder:text-gray-600"
+          />
         </div>
       </section>
 
