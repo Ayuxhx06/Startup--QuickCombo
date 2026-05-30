@@ -976,11 +976,19 @@ export default function PremiumAdmin() {
                           {/* Thumbnail */}
                           <div className="w-20 h-14 rounded-xl overflow-hidden shrink-0 border border-white/10">
                             {banner.image_url ? (
-                              <img
-                                src={banner.image_url.startsWith('http') ? banner.image_url : `${LIVE_BACKEND}${banner.image_url}`}
-                                alt={banner.title}
-                                className="w-full h-full object-cover"
-                              />
+                              banner.image_url.match(/\.(mp4|webm|ogg)$/i) ? (
+                                <video
+                                  src={banner.image_url.startsWith('http') ? banner.image_url : `${LIVE_BACKEND}${banner.image_url}`}
+                                  className="w-full h-full object-cover"
+                                  autoPlay loop muted playsInline
+                                />
+                              ) : (
+                                <img
+                                  src={banner.image_url.startsWith('http') ? banner.image_url : `${LIVE_BACKEND}${banner.image_url}`}
+                                  alt={banner.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              )
                             ) : (
                               <div className="w-full h-full flex items-center justify-center" style={{ background: banner.bg_color }}>
                                 <FileUp size={16} className="text-white/30" />
@@ -1091,7 +1099,15 @@ export default function PremiumAdmin() {
                           <label className="text-[10px] text-gray-500 font-black uppercase tracking-wider block mb-2">Banner Image</label>
                           {bannerForm.image_url ? (
                             <div className="relative">
-                              <img src={bannerForm.image_url.startsWith('http') ? bannerForm.image_url : `${LIVE_BACKEND}${bannerForm.image_url}`} alt="Banner" className="w-full h-32 object-cover rounded-xl" />
+                              {bannerForm.image_url.match(/\.(mp4|webm|ogg)$/i) ? (
+                                <video
+                                  src={bannerForm.image_url.startsWith('http') ? bannerForm.image_url : `${LIVE_BACKEND}${bannerForm.image_url}`}
+                                  className="w-full h-32 object-cover rounded-xl"
+                                  autoPlay loop muted playsInline
+                                />
+                              ) : (
+                                <img src={bannerForm.image_url.startsWith('http') ? bannerForm.image_url : `${LIVE_BACKEND}${bannerForm.image_url}`} alt="Banner" className="w-full h-32 object-cover rounded-xl" />
+                              )}
                               <button onClick={() => setBannerForm(f => ({ ...f, image_url: '' }))} className="absolute top-2 right-2 w-7 h-7 bg-black/70 rounded-lg flex items-center justify-center text-white">
                                 <X size={12} />
                               </button>
@@ -1103,10 +1119,10 @@ export default function PremiumAdmin() {
                               ) : (
                                 <>
                                   <FileUp size={20} className="text-gray-500 mb-1" />
-                                  <span className="text-xs text-gray-600">Upload banner image</span>
+                                  <span className="text-xs text-gray-600">Upload banner image/video</span>
                                 </>
                               )}
-                              <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                              <input type="file" accept="image/*,video/*" className="hidden" onChange={async (e) => {
                                 const file = e.target.files?.[0];
                                 if (!file) return;
                                 setBannerUploading(true);

@@ -105,13 +105,25 @@ export default function BannerCarousel() {
           >
             {/* Background */}
             {imgSrc ? (
-              <img
-                src={imgSrc}
-                alt={b.title}
-                className="w-full h-full object-cover"
-                draggable={false}
-                style={{ minHeight: 320 }}
-              />
+              imgSrc.match(/\.(mp4|webm|ogg)$/i) ? (
+                <video
+                  src={imgSrc}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{ minHeight: 320 }}
+                />
+              ) : (
+                <img
+                  src={imgSrc}
+                  alt={b.title}
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                  style={{ minHeight: 320 }}
+                />
+              )
             ) : (
               <div
                 className="w-full h-full"

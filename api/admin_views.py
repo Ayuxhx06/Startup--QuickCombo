@@ -31,8 +31,8 @@ def admin_upload_image(request):
 
     # Validate file type
     ext = os.path.splitext(image_file.name)[1].lower()
-    if ext not in ['.jpg', '.jpeg', '.png', '.webp']:
-        return Response({'error': 'Invalid file type. Supported: .jpg, .jpeg, .png, .webp'}, status=400)
+    if ext not in ['.jpg', '.jpeg', '.png', '.webp', '.mp4', '.webm', '.ogg']:
+        return Response({'error': 'Invalid file type. Supported: .jpg, .png, .webp, .mp4, .webm'}, status=400)
 
     # Ensure directory exists
     upload_path = os.path.join(settings.MEDIA_ROOT, 'uploads')
