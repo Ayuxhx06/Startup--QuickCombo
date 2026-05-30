@@ -63,8 +63,16 @@ export default function BannerCarousel() {
 
   const handleCTA = (banner: Banner) => {
     axios.post(`${API}/api/banners/${banner.id}/click/`).catch(() => {});
-    if (banner.cta_link.startsWith('http')) window.open(banner.cta_link, '_blank');
-    else router.push(banner.cta_link);
+    
+    if (banner.cta_link.includes('group-order=true')) {
+      window.dispatchEvent(new Event('openGroupOrder'));
+      // also optionally update URL
+      router.push(banner.cta_link);
+    } else if (banner.cta_link.startsWith('http')) {
+      window.open(banner.cta_link, '_blank');
+    } else {
+      router.push(banner.cta_link);
+    }
   };
 
   // Loading skeleton — same height as hero

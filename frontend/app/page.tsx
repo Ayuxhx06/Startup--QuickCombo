@@ -54,6 +54,10 @@ export default function HomePage() {
       setShowGroupModal(true);
       window.history.replaceState(null, '', '/');
     }
+
+    const handleOpenGroupOrder = () => setShowGroupModal(true);
+    window.addEventListener('openGroupOrder', handleOpenGroupOrder);
+    return () => window.removeEventListener('openGroupOrder', handleOpenGroupOrder);
   }, []);
 
   const handleOpenMenu = async (e: React.MouseEvent, rest: Restaurant) => {
