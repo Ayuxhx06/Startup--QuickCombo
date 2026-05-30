@@ -49,6 +49,13 @@ export default function HomePage() {
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [groupName, setGroupName] = useState('');
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('group-order=true')) {
+      setShowGroupModal(true);
+      window.history.replaceState(null, '', '/');
+    }
+  }, []);
+
   const handleOpenMenu = async (e: React.MouseEvent, rest: Restaurant) => {
     e.preventDefault();
     e.stopPropagation();

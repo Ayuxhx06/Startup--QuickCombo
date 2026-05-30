@@ -1162,7 +1162,7 @@ export default function PremiumAdmin() {
                             <input value={bannerForm.cta_link} onChange={e => setBannerForm(f => ({...f, cta_link: e.target.value}))} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-emerald-500/50 text-sm transition-all" placeholder="/menu or /combo or /menu?category=beverages" />
                             {/* Quick picks */}
                             <div className="flex flex-wrap gap-1.5 mt-2">
-                              {['/menu', '/combo', '/menu?category=beverages', '/menu?category=essentials', '/restaurants'].map(link => (
+                              {['/menu', '/combo', '/menu?category=beverages', '/menu?category=essentials', '/restaurants', '/?group-order=true'].map(link => (
                                 <button key={link} onClick={() => setBannerForm(f => ({...f, cta_link: link}))} className={`text-[9px] px-2 py-1 rounded-lg font-bold border transition-all ${
                                   bannerForm.cta_link === link ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-white/5 border-white/10 text-gray-500 hover:bg-white/10'
                                 }`}>{link}</button>
