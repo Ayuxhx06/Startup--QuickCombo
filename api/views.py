@@ -524,7 +524,7 @@ def validate_coupon(request):
 @api_view(['GET'])
 def public_coupons(request):
     """List active coupons for the checkout page."""
-    coupons = Coupon.objects.filter(is_active=True, expiry_date__gt=timezone.now()).order_by('min_order_value')
+    coupons = Coupon.objects.filter(is_active=True, is_public=True, expiry_date__gt=timezone.now()).order_by('min_order_value')
     return Response(CouponSerializer(coupons, many=True).data)
 
 def calculate_delivery_fee(items_data):
