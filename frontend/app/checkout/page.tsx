@@ -236,8 +236,38 @@ export default function CheckoutPage() {
     setDeliveryFee(fee);
   }, [items, total, specialRequests, appliedCoupon]);
 
+  let foodTotal = 0;
+  items.forEach(i => {
+    let is_grocery = false;
+    if (i.restaurant_name) {
+      const rn = i.restaurant_name.toLowerCase();
+      if (rn.includes('quickcombo store') || rn.includes('essentials store')) {
+        is_grocery = true;
+      }
+    } else if (i.restaurant) {
+      // fallback if restaurant_name is not populated but restaurant ID/object is
+      const rn = String(i.restaurant).toLowerCase();
+      if (rn.includes('quickcombo store') || rn.includes('essentials store')) {
+        is_grocery = true;
+      }
+    }
+    
+    if (i.category_name) {
+      const cn = i.category_name.toLowerCase();
+      if (['essential', 'grocery', 'snack', 'beverage', 'drink', 'packaged'].some(x => cn.includes(x))) {
+        is_grocery = true;
+      }
+    }
+    
+    // If it's food, add to foodTotal
+    if (!is_grocery) {
+      foodTotal += (parseFloat(i.price as any) || 0) * (i.quantity || 1);
+    }
+  });
+
+  const gstAmount = Math.round(foodTotal * 0.05 * 100) / 100;
   const packingCharge = 10;
-  const currentCalculatedTotal = items.length > 0 ? (total - discountAmount + deliveryFee + packingCharge) : 0;
+  const currentCalculatedTotal = items.length > 0 ? (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge + gstAmount) : 0;
 
   const hasFood = items.some(i => i.restaurant || i.restaurant_name || i.category_name?.toLowerCase().includes('bundle'));
   const hasEssentials = items.some(i => ['essentials', 'grocery', 'snacks', 'beverages', 'drinks'].includes(i.category_name?.toLowerCase() || ''));
@@ -264,7 +294,7 @@ export default function CheckoutPage() {
     if (!phoneNumber || phoneNumber.length < 10) { toast.error('Please enter a valid 10-digit phone number'); return; }
 
     const currentCalculatedTotal = items.length > 0 
-      ? (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge) 
+      ? (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge + gstAmount) 
       : 0;
 
     setLoading(true);
@@ -693,15 +723,21 @@ export default function CheckoutPage() {
               <span>Delivery Partner Fee</span>
               <span className={deliveryFee === 0 ? 'text-green-500 font-black' : ''}>{deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}</span>
             </div>
-            <div className="flex justify-between text-gray-400 border-b border-white/5 pb-3">
+            {gstAmount > 0 && (
+              <div className="flex justify-between text-gray-400 border-b border-white/5 pb-3 pt-3">
+                <span>GST on Food (5%)</span>
+                <span>₹{gstAmount}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-gray-400 border-b border-white/5 pb-3 pt-3">
               <span>Packing Charges</span>
               <span>₹{packingCharge}</span>
             </div>
             <div className="flex justify-between font-bold text-lg text-white pt-1">
               <span>Total Bill</span>
               <div className="flex items-center gap-2">
-                <span className="text-gray-500 text-sm line-through">₹{(parseFloat(total as any) || 0) + deliveryFee + packingCharge}</span>
-                <span>₹{(parseFloat(total as any) || 0) - discountAmount + deliveryFee + packingCharge}</span>
+                <span className="text-gray-500 text-sm line-through">₹{(parseFloat(total as any) || 0) + deliveryFee + packingCharge + gstAmount}</span>
+                <span>₹{(parseFloat(total as any) || 0) - discountAmount + deliveryFee + packingCharge + gstAmount}</span>
               </div>
             </div>
           </div>
@@ -709,7 +745,7 @@ export default function CheckoutPage() {
 
         {/* Terms Agreement Text */}
         <p className="text-[10px] text-gray-500 text-center px-4 py-2 font-medium">
-          By placing this order, you agree to QuickCombo's <Link href="/terms" className="text-green-500 underline">Terms & Conditions</Link> and <Link href="/privacy" className="text-green-500 underline">Privacy Policy</Link>.
+          By placing this order, you agree to QuickCombo's <Link href="/terms" className="text-green-500 underline">Terms & Conditions</Link>, <Link href="/privacy" className="text-green-500 underline">Privacy Policy</Link>, and <Link href="/refund" className="text-green-500 underline">Refund Policy</Link>.
         </p>
       </div>
 
@@ -755,7 +791,7 @@ export default function CheckoutPage() {
             } disabled:opacity-50`}
           >
             <div className={`flex flex-col items-start border-r pr-3 ${!ordersEnabled ? 'border-gray-700' : 'border-black/20'}`}>
-              <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + deliveryFee + packingCharge) ? 0 : (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge)}</span>
+              <span className="text-[15px] font-black leading-none">₹{isNaN(parseFloat(total as any) - discountAmount + deliveryFee + packingCharge + gstAmount) ? 0 : (parseFloat(total as any) - discountAmount + deliveryFee + packingCharge + gstAmount)}</span>
               <span className="text-[10px] font-bold opacity-70">TOTAL</span>
             </div>
             <div className="flex items-center font-black text-[15px]">

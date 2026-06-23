@@ -227,10 +227,11 @@ export default function ProfilePage() {
               {/* Version Info */}
               <div className="text-center py-8 space-y-3">
                  <p className="text-[10px] text-gray-600 font-bold tracking-widest uppercase">QuickCombo v2.4.1 Production</p>
-                 <div className="flex justify-center gap-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+                  <div className="flex justify-center gap-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">
                     <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-                    <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-                 </div>
+                    <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                    <Link href="/refund" className="hover:text-white transition-colors">Refunds</Link>
+                  </div>
               </div>
             </motion.div>
           </>

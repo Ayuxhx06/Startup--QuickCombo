@@ -709,7 +709,7 @@ export default function CheckoutPage() {
 
         {/* Terms Agreement Text */}
         <p className="text-[10px] text-gray-500 text-center px-4 py-2 font-medium">
-          By placing this order, you agree to QuickCombo's <Link href="/terms" className="text-green-500 underline">Terms & Conditions</Link> and <Link href="/privacy" className="text-green-500 underline">Privacy Policy</Link>.
+          By placing this order, you agree to QuickCombo's <Link href="/terms" className="text-green-500 underline">Terms & Conditions</Link>, <Link href="/privacy" className="text-green-500 underline">Privacy Policy</Link>, and <Link href="/refund" className="text-green-500 underline">Refund Policy</Link>.
         </p>
       </div>
 

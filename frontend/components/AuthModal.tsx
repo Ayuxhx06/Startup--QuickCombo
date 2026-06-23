@@ -185,7 +185,7 @@ export default function AuthModal() {
                       Continue with Google
                     </motion.button>
                     <p className="text-[10px] text-gray-500 text-center px-4 leading-relaxed">
-                      By continuing, you agree to our <Link href="/terms" className="text-green-500 underline" onClick={handleClose}>Terms of Service</Link> & <Link href="/privacy" className="text-green-500 underline" onClick={handleClose}>Privacy Policy</Link>.
+                      By continuing, you agree to our <Link href="/terms" className="text-green-500 underline" onClick={handleClose}>Terms of Service</Link>, <Link href="/privacy" className="text-green-500 underline" onClick={handleClose}>Privacy Policy</Link> & <Link href="/refund" className="text-green-500 underline" onClick={handleClose}>Refund Policy</Link>.
                     </p>
                   </motion.div>
                 ) : (

@@ -35,6 +35,9 @@ export default function AboutPage() {
               We've engineered a logistics network that connects you with premium local 
               partners to deliver quality, speed, and reliability—straight to your door.
             </p>
+            <p className="text-gray-400 text-sm leading-relaxed font-medium mt-4">
+              - QuickCombo (Proprietorship of Ayush Tomar)
+            </p>
           </div>
         </section>
 
@@ -94,6 +97,7 @@ export default function AboutPage() {
           <div className="flex justify-center gap-4 text-[10px] text-gray-500 font-bold uppercase transition-colors">
             <Link href="/terms" className="hover:text-white">Terms</Link>
             <Link href="/privacy" className="hover:text-white">Privacy</Link>
+            <Link href="/refund" className="hover:text-white">Refunds</Link>
           </div>
         </div>
       </div>

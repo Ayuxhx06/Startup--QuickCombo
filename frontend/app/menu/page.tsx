@@ -225,9 +225,10 @@ function MenuContent() {
 
       <div className="text-center mt-12 pb-8 space-y-2 opacity-50">
         <p className="text-[10px] text-gray-700 font-black tracking-widest uppercase italic">QuickCombo • Made with ️ in India</p>
-        <div className="flex justify-center gap-4 text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+        <div className="flex justify-center gap-6 text-xs text-gray-500 font-medium">
           <Link href="/terms" className="hover:text-green-500 transition-colors">Terms</Link>
           <Link href="/privacy" className="hover:text-green-500 transition-colors">Privacy</Link>
+          <Link href="/refund" className="hover:text-green-500 transition-colors">Refunds</Link>
         </div>
       </div>
     </div>

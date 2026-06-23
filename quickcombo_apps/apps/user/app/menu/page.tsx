@@ -228,6 +228,7 @@ function MenuContent() {
         <div className="flex justify-center gap-4 text-[10px] text-gray-600 font-bold uppercase tracking-widest">
           <Link href="/terms" className="hover:text-green-500 transition-colors">Terms</Link>
           <Link href="/privacy" className="hover:text-green-500 transition-colors">Privacy</Link>
+          <Link href="/refund" className="hover:text-green-500 transition-colors">Refunds</Link>
         </div>
       </div>
     </div>
